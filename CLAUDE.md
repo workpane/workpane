@@ -1,0 +1,2056 @@
+# Workpane Engineering Standard
+
+This file is the authoritative engineering standard for Workpane. It defines the current product
+architecture, source ownership, implementation rules, formatting conventions and completion gates.
+Newer explicit product requirements take precedence when they intentionally replace a rule here.
+
+## Product and technology baseline
+
+- The product is a native desktop application named Workpane.
+- The implementation uses C++20, Qt 6.11.2 or newer and Qt Widgets.
+- That minimum is 6.11.2 rather than 6.11 because `QImage::toCGImage` crashes inside `CGImageCreate` for an image carrying its own colour space, which a web page reaches on macOS by asking for a cursor of its own, and the crash takes the whole application with it.
+- Qt 6 must always be consumed as shared libraries and CMake configuration must reject static Qt builds.
+- The build uses CMake and Ninja through the repository task runner in `make.py`.
+- Automated tests use the pinned GoogleTest 1.17.0 release and CTest discovery.
+- Qt Test is limited to Qt signal, event and interaction utilities inside GoogleTest cases and never to assertions or waiting macros.
+- The terminal engine uses the pinned `libghostty-vt` dependency.
+- Cross-platform hardware discovery uses the pinned `hwinfo` commit `88c5072c4a137d54e94c7e712ae28ac284f1dd9b` as shared component libraries.
+- Unix-like systems use PTY support through `forkpty`.
+- Windows uses ConPTY with RAII handle ownership.
+- SQLite through Qt SQL is the only application persistence engine.
+- Build warnings are errors for first-party targets, except the GCC possibly-uninitialized report for standard optional payloads reached through a future continuation.
+- The GCC and Clang warning set adds the two polymorphism reports that neither `-Wall` nor `-Wextra` turns on, so a base class with virtual methods and a non-virtual destructor is refused rather than left to a reading, because deleting through such a base is undefined behavior.
+
+## Plugin-first architecture
+
+- The application is plugin-first and every product feature is implemented as a plugin.
+- The terminal workspace is the `terminal` plugin and is not a core feature.
+- The terminal emulation engine is a core-owned shared primitive and is not a feature of any plugin.
+- The static server is the `web-server` plugin and is not a core feature.
+- Centralized runtime logs are owned by the `logs` plugin and are not a core feature.
+- Operating-system and hardware discovery are owned by the `system-information` plugin and are not core features.
+- AI model connections, workspaces, task definitions, provider-API execution, execution history and the kanban are owned by the `ai` plugin.
+- Folder workspaces, source editing, syntax highlighting and language-server integration are owned by the `code-editor` plugin.
+- Donation destinations, supporter presentation and the bundled maintainer profile image are owned by the `donate` plugin.
+- The core owns only startup, the application shell, plugin discovery and lifecycle, localization, asynchronous messaging, scoped SQLite access, asynchronous filesystem operations, alerts and shared visual primitives.
+- The window opens saying that it is loading and builds its interface only once every plugin it presents is ready, because a product that takes seconds to appear reads as a product that failed to open.
+- Everything the reader waits for runs from the event loop that is already painting that window.
+- A window closed while it is still loading keeps nothing and asks nothing, because nothing was read to be kept.
+- What was queued to run after that window has nothing left to start, which is an ending rather than a failure.
+- The core does not know which navigation destinations, feature widgets or plugin-owned settings exist.
+- The core may contribute its own application settings through the same settings group contract without representing itself as a feature plugin.
+- Runtime discovery scans the platform plugin directory without hardcoded plugin filenames or
+  feature identifiers.
+- Build and packaging configuration may name bundled targets because it assembles the product.
+- Each plugin is a Qt shared library implementing `PluginInterface` through Qt plugin metadata.
+- Every plugin compiles its sources into one `Workpane<Name>Objects` library that the shared `Workpane<Name>Plugin` and its test suite link, so the eight build files differ only where a plugin really needs something the others do not.
+- A plugin releases whatever it already took before it returns a failure from initialization, rather than depending on the host to release it.
+- Each plugin declares a stable lowercase identifier containing letters, numbers and hyphens.
+- Each plugin declares dependencies by identifier.
+- A plugin that consumes no event declares no handler for one, because the interface answers that case itself and an empty override in six plugins is a declaration nobody reads.
+- The host validates dependencies before initialization and rejects missing dependencies or cycles.
+- The host initializes dependencies first and shuts plugins down in reverse initialization order.
+- Plugins never include another plugin's classes, headers or implementation details.
+- Shared behavior between plugins crosses only the host interface and JSON message contracts.
+- The interface identifier is `dev.workpane.PluginInterface/6.0`, represents only the current ABI and accepts no older ABI.
+
+## Plugin contributions
+
+- Each plugin always returns an ordered list containing zero or more navigation items together with its title key, translation catalog, style sheet, settings groups and widget factories.
+- Each navigation item provides a plugin-local identifier, translation key, native `QIcon`, primary or secondary placement and the position it declares in the bar.
+- The left mode bar is created entirely from discovered navigation contributions.
+- The mode bar never grows past its maximum width, because a language with long words must not widen the shell.
+- A label breaks between its words, and only a single word wider than the space it has left is broken inside itself, because that word has no boundary to break at.
+- The complete content area to the right of the mode bar belongs to the selected plugin widget.
+- The core treats every plugin view as an opaque `QWidget` and does not inspect feature state.
+- A plugin reveals only a navigation destination it declares itself, so a request answered by one plugin never moves the shell to another one.
+- Plugin-specific selectors and component styling live in the plugin style sheet.
+- Page headers, data grids, compact tool buttons, section titles, empty states, status indicators, settings forms, tab bars, Markdown documents, avatar discs, painted rounded surfaces, busy indicators, filter fields, row actions, the monospaced family catalog and local timestamp presentation come from the shared `workpane::ui` components and are never rebuilt inside a plugin.
+- A grouping surface is named workspace in every plugin, its default name is the numbered `Workspace %1` and the user renames it per plugin.
+- A view with no workspace shows only a centered empty state and the action that creates the first one, and never a placeholder that cannot be removed.
+- Mutually exclusive surfaces are pages of one stacked widget and never siblings whose visibility is toggled, because a splitter or a layout can still allocate space to the hidden one.
+- The application tab bar paints its own tabs and replaces the Qt close button with a flat round danger circle carrying a white cross.
+- A selected tab, a focused terminal and every current-item marker use one shared circular indicator painted in the theme accent, and the same indicator in the muted text color when the item is not current.
+- A surface never shows more than one current-item indicator.
+- A tab strip is always followed by exactly one single-pixel divider, provided by the tab widget when its pages are inside it and by the owning view when the strip is only a bar above separate content.
+- The tab widget divider is the reserved top border of its pane rather than a painted row, because a page that paints its own background covers anything drawn on the row it occupies.
+- That border is declared by the component for its own class rather than for an object name, because every surface renames the widget it owns.
+- A dialog form keeps one label column for every row it shows, so a field that appears with the selected kind still aligns with the fields above it.
+- A dialog creates its fields in the order it presents them, because Qt builds the tab order from the order the widgets were created, so a field created earlier takes the focus and the tab traversal even when it is shown further down.
+- Every control that carries text is one height, so a button beside a selectable field is not a row of two heights, and that height is the room the running style answers for such a field rather than a number written here.
+- A field that fills itself when it is left empty says so under itself, and that hint is the shared component, so its ink is the muted colour of the active theme and its size is the caption role rather than a colour and a size of its own.
+- That hint belongs inside the row of the field it explains rather than on a row of its own, so it starts where the field starts and sits against it by one shared metric.
+- A field the selected kind has nothing to do with is absent rather than present and closed, because a control nobody may type in still asks the reader what it is for.
+- Every tabbed surface uses the shared tab bar and its close button, so AI workspaces, browser tabs, editor workspaces, editor documents, terminal workspaces and dialog pages look identical and no surface installs its own tab button.
+- A view that owns the content area starts with a shared page header, keeps its content flush with the surrounding edges and separates surfaces with one single-pixel border.
+- A grid whose cells carry long messages wraps them and sizes its rows to the wrapped content, so a failure is readable without truncation.
+- The shared page header always closes with one single-pixel divider, so the surface below it starts against a visible boundary whether that surface is a tab strip, a data grid or a workspace.
+- Every single-pixel divider between surfaces uses the border color and no divider is drawn in a raised or hover color that disappears against its neighbors.
+- A divider is built by the shared `horizontalDivider` and `verticalDivider` components and never rebuilt as a widget of its own with a private object name and a private style rule.
+- A plain `QWidget` styled through a selector enables `Qt::WA_StyledBackground`, otherwise Qt silently discards its background and border and the declared divider never reaches the screen.
+- A data surface with no rows presents the shared empty state instead of an empty grid, an inset frame or a bordered placeholder.
+- A selected row of a data grid is painted in the theme accent with the on-accent ink, which is what every other current item in the product does.
+- Everything a selected row draws is written in the on-accent ink, covering its text, the glyph of a status cell and every action inside it, because a colour that carries a meaning stops carrying it once it sits on the accent.
+- An action drawn inside a row is built by the shared row action and a cell whose glyph means something is built by the shared status cell, so the grid knows what each of them draws and in which role.
+- A glyph beside the name of a tree item is declared the same way and repainted by the same rule, because a tree paints its selected item in the accent exactly as a grid does.
+- The grid repaints them when its selection changes and again once a rebuilt row has settled, because a row rebuilt while it stays selected signals no selection change and would keep the colours it was born with.
+- A surface that narrows a list by typing uses the shared filter field, which is a small caption over the field it types into.
+- A row whose item can be edited opens that editor on a double click, which is the same editor its own action opens.
+- Data grid columns size from their content and one designated column absorbs the remaining width, so no cell wraps and no column is elided while free space exists.
+- Data grid headers align with the content below them, which is the left edge, because a header centered over left-aligned cells reads as a different column.
+- Shared component geometry resolves from the active theme metrics and never from a literal size.
+- An indicator that turns reads its angle from the clock rather than from the count of frames it was given, so a frame the interface was too busy to draw is skipped instead of stuttering.
+- Shared control fonts, page titles, section titles, tab labels and status bar dividers come from the core style sheet and resolve their sizes from the active theme font roles.
+- The core style sheet contains only shared shell and design-system rules and is owned by the shared style so every surface, including a dialog rendered outside the window, resolves the same rules.
+- A plugin may contribute multiple navigation items without core changes and the host preserves their declared relative order within an equal placement and priority.
+- Navigation metadata is validated during plugin registration and its themed icons are regenerated from the same contribution contract when the active theme changes.
+- Navigation items sort by the position each one declares within the same placement, because discovering the plugin libraries in the order the filesystem lists them is not an order anyone chose.
+- Two destinations claiming one position reject the plugin that declares the second one, so the bar never falls back to the order the libraries happened to load in.
+- The core Settings destination is appended after every plugin navigation item and is always the absolute last mode.
+- Navigation identifiers must be unique inside their owning plugin.
+- Invalid, missing or untranslated contribution metadata rejects the complete plugin.
+- Widget factories return widgets only for declared identifiers.
+
+## Settings architecture
+
+- Settings use the explicit hierarchy of owner, group and section.
+- A plugin may contribute zero or more independent settings groups.
+- The core application may contribute zero or more core-owned settings groups through the same shell API.
+- Every group has a stable owner-local identifier, translated title and one or more sections.
+- A group containing exactly one section must identify that section as `general` and translate its title as General for the active locale.
+- A group containing multiple sections may use any validated owner-local section identifiers appropriate to those responsibilities.
+- Every section provides a translated title key and one or more translated search keys.
+- The settings interface creates one searchable category per group and renders every section in declared order.
+- Every settings section is built from the shared settings page, the shared settings form and the shared settings row, so every owner produces the same shape.
+- A settings section carries its configuration alone, so it starts with its form rows and ends with a full-width surface when it owns one and never explains itself with a paragraph.
+- The empty state of a settings surface states what is missing and never explains what the missing thing is for.
+- Exactly one single-pixel divider separates every pair of sections on a settings page, so a group of one section carries none.
+- A settings row spans the whole width with its caption on the left and its control against the right edge, and a toggle never carries its own caption.
+- Every settings row is the same height whatever control it carries, because a row that shrinks around a toggle reads as a different kind of row, and that height is measured from a text control of the running platform rather than declared as a number.
+- A caption asks for the width its own words need and wraps only past the readable bound, because a column narrower than the words breaks them while the row still has room.
+- A settings control that carries text grows to the shared readable width and shrinks with a narrow window, while a control of fixed size keeps its own width against the right edge.
+- A field the user types several lines into is the shared text field, which declares its own border and its own raised background, because a surface painted like the window behind it does not read as somewhere to type.
+- A section never draws its own title because the settings shell already renders the title of every declared section, so an owner that needs a second title declares a second section.
+- Settings content uses the complete width of the content area, so a divider and a data grid reach both edges while the title, the form rows and the actions of a section keep the inset the page gave up.
+- The horizontal inset of a settings section is a theme metric, so no surface writes it as a size of its own.
+- The shared settings form and the shared settings action row already carry that inset, so an owner never writes contents margins over them.
+- A row of actions above a settings surface is the shared settings action row, because a strip each owner builds itself is the one that reaches the edge.
+- A section title is written in upper case and painted in the accent, because a heading that shares the case and the colour of every caption below it does not read as a heading.
+- The case of a section title is applied by the shared component rather than by the catalogs, so a translator writes the natural sentence and no owner can forget the convention.
+- A settings search matching no category hides the section pages and presents the translated empty state instead.
+- Plugin section factories receive both the group identifier and section identifier and return content only for declared pairs.
+- Each plugin creates, owns and persists the controls inside its settings groups and sections.
+- Core settings factories create and own only application-shell settings.
+- The core stores window geometry, the selected language and the selected application theme identifier in its own settings document.
+- The core application owns the persisted interface language preference.
+- Application settings expose English and Portuguese as the complete selectable language set.
+- A language is declared together with the key that names it, so one cannot be offered without a name and no second declaration can disagree with the first.
+- The first run resolves the normalized complete system locale, then its base language and then English.
+- A manually selected language always takes precedence over the system locale on later starts.
+- Language changes persist asynchronously and retranslate the complete shell and every plugin view immediately without restarting plugin runtimes.
+- A failed language persistence restores the last committed language and retranslates the interface back to that value.
+- The terminal plugin owns terminal font family, terminal font size, terminal theme, paste confirmation and whether a program may write to the clipboard, all of them in its settings document.
+- The code-editor plugin owns the editor font family, the editor font size, the word wrap preference, the selected code colour scheme and whether language servers are enabled.
+- Every content surface owns and persists its own font size and its own default, because a terminal and an editor do not share a conventional reading size.
+- The terminal, the editor and the chat all open at ten points, which is the reading size of every content surface.
+- Ten rather than twelve, because a point is a physical size while the interface font is not, so twelve read a third larger than everything around it on a platform whose interface font is nine points and merely blended on one whose interface font is thirteen.
+- Font sizes outside the shared range of eight to thirty-six points are rejected by settings, by the stored value contract and by the font step.
+- The native zoom-in, zoom-out and reset shortcuts belong to the surface being read, so each content surface installs them on its own view with widget-with-children scope and no zoom reaches a surface the reader is not in.
+- Zooming answers the plain equal, minus and zero keys of the market convention, so increasing and decreasing take the same number of keys.
+- Each direction also answers the plus the zoom standard key names and the plus, minus and zero of a numeric keypad, because a reader reaches for whichever of them their keyboard puts in front of them, and it answers none of the shifted forms because those belong to the shell.
+- Every one of those combinations uses the control modifier, which Qt maps to the native key of the running platform.
+- Each surface steps its own persisted size, clamps it to the shared range and returns to its own default on reset, so zooming the editor leaves the terminal and the chat exactly as they were.
+- A size that could not be kept is rolled back and said, because a reader who zoomed and watched the size snap back learns nothing from silence.
+- The core neither stores nor exposes a content font size, so no surface inherits another surface reading size.
+- The web-server plugin owns its manager split ratio in its settings document and its server configurations in its own table.
+- Invalid values are rejected and never normalized into a different hidden behavior.
+- User changes update presentation state immediately and persist asynchronously.
+- Failed persistence rolls back the latest optimistic value to the last committed state and reports the error.
+- A successful write commits the value that was written rather than whatever the owner holds when the answer arrives, and a failure rolls back only while it is still the latest operation, because two overlapping saves would otherwise commit a value that never reached storage.
+- A write that answers after a newer one commits nothing at all, so the committed copy is never older than what reached storage and a later failure cannot roll the reader back to a value they already changed.
+
+## Application theme architecture
+
+- The core owns the shared application theme contract, built-in theme catalog, selected theme lifecycle and visual primitives.
+- The abstract `Theme` contract requires every concrete theme to provide a stable identifier, translated title key, every semantic color, every shared layout metric and every shared font role.
+- The built-in catalog contains Green, Blue and Red themes in that order.
+- Green has the stable `green` identifier and is the default theme.
+- Blue has the stable `blue` identifier and uses a blue accent with the same visual weight as Green.
+- Red has the stable `red` identifier and uses a red accent with the same visual weight as Green.
+- Theme identifiers are implementation data and visible theme names always come from core translations.
+- The selected theme identifier persists in the single core preferences row through the asynchronous settings pipeline.
+- First-run preferences select Green.
+- Loading a missing or unknown stored theme identifier selects Green and no other implicit theme fallback exists.
+- User theme selection validates against the built-in catalog before mutating application state.
+- Theme changes update the application palette, interface font, shared style sheet, plugin style sheets, navigation icons and every visible core or plugin view without restarting plugin runtimes.
+- Failed asynchronous theme persistence restores the last committed identifier and reapplies that complete theme.
+- The only runtime source of application theme values inside a plugin is `PluginHost::theme()`.
+- Plugin style sheets and navigation contributions receive the active theme explicitly.
+- Core and plugin style sheets express every theme value as a named token and the host resolves those tokens through the single shared substitution.
+- A theme value used by a style sheet is never written as a literal color, size, radius or padding.
+- Plugins never call a private theme singleton or duplicate application colors, fonts or shared metrics.
+- Semantic theme colors cover shell surfaces, borders, primary text, muted text, accent, accent hover, strong accent, on-accent content, success, warning, danger, danger presentation, information and terminal background.
+- A state that is neither good, nor a warning, nor a failure is painted in the information color, because borrowing one that already means something else tells the reader the wrong thing.
+- The strong accent is the darker step of the accent in every theme, so a filled element still separates itself when it sits on a surface already painted with the accent.
+- Shared theme metrics cover navigation, page headers, workspace bars, terminal headers, status bars, compact controls, icons, scroll bars, splitters, tabs, terminal padding, minimum terminal geometry, standard control geometry and the badge radius and padding.
+- Shared theme font roles cover the interface, navigation, captions, page titles, section titles and monospace content.
+- The native find, close and zoom keys keep one meaning across surfaces, so the key that closes a tab closes the conversation that is open.
+- All filled accent buttons use the `OnAccent` color for both text and icons, and every filled destructive surface uses `OnDanger` the same way.
+- The shared icon primitive for an action rendered on an accent background is `primaryIcon()`, which always renders from `OnAccent`, and its counterpart on a danger background is `destructiveIcon()`.
+- Neutral icons derive normal and active foregrounds from the active theme.
+- Semantic status icons use the matching success, warning or danger color supplied by the active theme.
+- Theme colors are never embedded as hexadecimal literals in application or plugin interface styles.
+- Terminal ANSI color schemes are terminal-content themes owned by the shared terminal engine, are selected by the terminal plugin and remain independent from the application chrome theme.
+
+## Localization contract
+
+- Every user-visible string comes from the owning plugin catalog or core shell catalog.
+- Every plugin stores its complete translation catalog in a dedicated English-named header inside that plugin directory.
+- Translation maps and locale assembly never share a plugin implementation file with lifecycle, domain, persistence or widget behavior.
+- The core shell stores its catalog in `CoreTranslations.h` and each plugin follows the `{PluginName}Translations.h` naming pattern.
+- Plugin translation keys follow the exact shape `plugin.section.key-name`.
+- Every key uses lowercase letters, numbers and hyphens in each of three components.
+- Every plugin catalog contains an English `en` locale.
+- Every plugin catalog contains every language exposed by the application language selector, which is English and Portuguese.
+- Every language spells every key the English catalog declares, including a product name that reads the same in both, because a catalog that leans on the fallback cannot be told apart from one that forgot the sentence.
+- A sentence is given exactly the arguments it declares, and a call that chooses between two sentences gives the same arguments to both, so the two declare the same, otherwise Qt reports the mismatch to the reader as a warning.
+- A language declares its own entries rather than starting from another language, because a catalog built by copying and overriding contains every key by construction and a case that reads it back can never fail.
+- The lint command refuses a catalog built from another one, because that is the only place the difference between a declared sentence and an inherited one is still visible.
+- A key belongs to the catalog of its language rather than to the function that assembles them, so the assembly names the two languages and nothing else.
+- One concept is named by one word in each language, so the grouping surface every plugin calls a workspace is called an espaço de trabalho in all of them.
+- Every translated key in another locale also exists in the English catalog.
+- Locale identifiers are lowercase and use hyphens.
+- The system locale replaces underscores with hyphens and converts to lowercase.
+- Lookup first tries the complete locale such as `pt-br`.
+- Lookup next tries the base language such as `pt`.
+- Lookup next tries English through `en`.
+- Lookup returns the key itself only when no candidate contains the key.
+- Registration rejects keys owned by another plugin, invalid locales, invalid keys and empty values.
+- Contribution registration rejects missing title and search translations.
+- A rule the standard states of every plugin is proven against every plugin at once rather than sampled by whichever suite happened to cover it.
+- User-visible literals must not use `tr()` outside this catalog architecture.
+- A structured error message is diagnostic text written for the log, so a notification never shows it and always carries a sentence from the catalog of its owner.
+- A plugin answering a request failure carries a translated reason, because the caller shows what it received and only the answering plugin knows what failed.
+
+## Asynchronous plugin communication
+
+- Plugins communicate through asynchronous JSON capabilities and events exposed by `PluginHost`.
+- A plugin asks for a capability by name and never for the plugin that answers it, so adding, replacing or removing an implementation is data rather than a change of code.
+- The host offers no way to address a plugin by its identity and no way to ask whether one is loaded, because either of those would let a caller depend on who answers instead of on what it needs.
+- A capability name is three lowercase components of letters, numbers and hyphens, which is the grammar a translation key already uses.
+- A capability is answered by exactly one provider, and a second plugin claiming a name already provided is refused with a stable code.
+- The core owns the vocabulary of the shared seams so a provider and a consumer cannot spell one differently, and owns no implementation of any of them.
+- A capability that belongs to one owner is named by that owner alone, because nothing outside it needs to spell a name only it answers.
+- Capability delivery reuses the queued request pipeline, so the timeout, the cancellation on context destruction, the at-most-once completion and the cancellation during shutdown are inherited rather than written a second time.
+- A capability is consulted where it is used rather than remembered at startup, because a provider registers while it initializes and no plugin may depend on that order.
+- Every capability is released before any plugin library starts shutting down, and they are released together because a plugin is never unloaded on its own.
+- The core gives each plugin a dedicated host context bound to its validated identity.
+- Plugins never provide or override their sender identity when invoking or publishing.
+- An invocation identifies sender, capability and JSON object payload.
+- A request callback receives either a JSON object or an explicit structured error.
+- Request delivery is queued onto the target plugin's Qt object thread.
+- Callback delivery is queued onto the callback context's Qt object thread.
+- Destroying the callback context cancels delivery without dereferencing dead state.
+- The host guarantees that a request callback can complete at most once.
+- Every request has one core-owned identity and a thirty-second timeout.
+- Request timeout timers are stopped and destroyed through deferred deletion so a completing request never destroys the timer that is emitting.
+- Pending requests remain tracked until their guarded callback has run or its context has been destroyed.
+- A request that is gone stops watching the context it was given, because that context outlives the request and would otherwise collect one guard for every request ever made through it.
+- Plugin shutdown cancels every pending request before any plugin library starts shutting down.
+- Request callbacks and their captured plugin code are released while the owning library is still loaded.
+- Invalid senders and empty names produce asynchronous errors.
+- A capability nobody provides is refused by name rather than left to time out, which is what an installation missing a plugin library meets rather than a thirty-second wait.
+- A provider explicitly rejects every name it does not implement, and the shared `workpane::plugins::unhandledTopic` contract is the only implementation of that answer, so eight plugins report one condition by one name.
+- Events identify sender, topic and JSON object payload and are delivered asynchronously.
+- Events broadcast to every other initialized plugin.
+- Receivers ignore events from unrelated senders and topics because events are broadcast.
+- Receivers strictly validate every payload for a topic they consume.
+- Unknown fields, missing fields, wrong types, duplicate identities and invalid references reject a
+  consumed message.
+- The shared `workpane::plugins::hasExactKeys` contract is the only implementation of the exact-field payload check.
+- A parse that validates in steps keeps the first reason it refused for, because a later step writing over it tells the reader about something other than what they hit first.
+- Event topics are namespaced by the plugin that defines them, such as `terminal.workspace.changed`.
+- The core publishes its own broadcast events under the `workpane` namespace through the same contract and never impersonates a plugin sender.
+- Payloads contain values only and never pointers, QObject addresses or C++ implementation types.
+- The web-server plugin has no required plugin dependency and operates from any selected folder.
+- Terminal integration is optional and asks for the terminal snapshot capability only where it uses it, so a run without the terminal simply finds nobody providing it.
+- Terminal close and workspace change integration uses asynchronous terminal events without controlling server ownership or lifetime.
+- Plugin code never calls another plugin directly even when both are bundled.
+
+## Asynchronous execution and UI responsiveness
+
+- The GUI thread coordinates widgets, presentation state and short in-memory mutations only.
+- Every operation that can wait on storage, a process, the filesystem, the network or another thread is asynchronous.
+- Runtime APIs for potentially blocking work return `QFuture` or complete through a queued callback.
+- SQLite runtime work executes on the dedicated serialized database worker and never on the GUI thread.
+- Plugin migrations and initial state recovery complete during bootstrap before the interactive window is created.
+- Provider requests execute asynchronously through the network stack and deliver their streamed content on the owning thread.
+- Content that comes from outside the application is framed, parsed and decoded away from the interface thread, because its size is decided by whoever sent it and never by us, and only the finished result returns to the thread that draws.
+- A transport that owns a child process ends that process and its own thread in one step, so the order never depends on which posted event arrives first.
+- An owner of a child process disconnects from it before ending it, because a read already queued is still delivered and would reach an owner that no longer holds it.
+- A child process is killed and reaped by the owner that started it rather than abandoned to delete itself, because the deletion of an abandoned one needs the event loop that is ending and never runs, so the process object and everything the platform gave it are never collected.
+- That reaping happens on the thread the owner lives on, which is the one being torn down, so nothing the reader is looking at waits for a child to exit.
+- System Information hardware collection executes on a worker thread and publishes one complete immutable snapshot.
+- AI tasks run through the provider HTTP transport and report start, streamed content, errors and completion through client signals.
+- Web-server lifecycle commands are queued to the server thread and completion is reported through futures.
+- Plugin requests, events and replies remain queued and never invoke another plugin synchronously.
+- Future continuations that access a QObject use that QObject as their context so destruction cancels delivery safely.
+- A continuation that captures nothing reaches nothing, so it needs no context, and the lint command refuses every other one that names none.
+- A connection and a single shot timer are given the object their lambda reaches as their context for the same reason, because each outlives the receiver and would otherwise call into one that is already gone.
+- A slot reaches its sender through a cast it checks rather than by dereferencing it, because a slot called directly has no sender and the cast is what says the object is the one the slot expects.
+- A continuation attached to a future that already finished runs immediately, so an object never starts its own asynchronous work inside its constructor and announces the result to a caller that could not connect yet.
+- Plugins with direct asynchronous continuations bind them to a runtime context they own, created during initialization and destroyed before shutdown state is released, either a dedicated context object or the runtime object the continuation mutates.
+- Runtime state a signal can reach is held behind a shared pointer rather than inside the container that indexes it, because a container that grows while a signal is being delivered invalidates every reference into it.
+- State a run is closing leaves the collection that indexes it before anything is announced, so no signal can reach an entry that is already going.
+- Destroying a plugin runtime context cancels pending state mutations, notifications and runtime creation before repositories, hosts or owned collections are cleared.
+- Widget state is changed only from continuations delivered on the widget's owning thread.
+- Views expose pending state by disabling duplicate actions or presenting progress without blocking the event loop.
+- Concurrent requests use explicit revision or operation identities so stale completions cannot overwrite newer state.
+- Cancellation is explicit, idempotent and asynchronous with a bounded escalation from graceful termination to forced termination.
+- Interactive code never calls `waitForStarted`, `waitForFinished`, `QThread::wait` or `Qt::BlockingQueuedConnection`.
+- The lint command refuses one of those outside a destructor and the shutdown of an owner, because the exception that teardown really needs is the one that hides the rest.
+- Nested event loops are not used to wait for storage, processes, workers, networking or plugin messages.
+- Destructors do not join workers while the interface is interactive.
+- Final process teardown may join owned threads only after the main window and plugin views have been destroyed.
+- The database executor drains its serialized queue before plugin libraries unload so cancelled continuations are released while their code is still mapped.
+- That drain runs what is already waiting rather than discarding it, because the last thing a plugin writes as the product closes is what the next start reads.
+- The filesystem service drains its serialized queue during final teardown before plugin libraries unload so cancelled continuations are released while their code is still mapped.
+- Background failure paths return structured errors, restore consistent state and notify through the shared alert system.
+
+## Shortcut and focus architecture
+
+- The core owns only application-shell shortcuts and every plugin owns all shortcuts for its own behavior.
+- Shortcut definitions live with their owning core or plugin source and are never duplicated as unrelated key checks.
+- Every shortcut uses the native platform combination appropriate to macOS, Windows and Linux.
+- Standard application operations use `QKeySequence` standard keys when Qt provides the required platform mapping.
+- Quitting declares its own combination rather than asking for that standard key, because Qt answers it with the `Exit` media key outside macOS and with nothing at all under some platform themes, so the shortcut the product promises would silently not exist.
+- The control modifier is what carries a declared application combination, because Qt maps it to Command on macOS and to Control everywhere else, so one declaration is native on all three platforms.
+- Core application shortcuts use application scope only when their behavior is intentionally valid from every focused plugin.
+- The core shortcut contract lives in the shared UI layer so the terminal engine reserves every application combination without depending on the application composition.
+- Every application-scoped shortcut is listed as reserved by the terminal, otherwise a platform where the terminal owns that modifier swallows it.
+- Plugin actions use widget-with-children scope rooted at the owning plugin view.
+- A plugin shortcut is inactive when its view is hidden or focus belongs to the core shell or another plugin.
+- Focused editors, browsers, terminals and embedded controls retain their native shortcuts without cross-plugin interception.
+- The terminal intercepts paste and terminal Control or Alt input only while its own terminal widget has focus.
+- Terminal input handling explicitly yields every core shortcut and every terminal-plugin action before forwarding key input to the shell.
+- Shortcut activation never reaches a hidden terminal session because another plugin has focus.
+- Every normal application exit request passes through the same translated confirmation surface.
+- Window close controls, the platform Quit command and the core Quit shortcut all honor cancellation.
+- Confirmed exit closes the window before plugin teardown and rejected exit preserves the complete running application state.
+
+## Persistence architecture
+
+- The source of truth is one `workpane.sqlite3` database in the application local data directory.
+- A structural change adds the next version and never rewrites the creating one, because what a plugin recorded is data the reader owns and rewriting that migration drops the schema and takes it with them.
+- The schema a plugin declares is what its migrations produce rather than the text they are written as, so it is built once in memory and read back, and a table a later version altered is compared against what that alteration really made.
+- Application data uses the native writable local data location selected by the operating system and never assumes a writable home-directory layout.
+- A reader who wants the application to keep its data elsewhere names an absolute directory with `data-dir`, which is what makes a run against isolated state possible without touching what they already have.
+- A directory that is not absolute, one that is empty and one that cannot be created are refused by name rather than answered with the platform location, and the argument survives the restart an import asks for.
+- The creating migration declares the complete set of tables and indexes, and every later version alters what it declared instead of being folded back into it.
+- Core schema evolution uses SQLite `PRAGMA user_version` and creates the complete schema when the version is zero.
+- A stored database this version cannot read is set aside under a name of its own and a new one takes its place, because nothing stored may keep the application from opening.
+- The write-ahead log of that database is set aside with it while it is still there, because what was committed last is only in it, and it never stays beside the database that replaced it.
+- A log the failed open already removed cannot be kept, because the database is only known to be unusable once that open has failed, so keeping every log against that possibility would copy one on every start.
+- The database that was set aside is named to the reader once, because the file it was kept in is where its data still is.
+- The core schema is validated by comparing the stored table definitions with the current ones after normalizing the quoting that SQLite applies to renamed tables.
+- Every value read from a database row is reached by the name of its column through the shared strict readers, because a row read by the position of an iterator has no name to fail by.
+- Storage has exactly two shapes: a typed table for what is queried, related or paged, and one settings document per owner for what is only read whole and written whole.
+- Every settings document lives in the core owned `plugin_settings` table keyed by the identity of its owner, and a plugin reaches it only through the scoped host, never through SQL.
+- A settings document is read for what its owner declares, so adding a setting is a change of code and never a change of schema.
+- Every value the document does not carry, carries in a shape the owner cannot use or carries outside the range the owner accepts is the declared default, because nothing stored may keep the reader from opening the application.
+- A key nobody declares changes nothing, so a document written by another version of the product still opens.
+- An entry of a stored collection that the owner cannot use is left out and every other entry still loads.
+- The shared `workpane::plugins` settings readers are the only implementation of that contract, covering the text, the integer, the boolean, the object, the object list and the text list, so a container of the wrong type is the declared default exactly like a scalar of the wrong type.
+- The `SettingsReader` is the convenience over those readers for an owner that ignores each result, so it carries a method only while an owner reads that shape through it.
+- A reference that names nothing is cleared rather than kept, because every later reader resolves it.
+- The core reads its own settings document through those same readers, because a shell that reads its stored values loosely accepts what it refuses from every plugin.
+- Core owns only lifecycle state, the settings documents and plugin schema versions.
+- A process `QLockFile` prevents concurrent application writers.
+- Foreign keys are enabled and the database uses WAL journaling, a bounded busy timeout and normal synchronous durability.
+- Every database operation returns an explicit structured result and storage failures never become empty state or default preferences.
+- Every function answering with a result declares it nodiscard, so a failure a caller drops is one the compiler names, and the lint command refuses a declaration that does not.
+- A structured error carries a stable code, the diagnostic message and the detail that names what it happened to, and nothing else, because a field no decision consults is dead weight on every failure in the project.
+- An error code is prefixed by the subject it is about, and one condition carries one code, so two implementations of the same interface report the same failure by the same name.
+- A code a decision consults means one thing, so a directory that could not be created and one that was never there are two codes rather than one sentence that is wrong for whichever of them happened.
+- A value the interface already shows is rolled back when its write fails, and the run that produced it stops, because a memory that disagrees with storage is a lie the next start discovers.
+- The clean marker becomes false during startup and true only after orderly shutdown.
+- Each plugin owns the tables bearing its identifier prefix and never reads or mutates another plugin's tables.
+- A plugin declares a table only for what it queries, relates or pages, so the tables that remain are workspaces, tasks, schedules, queues, executions, logs, tabs, bookmarks, documents and server configurations.
+- The scoped database host accepts only the explicit SQL grammar required by current plugin migrations and runtime operations.
+- Scoped statements reject multiple commands, comments, quoted identifiers, comma-separated sources, parenthesized sources and unsupported schema objects before SQLite prepares them.
+- Every accepted scoped statement must identify at least one table or index owned by the caller's normalized identifier prefix and rejects every foreign table or index reference.
+- Each plugin declares its migrations in its implementation without external migration files, numbered consecutively from the creating one.
+- The scoped host supplies the current schema version and applies the creating migration atomically.
+- A stored schema a plugin can no longer use is dropped and created again from the migrations that plugin declares, and only the objects carrying its identifier are touched.
+- That rebuild answers only a stored schema that does not match what the plugin declares, because it destroys what the reader recorded and every other failure of the migration path is a mistake in code or a passing condition.
+- A schema written by a later version of the product is refused by name rather than rebuilt, so going back to an older build leaves what the newer one recorded where it is.
+- The stored objects of a plugin are compared with the ones its migrations declare, so a schema that changed while its version stayed the same is rebuilt instead of failing on the first statement that reads it.
+- Every rebuilt feature is named to the reader once, because the data it held is gone.
+- Every multi-statement domain mutation uses the host transaction API and rolls back completely on failure.
+- Plugins validate identifiers, enum values, timestamps, JSON fields and paging boundaries before persistence.
+- Every field of a persisted entity travels through real SQL and back, proven by a case that writes each of them away from its default, because a column the reader stops selecting is data the reader loses.
+- Timestamps are stored as UTC ISO 8601 values with milliseconds.
+- The shared `workpane::persistence` stored-value contract is the only implementation of the stored timestamp format, its parsing, its validation and strict integer reading.
+- Timestamps are converted to the current system timezone and locale only at presentation time.
+- Large log and history collections are queried newest first in pages of at most one hundred rows.
+- There is no JSON database, legacy reader, compatibility branch or implicit conversion from an older format.
+- Terminal screen buffers and scrollback are never persisted.
+- Configuration export runs behind queued database writes and creates a consistent SQLite snapshot without blocking the GUI thread.
+- Configuration import validates integrity, core schema compatibility and preferences before staging the complete database in the application data directory.
+- A successful import requests an orderly shutdown, releases every database connection and process lock, then starts a new process.
+- That shutdown is deferred out of the request that asked for it, because the surface asking is one of the things it destroys and the object carrying the request is another.
+- The new process atomically replaces the current database from the staged import before opening any application connection.
+- That replacement discards the write-ahead log of the database it replaces, because a log a crash left behind is replayed over the database that arrived and hands the reader back the data the import was meant to replace.
+- Every path that puts one database in the place of another goes through the one replacement that does this, covering the applied import, the recovery of an interrupted one and the rollback of a rejected one.
+- Invalid or interrupted imports preserve the current database and return an explicit error.
+- A replacement can fail after the database it wrote is already in place, so a failed import leaves its backup where the next start recovers from it rather than deleting the only copy of what the reader had.
+- Import recovery removes a rejected pending database before deleting its backup so a cleanup failure cannot reapply the rejected database on the next launch.
+- Import and export transfer the single database containing core preferences, plugin schemas and plugin-owned persistent state.
+
+## Source ownership and dependency direction
+
+- The `src/app` directory owns process initialization and core composition.
+- The `src/plugins` directory owns the interface, discovery, lifecycle, localization, the capability registry and the message bus.
+- The `src/persistence` directory owns core state, transactions, schema versions and plugin database isolation.
+- The `src/filesystem` directory owns generic asynchronous file reads, directory listings, atomic writes, creation, movement and removal without feature-specific workspace policy.
+- The `src/ui` directory owns only the core window, dynamic navigation, dynamic settings shell and
+  shared visual primitives, including the shared selectable field, secret field, chip button, stepper row and find bar.
+- The `WorkpaneUi` library is the single build unit for the shared visual primitives and is linked by the core, the shared terminal engine and every plugin.
+- Every source belongs to exactly one build target and consumers link that target instead of recompiling the source, so the shared terminal rendering surface is compiled only by the engine that owns its dependency.
+- The `src/agent` directory owns the generic agent layer, covering the resource roots declared as data, the asynchronous catalog that reads skills, commands, subagent definitions, context files, plugin bundles and server catalogs, the Model Context Protocol client with its two transports, and the bounded network reply.
+- The `WorkpaneAgent` library is the single build unit for that layer and is linked by the core and by every plugin that runs an agent.
+- The `src/domain` directory contains only core value types.
+- The root C++ namespace is `workpane` and no feature name owns the application namespace.
+- Every namespace is named for the context it belongs to, so there is no catch-all namespace collecting whatever had nowhere else to go.
+- A namespace that exists only to hold one class is the name of that class written twice, so the class keeps the name and the namespace goes.
+- The accessor answering the single running instance of a type is a static member of that type, because nothing else owns the answer.
+- The lint command refuses a namespace named `utils`, `common`, `helpers`, `misc` or `shared`, because a name that says nothing is where unrelated modules end up mixed together.
+- A contract the whole product answers by lives in the root namespace, which is what the result and the structured error are, and everything narrower lives under the area that owns it.
+- A type a plugin defines lives in the namespace of that plugin, so a plugin widget is never declared in the namespace of the shared visual primitives.
+- A plugin may name the core namespace only to declare a core type ahead of its use.
+- The `plugins/terminal` directory owns all terminal domain, PTY, workspace, settings and UI code.
+- The `src/terminal` directory owns the shared terminal engine, shell profiles, terminal font and ANSI theme catalogs, terminal shortcuts and the platform PTY implementations under `src/terminal/platform`.
+- The `src/ui/TerminalWidget` component is the shared terminal rendering and input surface consumed by every plugin that embeds a terminal.
+- The `WorkpaneTerminalEngine` library is the single terminal implementation and plugins link it instead of duplicating terminal sources.
+- The `plugins/web-server` directory owns server state, networking, logs, settings and UI.
+- The `plugins/logs` directory owns centralized log persistence, filtering, paging, clearing and UI.
+- The `plugins/system-information` directory owns hardware discovery, immutable system snapshots, presentation, translations and refresh lifecycle.
+- The `plugins/ai` directory owns the provider catalog, the model connections, model discovery, the chat transport, the agent tools, workspaces, kanban state, executions, execution logs, scheduling and UI.
+- The Model Context Protocol client and both of its transports are owned by the core agent layer rather than by the AI plugin, because the protocol is a published standard and no feature of this product defines it.
+- That client depends on no catalog of any plugin, so the budget for a server to answer initialization is given to it by whoever configures that server.
+- The bound that holds an answer while its bytes arrive is owned by the same layer, because the size of what someone else sends is not an AI concern.
+- The tool registry stays in the AI plugin, because its refusals are sentences of the AI catalog and its services are AI settings, and moving it would carry both into a core that must know neither.
+- The `plugins/browser` directory owns embedded web navigation, tabs, bookmarks, bookmark groups, profile storage, settings, session persistence and UI.
+- The `plugins/code-editor` directory owns folder workspaces, file trees, documents, syntax highlighting, language-server processes, diagnostics, completion, settings and editor persistence.
+- The editor tree, the problems surface and the splitters are themed by the plugin style sheet, because a surface without one falls back to the platform look and leaves the application standard.
+- The `plugins/donate` directory owns donation links, the bundled profile image, translations, navigation metadata and support UI.
+- Core executable targets never compile plugin feature sources and the shared terminal engine is a core component rather than a plugin feature.
+- Core code never includes a feature plugin header.
+- Plugin targets may consume core interface headers and shared visual primitives.
+- Domain values do not depend on UI or persistence behavior.
+- Ownership uses values, references, RAII and smart pointers.
+- A widget or a worker a failure path must release is held by an owning pointer and handed over on success, because a delete written by hand is one a later early return forgets.
+- A Qt object parented to another is owned by that parent and is never also held by a smart pointer.
+- A child that reaches a member of its parent is released by that parent before it is destroyed, because the members of an object die before the base that destroys its children.
+- A notifier the event loop must outlive is parented and held by a raw reference the owner clears, because an owning pointer that releases into a deferred deletion is a second owner for as long as it holds one.
+- Raw Qt pointers are non-owning QObject references and deferred work uses `QPointer`.
+
+## Terminal plugin invariants
+
+- The plugin identifier is `terminal` and its only dependency is the centralized `logs` plugin.
+- Every terminal session ID is stable and unique within the workspace.
+- Every runtime terminal has exactly one persisted session value.
+- Every session belongs to exactly one visible slot or one shelf.
+- Every tab and session reference is validated when state loads.
+- Closing copies the terminal identity before any signal can destroy its original storage.
+- Views detach before the runtime and process are destroyed, and a slot whose session is gone shows what an empty slot shows.
+- Terminal close and workspace mutations publish their namespaced events asynchronously.
+- Restarting retains stable identity, directory, shell profile and history.
+- New terminals receive input focus when their pane becomes available.
+- Terminal-owned Control and Alt sequences take precedence while the terminal has focus.
+- Output is selected by dragging over it and by double clicking the word under the pointer, and the selection is anchored to the row of the scrollback it covers so scrolling moves it with that text.
+- A file dropped on the terminal writes its quoted path to the shell, and a drop carrying anything the shell would act on as more than a path delivers nothing at all.
+- A selected row copies only the text it carries, because the blanks padding it to the width of the terminal are not content.
+- Copying answers only while something is selected, so the combination that interrupts the shell still reaches it, and it uses the application modifier on macOS and Windows and the shifted control combination on Linux.
+- Closing the focused terminal uses the platform close combination on macOS and the shifted one elsewhere, because Control with W deletes the previous word in a shell.
+- Resize updates the emulator before the backend.
+- The pixel geometry of the grid is declared when the emulator is created, so no reader finds a terminal that knows its columns and not the size of its cells.
+- A program that asked for the mouse receives every press, release, drag and wheel notch in the protocol it selected, and the shift modifier claims that gesture back for the selection.
+- The wheel scrolls the history only while no program is reading the mouse, because a pager scrolls itself once it is.
+- A sideways notch reaches that program on the button the protocol reserves for it, because a trackpad moves sideways as readily as it moves down.
+- Only the history scrolls when no program is reading the wheel, because the grid is exactly as wide as the terminal and has nowhere sideways to go.
+- A program that asked for focus reporting is told when the terminal gains and loses the focus.
+- The selection belongs to the emulator rather than to the widget, so it reaches the scrollback, follows a wrapped line and survives everything the program writes under it.
+- A single press selects by cell, the second press of a sequence takes the word and the third takes the line, all decided by the emulator gesture rather than by a timer of our own.
+- A drag held outside the grid moves the viewport under it, which is what selects more than the rows on screen.
+- Copying a selection unwraps the lines it crossed and drops the blanks that padded them to the width of the terminal.
+- The right click offers copying, pasting, selecting everything and clearing the buffer, and yields to the program whenever that program is reading the mouse.
+- Selecting everything and clearing the buffer carry the application modifier on macOS and the shift on every other platform, because the plain combinations move and cut the shell line.
+- The cursor is drawn in the shape the program asked for, as a block, a bar, an underline or a hollow block, and blinks only while the program asked it to and the terminal has the focus.
+- A terminal nobody is typing into draws the outline of its cursor instead of the filled cell, and a cursor standing on a wide character covers the two cells that character occupies.
+- An address a program marked on its own cells is opened from them, and an address written as plain text is the word the blanks around it delimit, without the punctuation that closed the sentence.
+- Only the schemes the application can reach are offered as an address, and the platform combination with a click is what opens one.
+- The terminal hands the address to the plugin that browses and falls back to the browser of the system, so it never reaches into another plugin itself.
+- The terminal is searched with the native find key, and the query is answered against the history as well as against the rows on view.
+- Every match is marked in the text while the one being read carries the selection, the count says how many there are and stepping past the last one comes back around to the first.
+- Match counting stops at a bound and the count says so, because marking every result of a query over a long history costs more than the marks are worth.
+- The find bar floats over the content instead of taking rows from it, so searching never resizes the shell.
+- A program asking what the terminal is, how large it is or which side its background is on receives an answer, because a query nobody answers leaves that program waiting for the timeout.
+- The terminal reports itself by the name of this product rather than by the name of the library it embeds.
+- A bell rung while nobody is looking at a terminal is reported in the header of its pane until the reader comes back to it.
+- Text still being composed by an input method is drawn underlined where the cursor is and reaches the shell only when it is committed, because a writer who cannot see it is typing blind.
+- A program reaches the clipboard only while the user allows it and only with text, because anything printed to a terminal could ask for it.
+- A notification a program posts is shown through the shared toast overlay, where every other message of the application is shown.
+- The render snapshot is read only through the lock that guards it, and a surface painting one works on the copy it took rather than on whatever the next refresh has already replaced.
+- PTY output and input queues remain bounded.
+- A notifier stops watching at once and is destroyed when the event loop returns to it, because the read it is delivering is what closes the terminal it was watching.
+- The last thing a program wrote reaches the reader before the reader is told that program ended, whatever order the bytes and the end of the stream were read in.
+- A value a waiting thread reads under a lock is changed under that same lock, because a change only announced beside it is a notification nobody was waiting for yet.
+- The lint command refuses a value written outside its lock and then announced to a condition variable that waits on it, because only one of the two backends compiles per platform and no case here can reach the other.
+- Missing directories and unavailable shell profiles are explicit startup failures.
+- Themes own foreground, background, cursor and all sixteen ANSI base colors.
+- Resolving an ANSI theme requires an identifier already validated against the catalog and no caller resolves a literal identifier, and an identifier nobody declares is answered rather than thrown.
+- Theme changes apply to current and future sessions.
+- Font choices contain only installed monospaced families.
+- A monospaced surface opens on the first family a declared preference names that is installed, because the first family the system happens to list is not a font anyone chose.
+- Every monospaced surface resolves that family through one accessor, so a terminal, an editor and a document never open on three different fonts.
+- The monospace font role resolves a real family rather than a style hint, because a style sheet reads the family as a name and a hint means nothing to it.
+- A terminal cell is the glyph advance rounded to the nearest pixel and its row is the line spacing the font declares, because every cell is positioned explicitly and a cell wider or taller than the font asks for reads as a gap after every glyph and under every line.
+- A platform without an installed monospaced family keeps the terminal on the monospace style hint instead of resolving an empty family.
+- That absence is therefore never a startup failure, because a machine whose font database offers no fixed pitch family would otherwise be unable to open the application at all.
+- A shell runs every line a plain paste delivers, so text is handed over between the markers whenever the program asked to receive it that way, and the confirmation warns about text that would run rather than about text that merely wraps.
+- Terminal view shortcuts are active only while focus is inside the Terminal plugin view.
+- The terminal status bar reports the workspace count and the terminal count instead of the active workspace name.
+- A gesture the terminal refuses travels to the plugin as the structured error it was, so the plugin that owns the catalog decides what the reader is told rather than receiving a sentence already rendered.
+- Every condition of the terminal a reader reaches carries a sentence of the catalog, covering input it has not read yet, a shell that has ended, a shell that cannot be run, a working directory that is gone, a process that did not start, a system that refused a thread the terminal needs, a backend that stopped answering and a workspace that could not be saved.
+- Every thread a pseudo-terminal backend needs is created where a failure can still be reported, and by a call that answers a refusal rather than throwing it, so a system refusing one stops the start with a sentence instead of ending the application.
+- Both backends report that refusal by one code and one sentence, and neither starts a shell before the threads that read it and end it are running.
+- A fault of the emulator stays in the log, because nothing the reader can do answers it.
+- A failure the engine reports travels to the plugin as the structured error it was, so nothing renders it into a sentence before the plugin that owns the catalog has seen it.
+- The two pseudo-terminal backends report a shared condition by one name and in one sentence, so nothing that reads a failure has to know which platform produced it.
+- The lint command refuses a shared condition the two backends spell differently, because only one of them compiles per platform and no case can compare them.
+- The terminal actions offer the directory the shell is standing in to the Code Editor and to the Web Server, and offer each one only while its plugin is available.
+- Paste shortcuts use Command on macOS, Control on Windows and Control with Shift on Linux according to native terminal conventions.
+- Qt reports the macOS Command key as the control modifier and the physical Control key as the meta modifier, and the shortcut contract maps both explicitly.
+- The macOS terminal owns the physical Control and Alt sequences while every Command combination belongs to the application.
+- Qt reports the macOS Command key as the control modifier and the physical Control key as the meta modifier, so what reaches the terminal engine as its control modifier is the physical key and never Command, otherwise Command would interrupt what the shell is running.
+- A combination the terminal does not own is never written to the shell as if the shell had been typed at.
+- The close shortcut is reserved by the application only on macOS because Control with W deletes the previous word in a shell.
+- Unix child setup is async-signal-safe between `forkpty` and `execve`.
+- Windows handles and reader threads use deterministic RAII shutdown.
+
+## Web-server plugin invariants
+
+- Every server configuration has its own stable identity, display name and document root.
+- A folder arriving from another plugin opens the same form that configures every other server, pre-filled with that folder, its name and the next port no configuration took.
+- One folder is served by one configuration, so asking again for a folder already configured opens the form of that server instead of a second one for the same root.
+- Nothing is configured until that form is confirmed, so a rejected form leaves no server behind.
+- A server configuration may optionally link to one terminal session as an integration source.
+- Terminal data arrives only through validated JSON messages.
+- Closing a terminal removes only the optional link and preserves the server configuration and runtime.
+- Startup reconciliation removes unavailable terminal links without removing independent server configurations.
+- The primary creation action creates a Web Server from any folder and the terminal-based action remains secondary.
+- Independent stopped server configurations expose explicit edit, start and confirmed removal actions, and every row action is packed together at the start of its cell.
+- A removal that is refused says why in the language of the interface, because a reader who confirmed it and saw the row stay is looking at a product that reads as broken.
+- A running server keeps configuration fields read-only until stopped.
+- The form closes itself once the server it configured is running, because a server that answered leaves it nothing to ask.
+- Its stop carries the same destructive colour as the stop of the list, so one action does not read as two.
+- Starting validates identity, canonical readable root, numeric bind address and port.
+- Canonical validation prevents traversal and symlink escape.
+- Directory requests resolve `index.html` before `index.htm`.
+- Request headers, files, connection counts and deadlines remain bounded.
+- A connection never buffers more than one request may occupy, because the size of what a client sends is decided by that client and the bound has to hold before the bytes are read rather than after.
+- A file is written to the socket in bounded chunks and continued on every write that completes, so a response larger than that bound is the ordinary case rather than an exception.
+- A file that shrinks while it is being written ends the connection instead of waiting for bytes that are no longer there, because the same folder is opened in the editor and served at once.
+- Stopping aborts active sockets before worker destruction.
+- Request logging is bounded, thread-safe and runtime-only.
+- Timestamps are captured in UTC and rendered with system locale and timezone.
+- Request cursors remain monotonic after logs are cleared.
+- Every logged request names the address it came from, including the ones answered with a protocol error, because a log that identifies the caller of one request and not of the next explains nothing.
+
+## Logs plugin invariants
+
+- Every centralized entry contains a UTC timestamp, source plugin identifier, level, category, message and JSON details object.
+- Supported levels are exactly debug, info, warning and error.
+- The core attributes log and alert events through the scoped plugin identity.
+- The viewer loads the newest one hundred entries first and requests older pages explicitly.
+- An empty result replaces the entry grid with the translated empty state instead of an empty grid.
+- Search and level filtering operate on the loaded page set without mutating stored entries.
+- Clearing removes persisted log entries only after an explicit user action.
+- Invalid log topics, unknown levels, malformed timestamps and malformed stored details are rejected.
+- Feature-specific execution logs may use their own plugin tables when they require domain relationships and history.
+
+## System Information plugin invariants
+
+- The plugin identifier is `system-information` and it has no feature dependency, settings group or persistent schema.
+- The plugin contributes one secondary System navigation item and owns the complete right-side view for that destination.
+- Hardware access uses the exact pinned `hwinfo` source revision and links its shared battery, CPU, disk, GPU, mainboard, operating-system, RAM and network components.
+- The application bundle or deployment directory contains every shared `hwinfo` component required by the plugin.
+- Collection runs only on a worker thread and publishes one complete immutable snapshot to the GUI thread.
+- A refresh already in progress rejects duplicate refresh requests instead of starting overlapping hardware probes.
+- Refresh cancellation is atomic, checked between hardware categories and devices and completed before the plugin library unloads.
+- Failed or cancelled collection never replaces the last complete snapshot with partial state.
+- Collection failures publish structured plugin logs and use the shared translated error alert.
+- Snapshots contain one UTC capture timestamp and presentation converts it to the current system timezone and locale format.
+- Operating-system data contains host name, product name, version, kernel, architecture width and byte order when supplied by the platform.
+- Processor data contains vendor, model, physical and logical counts, capabilities, core topology, cache, frequency and simultaneous multithreading when supplied by the platform.
+- Live processor utilization and per-thread measurements are shown only on platforms where the pinned dependency implements them and unsupported measurements are never represented as zero.
+- Memory data contains total, available and free capacity together with detected module identity, size and frequency.
+- Graphics data contains identity, driver, device identifiers, memory, frequency and cores when supplied by the platform.
+- Every screen the window system offers is reported beside the graphics hardware with its name, resolution, scale, pixel density and refresh rate, because a reader whose surfaces look too large is looking for exactly those.
+- Those values are read on the thread that owns the window system rather than on the collection worker, because that thread is the only one allowed to ask.
+- Mainboard, disk, mounted-volume, battery and network-interface details expose every portable field supplied by the dependency.
+- Unknown or unavailable platform fields remain explicitly unavailable and never receive inferred hardware values.
+- Every value read from a platform buffer keeps only printable characters so fixed-size padding never reaches the interface.
+- Byte, frequency, percentage and integer presentation uses system-locale formatting.
+- The view uses shared theme colors, fonts and vector icons and changes appearance through the normal plugin theme reapplication path.
+- The dedicated `SystemInformationTranslations.h` catalog contains complete English and Portuguese strings.
+
+## AI plugin invariants
+
+- The plugin name is AI and its stable identifier is `ai` and its only dependency is the centralized `logs` plugin.
+- The plugin contributes one AI Tasks primary navigation item and five settings groups, which are the connections, the providers, the agents, the tools and the general ones, because one page holding every AI concern is a page nobody finds anything in.
+- A settings group holds one subject, so a concern large enough to be configured on its own carries a group of its own rather than a section inside somebody else's.
+- That navigation item is named for what it holds rather than for what runs it, and its icon is the list of things to do.
+- A task declares its execution kind, either an AI agent or a command, and the kind decides which fields it requires and how it runs.
+- An agent task is a complete agent run that continues while the model keeps asking for tools and stops when it answers without one.
+- The agent iteration limit and the command time limit are execution settings, separate from the model connections.
+- A connection is one configured provider and model pair carrying its own display name, credential, address, declared parameters and extra parameters.
+- A connection is identified by the `provider/model` key, and `connectionKey` is the only place that key is built.
+- One key names one configuration, so the same provider and model pair is configured once and a second one is refused with its key.
+- A connection presents its display name and falls back to its key when the user named nothing, which is what a task shows when it chooses one.
+- An agent task stores only the identifier of the agent it is handed to, and a command task stores none because it never reaches a model.
+- A task resolves its agent when it starts, so an agent removed later fails that run with the reason instead of silently running on another one.
+- That reason names the agent that is gone in the language of the interface, because the card is where the reader learns why the task stopped.
+- The task loads even when its agent no longer exists, because a removed agent must not stop the application from opening.
+- Editing a connection reaches every agent that names it and through them every task, which is what makes rotating a credential or correcting a parameter a single act.
+- Changing the provider or the model of a connection changes the key that names it, so every agent that ran on it and the default that pointed at it follow to the new key in the same write.
+- Removing a connection an agent runs on is refused, and the refusal says to point that agent at another connection first.
+- A run copies the connection it starts with, so changing that connection while it runs never changes the request it is already speaking.
+- A run ends with a stop reason of a closed set, which is answered, the iteration limit, the answer budget, the repetition of one tool, cancelled or failed, and only the last two are failures.
+- An answer the provider cut at the output budget keeps what arrived and ends the run with that budget as its reason, because the turns that already ran did the work and throwing them away explains nothing.
+- Reaching the iteration limit ends the run with that limit as its reason rather than with a failure, and the turn before it is told it is the last one so the model answers instead of calling another tool.
+- A tool call the protocol left unreadable is answered to the model as a failed result carrying what arrived, because a model told what it wrote writes the call again instead of losing the run.
+- A call that carries no identity cannot be answered, so that one still ends the run.
+- A tool call whose arguments cannot be read reports what arrived with them, because a failure nobody can read explains nothing.
+- Arguments a service sends already parsed are read exactly like the ones it streams as text fragments.
+- The card names what the run is doing, so a turn calling one tool names it, a turn calling several says how many and a run summarizing its earlier conversation says so.
+- A rejected request keeps the body the service answered as an exchanged payload, and its reported reason is read from the shapes services use before falling back to quoting that body.
+- A limit of zero means unlimited, for the agent iteration count, the command time limit and the answer budget.
+- An answer budget of zero asks for everything the model allows, so the maximum that model declares is what reaches the service, because more than one service requires that field and an absence fails there.
+- A zero on a model the catalog does not declare has no answer, so it is refused where it is typed rather than reaching the service as an absence, while the declared budget opens that connection like any other.
+- A zero on a model whose declared maximum is its whole window is refused the same way, because asking for all of it leaves the conversation none and every turn would compact away what came before.
+- A connection opens with the values a request is written with, which are a temperature of one, a nucleus of ninety-five hundredths and an answer budget of eight thousand one hundred and ninety-two tokens.
+- That budget is bounded by the maximum the selected model declares, so no connection opens outside the range its own model accepts.
+- An agent that repeats the same tool with the same arguments beyond the permitted count ends the run with the repetition as its reason instead of looping forever, keeping what the earlier turns produced.
+- Tool invocation reaches storage and the network, so every tool completes through a callback and the agent resumes only once every result of the turn has arrived.
+- Every tool carries a deadline and answers as a failure when it expires, so a tool that never calls back is reported to the model instead of holding the run open forever, and only a command the caller declared unlimited waits without one.
+- Every tool declares what it reaches, either nothing, a path it reads, a path it writes or everything, and two calls of one turn run together only when their declarations cannot meet, because a pair of edits landing on one file would otherwise keep only the last one.
+- A command and a server tool reach everything, so each takes the turn alone, and a server tool the protocol declares read-only reaches nothing and runs beside the others.
+- The results of a turn are answered in the order the model asked for them, whatever order they finished in.
+- An oversized tool result keeps its beginning and its end, because what a command reports last is what explains its failure.
+- A tool result carries the execution it belongs to, so a tool answering after its run was stopped is discarded instead of joining the run the card started next.
+- An answer nobody is waiting for changes nothing, because the call it carries was already answered and the turn it belonged to must not be started a second time.
+- A tool being cancelled is disconnected before that cancellation reaches it, so the exit it is about to have never answers a call the cancellation already answered.
+- The conversation is fitted to the model the run itself declares rather than to the current selection, because changing the selected model while a card runs must not change the window that run is speaking to.
+- Both execution kinds declare a working directory, required by a command and optional for an agent, because an agent without one simply has no file access.
+- A file tool resolves its path against the working directory the task declares and judges it by where it lands rather than by how it was written, so the absolute form a model naturally uses is accepted while a traversal, a symbolic link reaching outside and a task declaring no working directory are refused.
+- A refused path names the path it refused and the directory it had to stay inside, because a model told only that it was refused writes the same call again.
+- The deepest ancestor that already exists is resolved before that check and the rest of the path is measured from it, because a symbolic link anywhere above a file that is not there yet decides where that file really lands.
+- An empty path names the working directory itself, which is how listing it is asked for.
+- The filesystem tools cover reading, writing, editing, listing, creating a directory, moving, copying, removing, describing a path and searching by name and content, and every mutation runs through the core asynchronous filesystem service.
+- The agent looks at an image of its working directory through its own tool, which accepts PNG, JPEG, WebP and GIF and refuses a model that declares no image input by name, before anything is read.
+- An image reaches the model in the shape its protocol accepts, inside the tool result for the Anthropic API and as the user turn following the tool messages for the OpenAI-compatible API, which carries text alone.
+- The bytes an image tool returned are stored with the conversation message of that result, so a later run and every run after a restart still show the model the picture it was shown.
+- A model that does not read an image receives the text of that result with an explicit sentence saying the picture was not sent, instead of a result that silently lost it.
+- A picture belongs to the run that read it rather than to the stored text of that result, so it travels with the run and a later start reads it again instead of finding it in a conversation that never carried bytes.
+- An edit names the exact passage it replaces instead of rewriting the whole file, because a rewrite spends the output budget of the model on text nobody asked to change and loses what the model failed to copy back.
+- A file whose bytes are not UTF-8 is refused by name rather than answered with the character that stands for what the decoding lost, because reading it tells the model something the file does not say and editing it writes that loss back over every byte it could not read.
+- A passage the file does not carry is refused, and a passage appearing more than once is refused with its count unless the agent explicitly asks for every occurrence.
+- The read tool returns a whole file, everything from one line or a closed range of lines, because a large file must not enter the context in full.
+- The agent owns a command tool that runs inside the same working directory with its own time limit and returns the exit code together with the output.
+- A new task starts in the home directory the running system reports, and a task whose working directory was cleared has no file access rather than a default root.
+- A tool that produces a file writes it exactly where the agent asked for it, inside the working directory the task declares, and answers with that path.
+- A service answering with more than the permitted size writes no file at all, because a picture or a recording cut short is not the one the agent asked for and reporting it as written is worse than failing.
+- Writing a file that is not there yet creates it together with the directories it needs, and creating a directory creates every missing level, because an agent made to create them one at a time spends a turn on each.
+- Removing a directory that is not empty is refused unless the call asked for that explicitly, because a tool described as removing one thing must not take everything inside it.
+- A call is judged against the schema the model received, so a missing argument and an argument of the wrong type are answered by name and by declared type instead of leaving the model to guess and repeat.
+- Every refusal of a tool names the tool and what was wrong with the call, which the suite proves for every declared tool from its own schema rather than from a list written by hand.
+- The failure of a repeated call carries what that call kept answering, because the repetition is the symptom and that answer is the reason.
+- Image generation reuses the configured provider address and credential and refuses explicitly when no address is configured, instead of reaching an empty endpoint.
+- Speech is a selected service with its own published endpoint, voice and credential, because each service authenticates through its own header and answers with audio bytes rather than a JSON envelope.
+- A speaking service is therefore a provider of the catalog like every other one, so a second one is an entry of data and never a value written into the code.
+- Its endpoint declares the header its credential travels in, what precedes that credential, the body field carrying the text, the field carrying the voice when the address does not, and the model it requires, so no modality is reached through a branch on which service answered.
+- An endpoint answering a single request declares how that request is built, covering the credential header, the field carrying the text and the fields every request to it carries unchanged, and a conversation endpoint declares none of it because the client that holds the conversation writes its body.
+- A service that names the voice inside its own address writes the declared placeholder where the voice goes.
+- A service publishing a closed voice set is chosen from that set, while a service with an account catalog is typed and listed by the voice tool, and a speaking endpoint declares exactly one of the two.
+- A protocol says how a conversation is held, so a provider that holds none declares no protocol, no model, no trait and no parameter, and one that answers no modality at all is refused.
+- A provider that declares a protocol answers a conversation, either at its declared chat endpoint or by invoking a program, and a catalog where those two disagree is refused.
+- Every surface that offers a connection reads the providers answering the conversation rather than the whole catalog, so a service that only speaks is never offered as a model to talk to.
+- Every service failure returns the reason the service published, falling back to the transport message only when the response carries none, because the agent explains that reason to the user.
+- A media tool without its configuration refuses explicitly rather than reaching an empty endpoint.
+- The connections group carries the connection section, the providers group carries the selection section and the rate-limit section, the agents group carries the agent section, the tools group carries the server, search and speech sections, and the general group carries the execution section.
+- The providers group holds only what belongs to one provider, so it opens with the selector that names which provider is being configured and every section below it presents that provider alone.
+- A later per-provider concern joins that same group as one more section, because a page reached through a selector is where a reader looks for everything that selector governs.
+- Every per-provider section reads the provider from the one scope the selector writes, so no section asks for it a second time and none of them can disagree about which provider is being edited.
+- The parallel execution limit, the agent iteration limit and the command time limit are execution settings of the general group, because none of them belongs to one provider or one connection.
+- The connection section presents the configured connections in the shared data grid with the shared empty state, the actions that add, edit and remove through the shared confirmation, and the default connection selector.
+- Removing the connection the default names moves the default to one that is still configured, and removing the last one leaves no default at all.
+- Model Context Protocol servers are registered in their own settings section, each with a stable lowercase identifier, its transport, its command or address, its credential, its roots and whether it may sample.
+- A registered server is connected once for the plugin and the tools it publishes join the catalog every agent receives, so a server is configured in one place rather than per task.
+- A server tool is published under a name qualified by its server, so two servers publishing the same tool never collide and a call always reaches the server that declared it.
+- A tool call reaching a server that is no longer ready fails with a translated message instead of waiting for a connection that will not come.
+- The complete server set is rewritten with the document that carries it, so removing a server leaves nothing behind.
+- The Model Context Protocol client speaks the pinned `2025-06-18` revision over the stdio transport and over the streamable HTTP transport.
+- The stdio transport frames every message as one line of JSON-RPC, and the HTTP transport posts every message to one endpoint and accepts either a single JSON document or an event stream.
+- The session identifier the server assigns during initialization travels on every later HTTP request, and a terminated session is restarted from a fresh initialization rather than retried with the dead identity.
+- Leaving an HTTP server sends the explicit session deletion the specification defines.
+- The client declares its capabilities, negotiates the protocol version, refuses a server that negotiates none and sends the initialized notification before any other request.
+- The client implements the client side of initialization, tool discovery, tool invocation, resource listing and reading, prompt listing and retrieval, ping and cursor pagination.
+- The resources and the prompts of every connected server reach the agent as its own tools, so a capability the client speaks is never code without a caller.
+- A server request the client does not implement receives an explicit method-not-found response rather than silence.
+- The client answers ping itself and answers roots listing with the working directory the task declares, so a server knows the boundary it may operate inside instead of guessing.
+- Sampling lets a server borrow the configured model, so it is declared only for a server the user explicitly allowed and always carries the configured token budget.
+- A server that was not allowed to sample receives a method-not-found response rather than the configured model, because sampling spends the credential and injects a prompt the user did not write.
+- Elicitation is refused because a task runs unattended and possibly scheduled, so a request for user input has nobody to answer it.
+- Progress notifications are surfaced so a long tool reports how far it has moved instead of only that it was called.
+- Stopping cancels every request still in flight at the server, so abandoned work stops being computed instead of being merely ignored.
+- A tools list changed notification refreshes the discovered tools, so a server that adds a tool at runtime is seen without restarting it.
+- Every pending request completes when the server stops or exits, so a callback is never leaked.
+- A failure is announced once, so answering the pending requests it ended never announces it again, and a server that exits announces it itself rather than only when a request happens to be waiting.
+- Bounded message size, a start timeout and escalated termination apply to the MCP transport as they do to every other child process.
+- A server that broke the protocol is read no further, so what it keeps writing never grows past the bound that just refused it.
+- Both transports of one client hold an answer to the same bound, and the HTTP one holds it while the bytes arrive rather than once they all have, because the size of that answer is decided by the server.
+- Every answer the plugin reads from the network is bounded while it arrives by the one shared contract, covering the servers, the model catalog, the pages the agent fetches, the pictures it generates and the speech it asks for, because reading the first bytes of a body already held whole bounds nothing.
+- A command task runs in its own absolute working directory, streams its merged output, succeeds on a zero exit code and fails on any other.
+- A shell draws colors, cursor moves and progress rewrites, so only the readable text of the merged output reaches the execution record and a sequence split across two reads is completed by the next one.
+- A character split across two reads is completed the same way, because whoever writes to a pipe decides where a chunk ends and decoding each one alone turns that character into the marks that stand for what was lost.
+- Content that arrives in pieces is either buffered as bytes until a whole line or frame is there, which is what a stream of events and a framed protocol do, or decoded by something that keeps what it could not finish, which is what a stream of plain output does.
+- A stopped process is detached from the object that started it, so releasing that object never waits for a child to exit.
+- A command task requires no connection, because it never reaches a model.
+- Command termination escalates from a graceful request to a forced kill on a timer, because the interactive thread never waits for a process to exit.
+- The forced kill takes down the whole process tree, because Windows terminates only the shell that was started and would leave the command itself running after the task was stopped.
+- A console process on Windows has no window for a graceful request to reach, so the stop there is the tree kill itself while the Unix stop keeps its graceful request and its escalation timer.
+- Tasks execute through a provider HTTP API or a local command and never through a terminal session.
+- The provider catalog is declarative data, so a provider, a model or a parameter is added to `providers.json` and never as interface code.
+- A provider declares which modalities it answers and where each one answers, so chat, images and speech are reached through one resolver and a modality is added to a provider as data rather than as a path written into the caller that wants it.
+- The modalities are chat, images and speech, which is the closed set this product serves, and a name outside it rejects the complete plugin.
+- The caller decides which address a connection speaks to and the catalog decides where on it the modality answers, so a self-hosted service reaches every modality it declares without a second rule.
+- A provider that declares no endpoint for a modality is refused by name rather than reached at a guessed path, and a command line agent declares none because it is invoked rather than reached.
+- A provider that declares no protocol is never asked how it holds a conversation, so nothing reads a value it never declared.
+- A voice belongs to the endpoint that speaks, so only that one declares voices and a default it really offers.
+- A provider descriptor declares its identifier, translated title, wire protocol, published address, whether that address is configurable, the environment variable its credential officially uses, whether it requires an API key, the traits it declares for a user-defined model, the models it opens with, its retry budget, its stream idle timeout, its extra request headers, its query parameters and its parameter descriptors.
+- A provider that requires a credential names the environment variable that credential officially lives in, because a form that asks for a key without saying where it normally is makes the user look it up.
+- A credential field opens already referencing the variable the service documents, because that is where the key normally lives and the user only edits it when it does not.
+- Only a self-hosted service owns its own address, which is asked for while such a service is selected and is validated as an HTTP or HTTPS address.
+- Every other provider answers at the address its descriptor publishes, so the stored connection carries none.
+- The wire protocols are the Anthropic native API and the OpenAI-compatible API, and every other provider reached over a wire differs from those two only by address and model list.
+- A command line agent answers the same question a model answers, so it is a provider on its own protocol, invoked rather than requested.
+- Such a provider declares the program to run and the arguments to run it with, as data like every other provider, and the argument list declares where the prompt goes and where the working directory goes.
+- That list also declares where the model goes and is refused without it, because the reader chooses a model for every connection and a vector that never carries it would discard that choice in silence.
+- The working directory is the one place the list may leave out, because the process already runs there.
+- The program is started with an argument vector rather than a command line, so a prompt carrying quotes, newlines, dollars, backticks or semicolons reaches the agent exactly as it was written.
+- The program is found by its name alone, resolved against the executable path of the running system and then against the install directories that platform declares, because a window opened by the desktop does not inherit the path a shell has.
+- Which executable a name resolves to is a property of the running system, so the transport receives that resolution and a deterministic run is given one of its own.
+- A program that is not installed is an explicit failure naming it, and a task with no working directory cannot run a command line agent.
+- The process runs in the directory the task declares, whether or not that provider also takes it as an argument.
+- A command line agent runs its own tools, so none is declared to it and its run is one turn that ends when the program does.
+- A command line agent that failed carries what it printed as its reason, and its exit code when it printed nothing, because a program refusing its own arguments is the failure the reader has to be told about.
+- Every condition the command runner reports that the reader can reach carries a sentence of the catalog, covering the time limit, the output bound, an unavailable working directory, a program that did not start and one that ended abnormally.
+- A guard of that runner the interface cannot reach keeps its diagnostic, because that text is written for the log rather than for the card.
+- A program that did not start and a program that ended abnormally are two conditions, so they carry two codes.
+- A command line agent is told which model to answer with, because every one of them takes that as an argument, so the model of the connection replaces the mark the provider declares for it.
+- A command line agent answers with the same model the service does, so its window and its output bound are read from that model in the catalog rather than declared a second time.
+- A command line agent is handed a prompt and runs its own tools, so neither an answer budget nor a tool declaration travels to it and neither takes room from its window, which matters because a service may publish the same number for what a model reads and for what it may answer.
+- A model the catalog does not know is left out of that provider rather than declared with a window nobody published, and the model of a connection is typed when the reader wants one that is not offered.
+- No command line agent reports what it spent, so what it was given and what it answered are counted at the four characters a token averages, which is an estimate the reader is given rather than a measurement.
+- The conversation is rendered into the prompt, because these agents are invoked without a session and keep nothing between runs.
+- A command line provider declares no address, no credential and no parameter, and a provider reached over a wire declares no program.
+- Nothing is ever written to the input of a command line agent, so that input is closed the moment the process starts rather than left open for a program that waits to be piped to.
+- A command line agent signs in on its own and bills the subscription of the reader, so the credentials each vendor reads are named by that provider and removed from what the process inherits, otherwise the agent spends an API key instead.
+- Those variable names are data in the catalog like the program and the arguments, so a vendor that starts reading another one is a change of data.
+- The name of a command line provider says it is a command line agent, because a reader choosing between one and the service behind it must be able to tell them apart.
+- Only a model reached over a wire declares tool calling, because a command line agent declares none and still runs a task.
+- A model descriptor declares its identifier, display name, context window, maximum output and the traits it supports.
+- A model source is not declared, because every provider accepts a model typed by the user and the catalog only decides which ones are offered.
+- Every model lives in the catalog file the plugin carries as a resource, so a model is added by one line of data and never by interface code, and a provider declares only which of them it opens with.
+- What the agent may be tuned with lives in that file beside the models, covering the repetition limit, the summary budget, the deadlines, the retry backoff and the bounds the settings offer, and every one of them is refused outside the range that keeps it sane.
+- The caps that keep a payload from filling memory stay in the code that enforces them, because a limit that exists to keep the application alive is not a preference.
+- A catalog file that names an unknown provider, carries an unknown field, a wrong type, an unknown protocol, an unknown trait, an empty wire field, a duplicate identifier or a preference nobody declares rejects the complete plugin instead of loading part of it.
+- The catalog is parsed from the text of the two files rather than from their paths, so every rejection it declares is exercised by a test.
+- The hand-owned `providers.json` carries the providers and the tunables while the generated `models.json` carries only the models, so regenerating one never touches the other.
+- The repository imports the model file from a LiteLLM checkout through `python3 make.py models` and keeps every model added by hand, so regenerating it never drops what the project declared itself.
+- Only a model that calls tools is declared, because a task cannot run on one that calls none and offering a model that always fails is worse than not offering it.
+- A catalog model that declares no tool calling rejects the complete plugin, so the rule is enforced where the file is read rather than when a run is already starting.
+- Every model a provider opens with declares tool calling, because a preference nobody can run is a default that always fails.
+- The declared maximum output bounds the output budget parameter of that model, and a model outside the catalog keeps the wide bound its provider declares.
+- Model traits are sampling, reasoning, function calling, vision and the system role.
+- A parameter descriptor declares its logical identifier, translated title, type, the field it is written to on the wire, whether it carries the answer budget, numeric bounds, default value, enumeration options and the trait a model must have for that parameter to apply.
+- Parameter types are integer, number and enumeration, which is what the providers declare, and a value of the wrong type is refused rather than converted.
+- Anything a service accepts beyond those is written as an extra parameter, so the type set stays exactly what the catalog uses.
+- The wire field is a dotted path, so a nested field such as `output_config.effort` is data and the body builder never names a provider field in code.
+- Two parameters may share one identifier only when both declare a required trait and those traits differ, because exactly one of them then applies to any model.
+- A model declaring both sampling and reasoning rejects the catalog, because the parameter set built for one excludes the one built for the other.
+- The parameter that carries the answer budget says so, so the conversation fitter and the summary request reach it by declaration instead of by name.
+- The extra parameters are a JSON object the user writes, merged over the declared parameters when the request is built, so a field this project does not know reaches the service unchanged with its own JSON type.
+- An extra parameter key is a dotted path like a declared field, and a JSON null removes the field the service must not receive.
+- The extra-parameter editor validates while it is typed, reporting the parse position, a document that is not an object and an empty key, and the confirm action stays disabled while it is invalid.
+- The settings form is generated from the applicable parameter descriptors, so selecting a reasoning model replaces the sampling fields with the reasoning fields without any interface change.
+- A connection dialog opens from a complete configuration, using the stored one when it is edited and the values its provider declares when it is new, so a first run never presents an empty field that its own validation would reject.
+- A command line agent is offered neither model discovery nor extra parameters, because it answers no catalog and carries no request body, and offering them answers a question about an address that provider does not have.
+- Every search service and speech service exists from the moment the application opens, carrying the voice, credential reference and address its own descriptor declares, and storage holds only what the user changed.
+- A model connection is created by the user rather than declared, because the catalog cannot know which provider and model this installation has a credential for.
+- The interface never asks the user to save a value that is already the declared default, because a default that must be confirmed is not a default.
+- A model outside the catalog keeps the trait set its provider declares for user-defined models, which is explicit data rather than an inferred capability.
+- A self-hosted endpoint declares sampling and tool calling for the model it is serving, because the endpoint accepts the tools field whatever that model is, while seeing an image belongs to the model alone.
+- What reaches the wire is decided by the traits the selected model declares, and a model the catalog does not name keeps the traits its provider declares for user-defined models.
+- A stored connection is validated against the catalog when the settings load, and a stored default key naming no configured connection is rejected there, because every later reader resolves it.
+- Parameter validation is one shared routine that rejects a wrong type, a value outside its bounds, an undeclared enumeration value, a missing declared parameter and a parameter the selected model does not declare.
+- The request body builder writes every applicable parameter at the field its descriptor names, then merges the extra parameters over it, so a reasoning model receives the completion budget and the effort while a sampling model receives the temperature and the nucleus fields without a branch in code.
+- The shape of the protocol stays in code, covering the model, the messages, the streaming flags, the Anthropic system lift and the tool declarations, because it is not a preference.
+- An Anthropic reasoning model controls its thinking through the output configuration effort and omits the sampling fields.
+- Provider responses are consumed as server-sent events with a bounded buffer, bounded accumulated content, incremental text delivery, token usage, a finish reason and explicit cancellation.
+- A rejected request answers with a body instead of a stream, so that body is retained apart from the line parser and its reported reason becomes the failure message.
+- A provider declares its retry budget, its stream idle timeout, its extra request headers and its query parameters, so a provider that needs them is data rather than a branch.
+- Only a transient transport or server condition is retried, covering a timeout, a dropped connection, a refused connection, a rate limit and a server error, because a rejected request repeats the same rejection.
+- A retried request waits before the next attempt, obeying the delay the service asked for and otherwise doubling from the declared base up to the declared ceiling, because repeating a rejection immediately reproduces what caused it.
+- Every received chunk restarts the idle window, so a stream that stops sending fails instead of waiting for the whole request timeout.
+- A provider failure presents the reason the provider returned and falls back to the transport message only when the response carries none.
+- The Anthropic API rejects a request carrying both sampling controls, so that provider declares the temperature alone.
+- Exactly one terminal event is emitted per request, whether it completes, fails or is cancelled.
+- The transport is an interface so a deterministic client replaces the network implementation in tests.
+- A tool declares a lowercase name, a translated description key and its parameters as a JSON Schema object, and an invalid declaration is rejected before any request carries it.
+- Tool declarations, assistant turns carrying tool calls and tool results are serialized by one shared contract into the shape each wire protocol names, function and parameters for the OpenAI-compatible API and name and input schema for the Anthropic API.
+- A tool result is returned as a tool role message with its call identifier on the OpenAI-compatible API and as a tool result block inside a user message on the Anthropic API, and a failed result is marked as an error.
+- Both protocols stream tool arguments as text fragments, so the accumulator rebuilds every call and rejects a truncated argument, a malformed argument or a call without its identity instead of dispatching it.
+- Each wire protocol is exercised against a recorded provider stream served over a loopback socket, so the parser is validated against the payload the provider really returns rather than against a payload the project invented.
+- A secret is either a literal value or a reference to an environment variable written as `{env.NAME}`, resolved at request time.
+- A referenced environment variable that is unset or empty is an explicit error and never an empty credential.
+- Every secret field is masked and reveals its value only after a translated confirmation.
+- API keys are stored in the settings document in plain text, so the application data directory carries the same confidentiality as the credentials it holds.
+- The complete configuration of the plugin is one settings document carrying every connection with its display name, secret, address, validated parameters and extra parameters, the connection a new task starts from, the execution settings, the provider rate limits, the search service, the speech service and the registered servers.
+- A parallel limit of zero is unlimited and every positive value is the maximum number of concurrent provider requests.
+- A service decides how often it answers, so the pace is declared per provider and every connection, every workspace and every task that reaches that service waits in the same queue.
+- A provider carries a delay between requests, a maximum number of requests per minute and a maximum number of requests at the same time, and a zero on any of them means that one was never declared.
+- The three limits compose, so a request leaves only once the delay has passed, the window of the last minute has room and no other request of that provider is still in flight.
+- Every request of an agent run passes through that queue rather than only the start of a task, because one task asks the model once per iteration and would spend the whole budget by itself.
+- The pace is applied where the request leaves, so the retry of a rejected request queues again like any other request.
+- A place in the queue belongs to the holder it was given to from the moment it is counted, so a run stopped before it heard about its turn gives that place back instead of holding it for a provider that then admits nobody.
+- A run stopped while it is still waiting withdraws from that queue, because a place nobody withdrew is admitted later and sends the request of a run that no longer exists.
+- A place is given back the moment its holder stops wanting it, whether it was waiting for that place or already holding it, rather than when that holder is destroyed.
+- A provider nobody limited stores nothing, because a limit of zeros is what the absence already means.
+- A run that is waiting says so on its card and records the wait in its execution log, because a card that only says sending explains nothing.
+- Every run is recorded as an execution with its UTC start, UTC finish, status, token usage, finish reason, error message and returned content.
+- The call that summarises a conversation is part of the run that needed it, so what it spent is counted with everything else that run spent and reaches the cost the reader is shown.
+- A run is recorded with the provider and the model it really spoke to, so what it cost is answered from the price of that model rather than from a connection that may have moved since.
+- The catalog carries the price a service publishes per token, and a model nobody published one for reports no cost at all rather than one that reads as free.
+- A price written in a shape nobody declares rejects the complete plugin, exactly like every other value of the catalog.
+- Execution statuses are exactly running, succeeded, failed and cancelled.
+- Execution log entries carry a UTC timestamp, a monotonic sequence, a level of debug, info, warning or error, a closed event kind and the exchanged payload.
+- The kind names the event in the interface language while the detail keeps the exchanged payload verbatim, because a request body is data and is never translated.
+- The kind also decides how the detail is presented, so an entry carrying an exchanged payload is opened on demand in its own surface while every other kind stays readable inside the grid.
+- That action is the shared chip button packed at the start of its cell, a thin pill sized by the badge metrics and filled with the strong accent over the on-accent text, so it stays visible on a selected row, because a bare label inside a grid does not read as something to click.
+- A payload surface presents the content verbatim in the monospace role and indents it only when it really is JSON.
+- Every exchange is recorded, covering the queue entry, the start, the request that was sent, the first content received, the complete response, the reported token usage and the terminal outcome.
+- The credential travels in a request header and is never recorded with the request.
+- Execution log entries are presented newest first, ordered by their sequence so entries written inside the same millisecond keep their real order.
+- A running task presents its live phase on its card, covering waiting for capacity, waiting for the model and receiving the response.
+- A card refreshes itself when its own run reports progress, and only a changed set of tasks rebuilds the board, because a turn reports many times and rebuilding every card each time freezes the interface.
+- The status badge takes its background and foreground from the active theme, with a neutral surface for idle and the semantic colors for queued, running, succeeded, failed and cancelled.
+- The badge is a slim rounded pill sized by its own theme radius and padding, occupies its own line, and the live phase reads on the line below it rather than beside it.
+- A data grid declares how every column is sized once and never calls a manual resize, because the manual pass overrides the declared mode and leaves the grid narrower than its viewport.
+- Executions and their log entries are queried newest first in pages of at most one hundred rows.
+- Execution and log reads run through the asynchronous database API because they answer an interactive action, while the bootstrap query stays reserved for startup recovery.
+- A later selection in the execution history wins, so a completion belonging to an earlier selection is discarded by its revision.
+- A field the user types into persists when its edit ends rather than on every keystroke, so a credential or a model identifier is never written character by character.
+- A stored execution that finished before it started is rejected by the reader and by the writer.
+- The execution client is destroyed through deferred deletion because completion can be reached from a signal that client is emitting.
+- Tasks are grouped into workspaces and every workspace is a renameable tab that owns its own kanban.
+- Exactly one workspace is active and the active workspace persists across restarts.
+- Removing a workspace removes every task it contains and is rejected while any of those tasks is queued or running.
+- A task that is gone leaves nothing behind, in storage by the cascade its schema declares and in memory by one place that forgets everything keyed by it, because a caller that removes a task in its own way forgets a different subset each time.
+- A run starts only once the turn that asked for it is durable, so a conversation nobody could write never becomes a run nobody can explain.
+- A task removed while its conversation is open returns the reader to the board, because a surface that answers for nothing is worse than no surface.
+- The kanban contains exactly To Do, Doing, Blocked, Review and Done columns rendered as equal-width columns with a centered title.
+- A single-pixel divider separates every kanban column across the full column height, drawn as its own widget between columns.
+- A divider that must span a surface is its own widget rather than a border on a container, because a child laid out to the full width paints over the border and leaves only a stub.
+- An agent is a configured entity carrying a stable lowercase identifier, a name, a description, its own system prompt, the connection it speaks through and its iteration limit.
+- The dialog asks for the name first and spells the identifier from it when the field is saved empty, because a name is what the writer came to give and the identifier is a consequence of it.
+- Nothing is written into that field while the reader is typing the name, because a field that fills itself under the hands of whoever is reading it is a field they have to undo.
+- There is no system prompt written in code, so what an agent is told is what the user wrote for it and nothing else.
+- The system prompt of an agent carries tags from a closed set, and a tag nobody declares is refused where the prompt is written rather than met by a run that cannot answer it.
+- A capability tag answers what the run really has, covering the selected model and its traits, whether that model reads an image, whether a search service and a speech service are configured, which servers are connected and the room the turn has, so an agent never promises what is not there.
+- A capability tag renders one translated sentence, so a prompt written in one language still tells the model the same fact in another.
+- The template the agent dialog offers already carries those tags, because a writer who cannot see them writes a prompt that promises what nobody configured.
+- One tag expands to the working directory, the environment, the published context files and the skills of the task, so an agent asks for all of it with a single mark.
+- The agent dialog offers a chooser of prompt templates and a list of every tag with what it stands for, because a writer who cannot see them writes a prompt that does not exist.
+- The set of templates is data in the asset catalog and each identifier names the three translated keys carrying its name, its description and its body, so a template is added by one entry and never by interface code.
+- A template identifier is lowercase letters, numbers and hyphens, is declared once, and a catalog declaring none, one of another shape or the same one twice rejects the complete plugin.
+- The templates are the website builder, the application builder, the security reviewer and the code reviewer, each written in full in both languages and each carrying the capability tags in place.
+- A template is inserted into the prompt the writer then owns, because there is no system prompt written in code and a template is an offer rather than a behaviour.
+- Every template names the same tags in every language, because a body that lost one would tell the model different facts depending on the language the reader chose.
+- A connection an agent runs on is refused while that agent exists, and an agent is removed freely while the tasks it was handed stop with the reason that names it.
+- A model that declares the system role receives the instructions as a system message, and one that does not receives them as the first user message, which is what the market does.
+- An agent run starts from the instructions of its agent, rendered with what the run knows about the task and the machine.
+- The data block carries the user name when the system reports one, the home directory, the local time with its timezone, the UTC time, the locale, the language and the operating system, because a task about today or about this machine must not be guessed.
+- A skill follows either published layout, a directory holding a `SKILL.md` or a single Markdown file, and its front matter carries its name and description.
+- Skills, commands, subagent definitions, context files, plugin bundles and the server catalogs other tools leave behind are all discovered by the core agent resource catalog rather than by the plugin that consumes them.
+- The product reads what the published ecosystems leave on disk and installs none of it, because a workspace prepared for any agent must work here unchanged and nothing may be written into it.
+- The roots are declared as data, covering the project the agent runs in and the machine roots of its reader, so supporting one more ecosystem is one more entry and never a change of code.
+- Project roots are declared before machine roots and the first root that declares a name owns it, so a workspace overrides what the machine offers.
+- A bundle is a directory carrying its own manifest and its own skills, commands and agents, and what it carries joins the same catalog, which is how a published plugin is read without being installed.
+- A bundle carries no bundle of its own, because the depth of what a workspace declares must not be decided by that workspace.
+- A document root names one file and is read directly rather than looked for in a listing, because the published ecosystems name it with a leading dot and a directory listing carries no hidden entry.
+- Every kind is bounded in the number of entries it reads and in the bytes of each one, and the whole catalog is bounded in what it returns.
+- A bound is named for what it counts, so the one that limits bundles counts bundles rather than the roots they contribute.
+- A workspace larger than the catalog accepts still answers, keeping whole entries rather than a truncated one, because the size of a workspace is decided by whoever opened it.
+- An entry the catalog cannot use is skipped by name in the log and never drops the catalog around it, whether its front matter declares no description or its bytes could not be read at all.
+- The catalog is read through the asynchronous filesystem service and kept for the turns of one run, because the prompt and the tools ask for it on every turn and a disk is not answered that often.
+- A run reads the workspace again before its first turn, because a skill, a command or an instruction written while the application is open must reach the next run rather than wait for a restart.
+- A walk already under way for a working directory answers everyone who asked for it, so runs starting together read those roots once rather than once each.
+- Everyone waiting is answered with what that walk found rather than with what the catalog holds, because a completion may forget the catalog and start another walk.
+- The listing of a skill says which root it came from, so a name that shadows another is visible.
+- A skill is disclosed progressively, so the instructions offer only its name and description while its body is loaded by the skill tools, keeping the context free of skills the task never uses.
+- The agent owns tools to list the skills, to search them by name and description, to load the full instructions of one and to read a file that skill ships beside them, which is how a skill carries its reference, its README and its scripts.
+- A file of a skill is resolved inside that skill bundle and refused outside it, exactly as a working directory refuses a path that leaves it.
+- The published context files are always-on instructions and join the prompt in full, because they describe how the workspace itself expects work to be done, and they are the ones every published ecosystem writes rather than the three of one of them.
+- A context document the project declares owns its name, so the one the machine carries applies only where the project has none.
+- A rule that applies only to the files a pattern names is not read, because reading it always would hand the model instructions written for a file it is not looking at.
+- A context file is the whole document, so the catalog carries what it read and the prompt opens no file of its own on the thread that draws.
+- A server catalog another tool left in the workspace is read and reported and never connected on its own, because starting a server declared by a file the reader did not write would run a command nobody chose.
+- Skill and context conventions follow the published formats rather than a name this project invented, so a workspace prepared for any agent works here unchanged.
+- The assistant text of every iteration is kept, because an agent that spoke before calling a tool said something the run must not discard.
+- The conversation belongs to the task and outlives every run, so an agent keeps what it learned and a task is a dialogue rather than a command that starts from nothing each time.
+- The conversation is stored in the shape the product owns and projected into the shape the wire protocol names, so the same dialogue survives a change of provider.
+- The conversation is read newest first in pages of at most one hundred, and scrolling to the top of the chat asks for the page before it.
+- A conversation message is a user turn, an assistant turn with the calls it asked for, or the result of one call, and the projection groups consecutive results the way the protocol expects.
+- An assistant turn that answered with no text is not stored, because a turn carrying nothing must not enter the transcript the model reads.
+- Play and a due schedule send the prompt of the task again as a new user turn, because that prompt is the standing instruction a schedule repeats.
+- A message typed while a turn is running joins the conversation at once and is claimed by the next iteration of that turn, and a message that arrives after the final answer opens the next turn instead.
+- Resetting a task clears its conversation and the runs that conversation recorded, returning it to the state it was created in.
+- Nothing else removes what a task recorded, because that history is the memory of the agent, so a conversation is emptied only by that reset and by removing the task or the workspace it belongs to.
+- A summary replaces the turns it covers only in the request that is sent, and every one of those turns stays stored, so compacting a long conversation costs the model its detail and never costs the reader their history.
+- The conversation is fitted to the context window of the selected model before every turn, estimated from the serialized message size.
+- Every message is measured once and the fitting reads the total it keeps, because measuring one serializes it and doing that again for every turn it drops freezes the thread that draws.
+- The fitting aims at a share of what remains rather than at the whole of it, because an estimate made from the size of the text underestimates what the model really counts, so a turn compacts under pressure instead of at the moment it overflows.
+- The window has to hold the answer and the tool declarations as well as the conversation, so the output budget and the serialized tools are reserved before anything is fitted into what is left.
+- A model that declares no window bounds nothing, and a window whose reservation leaves no room bounds everything, so the two are answered apart instead of by one number that would mean both.
+- A budget asking for everything a model allows is what most of the catalog declares as its whole window, so a run reaching that is fitted down to the instructions and the task rather than sent whole to a model with no room for it.
+- The request that summarizes what was dropped is fitted the same way, because what no longer fits can be larger than the window itself.
+- Fitting drops whole turns from the oldest end, because an assistant turn carrying tool calls is invalid without the results that answer it, and never drops the instructions or the task itself.
+- The middle of an older tool result is shortened before any turn is dropped, because that is the cheapest space in the conversation and it costs no model call.
+- What no longer fits is summarized by one model call and joins the conversation as the turn that replaces the ones it summarized, so the same turns are never summarized twice.
+- A summary is machinery rather than something the reader said, so it never opens a turn of its own.
+- The summary request carries no tools and its own output budget, and a summary that fails is reported as a warning while the run continues with the fitted conversation.
+- A compaction and its summary are recorded in the execution log, so a run that compacted says so instead of silently forgetting.
+- A tool result travels straight into the model context, so it is truncated with an explicit notice rather than allowed to fill the window.
+- A content block and a dotted wire field nest only as deep as the code declares, because whoever wrote them decides that depth.
+- The Anthropic API carries the instructions in its own field, so the system message is lifted out of the conversation for that protocol.
+- Each protocol declares the shape it demands, and every request satisfies it before it leaves, including the turn that follows a compaction, because the summary joins the conversation as a turn of its own and can land beside a turn of the same role.
+- The Anthropic API refuses a repeated role, so two consecutive turns of one role are joined into the single turn it expects, keeping the content blocks each one carried.
+- A conversation whose oldest turns were dropped can open with an assistant turn, which answers nothing and is left out for that protocol.
+- The board and the conversation are pages of one stacked widget, so opening a task replaces the board rather than covering it.
+- The conversation page carries the shared page header with the title of the task, the live phase, the stop action and the reset action.
+- An assistant answer is presented as Markdown through the shared document support, and it grows in place while it is being written.
+- A task is answered by one surface, which carries its conversation, its executions, their log entries and its returned content as tabs of the shared tab bar.
+- Everything on that surface follows the run while it is open, so a message, a phase, an execution and a log entry appear without reopening it.
+- The surface opens without holding the event loop, carries the action that stops the run and closes by the same key that closes a tab.
+- A double click opens the editor while a task waits in To Do and has never run, and opens the surface in every other case, so it is always one of the two.
+- The card carries the action that opens the conversation, which is the same surface on its first tab.
+- The conversation reads as a chat, so a message is a rounded box on the side of whoever wrote it, with the spark beside what the agent answered and the person beside what the reader wrote, each inside a filled disc.
+- The box is a painted shape in the colour the theme gives that side, so its corner stays correct at any size and follows the selected theme.
+- A message that follows one from the same writer repeats no avatar and keeps the room that avatar would take, so the boxes of one group share an edge.
+- Every message of every role is Markdown read through the shared document, covering headings, emphasis, lists, quotes, links, tables, inline code, fenced code in the monospace role and emoji.
+- The Markdown reader names a family only on the runs it read as code, and which name that is differs by platform, so the shared document finds those runs by the property rather than by its value and writes the declared family over them.
+- A style sheet declared for a document reaches what is parsed as markup and never what is read as Markdown, so a rule about code is applied to the document rather than declared for it.
+- A chat message is written with the return key, so a single newline is a line break and only the prose between fenced blocks is broken that way.
+- A box is as wide as the words it carries up to seventy percent of the surface, because a wall of text edge to edge is not a conversation.
+- One rule measures every box, so a turn of tool calls is as wide as the longest line it carries exactly like a message is, and a line that wraps is measured from its text rather than from the width one word needs.
+- That measurement never rounds the advance of a line down, because a box given exactly the width its text reports still breaks that text onto a second line.
+- The time a message was sent reads at the end of its line when that line has room and takes a line of its own when it does not, and it is written in the ink of the box at a lower weight.
+- A turn that called tools presents one entry per call with the mark of a tool and its public name on the first line and the one thing it is doing under them, separated from it, because the reader wants to know what it did rather than what it was passed.
+- A tool declares the public name a reader sees and the sentence that says what it is doing, both translated, together with the single argument that sentence carries.
+- A tool published by a server is named the way that server spelled it, with the marks that separate its words read as spaces, because its name is the only one it has.
+- A long argument keeps its beginning and its end, because the end of a path is what names the file.
+- A tool result opens no box of its own, so a turn of four calls is one turn rather than five messages nobody can pair.
+- A turn that is being written opens its own bubble on the side of the agent, carrying the live indicator and the phase it reached until the first words arrive and replace them, because a run says what it is doing where its answer will be.
+- That bubble never shows a time until it carries something, because a box with nothing but an hour in it is not a message.
+- The stack of messages rests on the composer, so a conversation with two turns starts at the bottom where the next one will be written.
+- The composer opens on one line, grows with every line written into it up to a bound and sends through one round action whose radius is half its size by construction.
+- A message that arrives brings the reader along only while they are at the end, because one who has scrolled up is reading rather than following.
+- The chat owns its reading size with its own default and steps it from its own view like every other content surface.
+- Everything inside a bubble is written at that size, covering the name of a tool, what it is doing and the time, because one line smaller than the words beside it reads as a different surface.
+- The boxes reflow when the surface is resized, so a conversation read in a narrow shell wraps where that shell ends.
+- The composer sends on the plain return and breaks the line on the shifted one, and it stays enabled while a turn is running because that is how a message is queued.
+- The board owns the complete content area below the page header and no terminal surface exists inside the plugin.
+- A task owns a title, description, prompt, an optional issue address, the agent it is handed to, a column and an optional schedule, because the instructions, the credential and the parameters belong to the agent rather than to the task.
+- One shared contract decides what a task must carry and both the reader and the writer use it, because a reader stricter than its writer refuses to load what it stored and the application never opens again.
+- An agent task requires its prompt and a command task requires its command, so neither kind is measured by what the other needs.
+- The issue address is validated as an HTTP or HTTPS address when present, and is empty for a task that belongs to no issue.
+- The agent owns a tool that reads the task it is working on, covering its title, description, prompt, column, working directory and issue address, so it never has to infer its own assignment.
+- The web search service is registered in its own settings section, selecting Brave Search, Tavily or a SearXNG instance, and each one is read by the contract it publishes rather than by a shared guess.
+- A search without a configured service refuses explicitly, and a service answering with no result says so instead of returning an empty tool answer.
+- A provider that publishes a models endpoint fills the model selector from the service itself, and a catalog answered as empty is an explicit failure rather than an empty selection.
+- A discovered model catalog belongs to the provider that answered it and is discarded when the selection moves to another provider.
+- Task cards keep their own margin, carry a status badge and expose Play, Stop, Information, Edit and Remove actions.
+- A card that carries a schedule also exposes the action that stops it, and confirming removes the schedule and takes the action away with it, because an action that stops what no longer exists has nothing to do.
+- A card whose task declares a working directory offers that folder to the Code Editor and to the Web Server, and a task without one offers neither.
+- The status badge covers idle, scheduled, queued, running, stopped, succeeded, failed and cancelled and takes its color from the active theme.
+- A task waiting for a schedule reads as scheduled in the information color, because a task nobody scheduled and a task waiting for its hour are not the same state.
+- A run that ended at the iteration limit, at the answer budget or repeating one tool reads as stopped in the warning color, because a green badge over a line saying the run stopped without answering contradicts itself.
+- The Information action opens a read-only dialog presenting the execution history, the log entries of the selected execution and its returned content.
+- A double click opens the conversation of a task, and a command that holds none opens the editor its own action opens.
+- The returned content is rendered as Markdown through the shared document support, so a model answer reads as formatted text instead of its source.
+- The information dialog opens with the shared page header, so it carries the same title, the same execution count and the same closing divider as every other surface.
+- The surface of a task follows the run that is writing, so an execution and an entry appear while it is open without being reopened.
+- A reload keeps the execution the reader opened, matched by its identity rather than by its row, because a reload that returns to the newest one takes the reader off what they were reading.
+- A reload keeps the entry the reader is on, matched the same way, and follows the newest one only while the reader is already on it, because entries arrive above them.
+- Every reload of that surface reaches storage asynchronously, so a run writing entries never blocks the interface that presents them.
+- The log surface exists only for an agent run, because a command exchanges nothing with a model.
+- An execution that returned no text presents why it is empty, using its own error message when it failed and its stop reason when something else ended it, instead of a blank surface.
+- A text column declared NOT NULL is written through the shared stored-text contract, because a null string binds as a SQL NULL rather than an empty value.
+- Editing and removing are rejected while a task is queued or running.
+- A task card presents the message of its last failed run and clears it when the task starts again.
+- A card whose run ended without answering names what stopped it, so a reader never has to open the surface to learn that the limit was reached.
+- A card that could not start because the agent it was handed to is gone names that agent, and the same sentence is written by one place whether the agent went while the task waited or while it was running.
+- Dropping a card into Doing starts the task, so a failure there reads as the run that could not start rather than as a card that could not be written.
+- A restart restores what happened to every task by reading the newest run each one recorded, because a card showing idle for a task that failed tells the user nothing, and reading it back keeps the outcome in one place instead of storing it a second time on the task.
+- Notifications present the error message and never the identifier carried as the error detail.
+- Queued tasks are ordered by their persisted queue timestamp and start as soon as the provider has capacity.
+- The persisted queue survives restart and is dispatched as soon as the plugin finishes loading, so what was waiting when the application closed reaches the model again without the user touching anything.
+- A queued task whose connection is gone is dispatched, fails with the reason and returns to To Do, because a card waiting forever explains nothing.
+- Starting a task inserts its queue row and moves the card to Doing in one database transaction.
+- Stopping a task removes its queue row and returns the card to To Do in one database transaction before the request is cancelled.
+- Stopping a run stops everything that run started, covering the provider request, the summary request it may be waiting on and any command a tool of that turn is still running, because work nobody is waiting for must not keep running.
+- A command stopped that way answers its call as a failure, and the answer reaches an execution that is already gone, so the run is cleared before the commands are stopped rather than resumed by their own answers.
+- A stopped task always returns to To Do and records its execution as cancelled.
+- A finished task moves to Done when the provider completes successfully and returns to To Do for any failure or cancellation.
+- A task may own no schedule, one future local date and time, a minimum one-minute interval or a strict five-field POSIX cron expression.
+- Cron accepts portable numeric wildcards, values, ranges and comma lists, treats both zero and seven as Sunday and applies the POSIX day-of-month and day-of-week matching rule.
+- Cron extensions such as slash steps, aliases and named months or weekdays are rejected because they are not part of the selected portable POSIX contract.
+- Schedules retain their defining IANA timezone, persist all instants in UTC and display the next occurrence with the current system locale and timezone.
+- An occurrence is chosen on the wall clock the expression is written in and only then turned into an instant, because a calendar is what a person schedules against.
+- A wall clock the calendar skips when daylight saving starts is answered by the first instant that day really carries, so a job written for a time that does not exist still runs that day.
+- A wall clock the calendar repeats when daylight saving ends fires once, on the first of the two instants, because one line of a schedule is one occurrence.
+- The search walks the days the expression declares rather than every minute of the horizon, so an expression matching once a year costs the days of that year instead of its minutes.
+- An interval is counted in real seconds over UTC, so a daylight saving turn never changes the spacing between two runs.
+- A due occurrence advances its schedule and inserts its queue row in one transaction, preventing duplicate dispatch after a crash.
+- The task leaves the schedule before that row is written, because a scheduler that wakes again while the write is in flight would dispatch the same occurrence once more, and a write that fails returns the task to the schedule it was taken from.
+- Starting a task queues it before its row is written for the same reason, so a second start asked for meanwhile is refused instead of reaching storage as a duplicate.
+- One-time schedules disable after dispatch but keep the date they were given and the moment they ran, because the card is where the user remembers what was scheduled.
+- Interval schedules skip accumulated missed intervals and cron schedules calculate the next wall-clock occurrence.
+- Scheduler wakeups are capped so wall-clock and timezone changes are reconciled without a blocking polling loop.
+- AI failures publish structured plugin logs and report through the shared toast overlay.
+
+## Browser plugin invariants
+
+- The plugin identifier is `browser` and it has no feature dependency.
+- The plugin contributes one primary Browser navigation item and one General settings group.
+- Qt WebEngine uses the shared Qt build and a Browser-owned profile rooted in the application data directory.
+- The embedded browser supports multiple movable and closable tabs, address navigation, back, forward, reload, stop, home and site-requested tabs.
+- Supported explicit URL schemes are HTTP, HTTPS, file and about.
+- Addresses without a scheme receive HTTPS deterministically and malformed or unsupported addresses are rejected.
+- The Browser owns its homepage in its settings document and its tab identifiers, order, titles, URLs, active tab and UTC timestamps in its own tables.
+- Every tab mutation queues an asynchronous full-session database transaction and the final queued snapshot is authoritative.
+- A snapshot that answers after a newer one commits nothing, and a failure rolls back to what was committed rather than to the snapshot that failure carried, because two writes of the tabs can be in flight at once.
+- Closing the last tab leaves the Browser without any tab so its renderer is released, and the view presents the empty state with the action that opens a new tab.
+- The tab surface and the empty state are mutually exclusive pages of one stacked widget, so neither can share the content area with the other.
+- A start without any stored tab opens one homepage tab, and exactly one tab is active whenever a tab exists.
+- Browser startup strictly validates every stored URL, identifier, title, timestamp and active-tab invariant.
+- The Browser owns ordered bookmark groups and ordered bookmarks with names, canonical URLs, optional group membership and UTC creation and update timestamps.
+- Ungrouped bookmarks use an empty domain group identifier and appear under one translated virtual group that is never persisted as a bookmark group.
+- Users can create, edit and remove groups and bookmarks through the Browser-owned panel without exposing storage details to the core.
+- The bookmarks panel is hidden by default and is shown or hidden from the toolbar toggle.
+- Removing a group preserves its bookmarks by moving them to the ungrouped collection in their existing relative order.
+- The position of a bookmark inside its container is numbered by the write rather than carried by the bookmark, so a collection that gains the bookmarks of a removed group is still numbered from zero without a gap, which is what the next start demands of it.
+- Bookmarks can be dragged between groups, reordered within a group or dropped into the ungrouped collection.
+- Every drag result must contain every known group and bookmark exactly once and must reject unknown or duplicate identifiers.
+- A bookmark opens explicitly in the focused current tab or in a newly activated tab and double-click opens it in the current tab.
+- Every bookmark mutation queues one asynchronous full-bookmark transaction and restores the latest committed snapshot when persistence fails.
+- Browser startup strictly validates canonical bookmark URLs, group references, per-container positions, names and UTC timestamp order.
+- Browser state survives application restart and configuration export or import through Browser-owned SQLite tables.
+- Browser page shortcuts remain scoped to the focused WebEngine view and never invoke terminal or another plugin behavior.
+- Other plugins may open a tab only by invoking the `workspace.page.open` capability, which the Browser provides.
+- A plugin answering a request to show something reveals its own destination, because a caller asking for a page or a folder wants to read it rather than to be told it exists somewhere.
+- A folder is opened for editing by invoking the `workspace.folder.open` capability and served by invoking `workspace.folder.serve`, and neither caller knows which plugin provides them.
+- The Web Server exposes one action that opens its address in the system browser and one that opens it in the Browser plugin through that contract.
+- Either of those actions says so when the address could not be opened, because an action that does nothing and explains nothing reads as a product that is broken.
+- The action that leaves the application carries the glyph of a link opening elsewhere and says so, and the one that stays says which plugin it opens in.
+- Browser storage failures restore the latest committed tabs or homepage and report through the shared toast overlay.
+
+## Donate plugin invariants
+
+- The plugin identifier is `donate` and it has no feature dependency.
+- The plugin owns one secondary navigation item with final priority.
+- The Donate navigation item is the last plugin feature item and the core Settings item remains below it.
+- The navigation item uses the shared vector Donate icon and never reuses the maintainer photograph as navigation chrome.
+- The support view presents a high-resolution bundled profile image with a large circular crop, maintainer identity, concise funding context and verified donation destinations.
+- The bundled image is loaded from a plugin-owned Qt resource and never requires a network request to render.
+- Official donation destinations are GitHub Sponsors and Ko-fi links published by the maintainer profile.
+- Donation buttons open only explicit HTTPS destinations in the system default browser.
+- A browser dispatch failure reports through the shared toast overlay.
+- The plugin contributes no settings until it owns a configurable product behavior.
+
+## Code Editor plugin invariants
+
+- The plugin identifier is `code-editor` and its only dependency is the centralized `logs` plugin.
+- Every open folder is a movable and closable workspace tab with a stable identifier, canonical absolute root, position, active state and UTC timestamps.
+- One folder is opened once, so asking for a folder a workspace already has activates that workspace instead of opening a second one for the same root.
+- Each workspace owns a live filesystem tree and an ordered set of movable and closable document tabs.
+- The filesystem tree observes external changes through Qt filesystem modeling without periodic GUI-thread scanning.
+- Every watched path is rearmed when its notification arrives, because macOS reports a watched file only once and the second external edit would otherwise never be seen even though the path is still listed as watched.
+- A watched file can still change without the platform reporting it at all, so returning to the application looks at every open document again rather than trusting that a notification was delivered.
+- The core filesystem service serializes filesystem work on a dedicated worker and exposes asynchronous reads, atomic writes, creation, movement and removal through the scoped plugin host.
+- That service writes its diagnostics for the log, so the editor says every condition it reports as a sentence of its own catalog followed by the path it happened to, because a reader told only a path learns nothing.
+- A condition of that service the interface never asks for keeps its diagnostic, which is what a limit checked in code is.
+- File creation, directory creation, rename, move and confirmed permanent removal validate absolute targets and never overwrite an existing destination.
+- Workspace policy resolves canonical paths and rejects traversal or symbolic-link escape before any file is opened or created.
+- Path containment always compares against the forward slash that `QDir::cleanPath` produces so a workspace behaves identically on every platform.
+- The workspace resolves the root it compares against rather than trusting the form it was opened with, because containment compares canonical paths and a root reached through a symbolic link would refuse every file inside it.
+- A path answered by a language server is resolved back to the document the workspace has open, because the same file is named with another case and another drive letter case on Windows.
+- The workspace root itself cannot be renamed, moved or removed from the editor tree.
+- Text documents accept UTF-8, UTF-8 with a byte order mark, UTF-16 little endian and UTF-16 big endian files up to sixteen mebibytes, and reject binary, oversized, unavailable or invalidly encoded files explicitly.
+- Inspecting the bytes of a file, hashing them and decoding them is work whose size the file decides, so it happens away from the interface and only the finished text reaches the buffer.
+- Whether the buffer already holds what was read is answered by the digest, because comparing the text would cost the whole document on the thread that draws.
+- The mark the file starts with names its encoding, so a UTF-16 file is never mistaken for binary because of the null bytes it legitimately carries.
+- An encoding the editor cannot write back, such as UTF-32 or UTF-7, is refused with its name instead of being opened as text or reported as binary.
+- A file is written back in the encoding and the mark it arrived in, so opening it never rewrites bytes nobody asked to change.
+- Saves use atomic replacement and content revisions so an older asynchronous completion cannot mark newer edits as clean.
+- A platform that refuses to replace a file another process is holding fails that save explicitly and leaves the document dirty, because a write nobody confirmed must never read as one that landed.
+- Clean documents reload after an external edit and dirty documents preserve their buffer while reporting a translated conflict.
+- What the file now says is judged once its bytes are decoded rather than when they were read, so the reader can type while a large file is being read without the reload replacing what was typed.
+- A save asked for while one is still being written runs after it instead of being dropped, because an edit the reader saved must reach the file.
+- The stored cursor of a restored document is applied once, when it first loads, because a later reload must never move the reader.
+- A reload that carries the same text leaves the buffer untouched, and a reload that changes it restores the cursor and the scroll, because saving a file must never send the reader back to the first line.
+- The document remembers the digest of what it last read or wrote, so a watcher notification only becomes a reload or a conflict when the bytes on disk really differ, and our own save or a rename stays silent.
+- Destroying a document disconnects text-document notifications before destroying its highlighter and timers.
+- The editor provides line numbers, current-line emphasis, an optional persisted word wrap, EditorConfig indentation, selection indent and unindent, native editing shortcuts, save, incremental find and language completion.
+- The tree of a workspace carries the shared filter field above it and narrows to the names that match what was typed, keeping the folders that lead to a match and reading a folder it has to look inside.
+- That walk carries the depth this project declares, because a folder reached through a symbolic link can name the folder that holds it and the tree would otherwise keep offering one more level for as long as anyone waited.
+- A folder that finished loading narrows itself and only the path that leads to it, because narrowing the whole tree once per folder that arrives costs the tree squared, and a folder that loads only ever adds names the filter can match.
+- One single-pixel divider separates that filter from the tree, because two surfaces of one panel are told apart by the boundary between them.
+- The find bar is the shared component every surface searches with, and its owner supplies the words so it carries no catalog of its own.
+- The find bar opens with the native find shortcut, moves between matches with the native find-next and find-previous shortcuts, wraps around the document and closes with Escape.
+- A file is found by typing part of its name, ranking a path by the characters found in order, where a run found together outranks the same characters found apart and a match in the name outranks one only a directory above it carries.
+- The size of a folder is decided by whoever opened it, so it is walked away from the interface and only as far as the bound the catalog declares, and the count says when it stopped there.
+- Typing in the find bar searches from where the reader was when it opened, so the cursor is never dragged forward through the file while the query is still being written.
+- The find bar reports the position of the current match inside the total, marks every match in the text and offers the case-sensitive and whole-word options.
+- Match counting and marking stop at a bound and the count says so, because a query matching a whole large file must not freeze the interface that is searching it.
+- The native close shortcut closes the focused document tab in the Code Editor and the focused tab in the Browser.
+- An action built from a standard key registers every binding that key declares rather than the first one, because Windows names the close key as the function combination first and the one every reader presses second, and taking only the first leaves that one doing nothing.
+- The workspace status bar reports the cursor line and column, the resolved indentation, the line ending, the character set and the word wrap toggle.
+- EditorConfig resolution walks from the document directory to the workspace root, stops at the first `root = true` file, applies the farthest file first and supports the documented `*`, `**`, `?`, `[seq]`, `[!seq]`, `{a,b}` and `{num1..num2}` patterns.
+- The glob answers the cases the EditorConfig core test suite defines, so a section behaves here exactly as it does in every conforming editor.
+- A comment is a whole line, so a hash or a semicolon anywhere else is the literal text of a value or of a section name.
+- A character class that never closes, or one offering a path separator, is not a class at all and stands for the literal text it spells.
+- A double star between separators also stands for no directory at all, so `a/**/b` matches `a/b`.
+- A separator inside a character class is one of the characters that class offers rather than a level of the path.
+- EditorConfig supplies indent style, indent size, tab width, end of line, character set, trailing whitespace trimming, final newline and maximum line length.
+- A property set to `unset` clears what a file above declared rather than being ignored, because undoing an inherited value is what that value is for.
+- An indent size that follows the tab width is resolved once every file has been read, so the two are written in either order.
+- A brace expression spelling neither an alternation nor a numeric range is the literal text it spells, so a file really named that way is the one it matches.
+- A brace that never closes keeps what was already read of it rather than rewinding, because a run of them would otherwise read the same tail once per brace and never finish.
+- A brace nests only as deep as the bound the code enforces and a numeric range spans only as many values, because both are reached from a file the workspace decided the contents of.
+- The only character sets accepted are the ones the editor can write back, so `latin1` is reported by name instead of being applied.
+- A document remembers the line ending and the byte order mark the file already carried, and a rule declared by EditorConfig is the only thing that changes either of them, so opening and saving a file never rewrites bytes nobody asked to change.
+- Saving applies the resolved trailing whitespace, final newline, line ending and byte order mark rules before the atomic write.
+- The status bar reports the line ending and the character set the document will actually write, not the ones a configuration file happens to declare.
+- The character sets are the five EditorConfig declares, which are the ones Qt converts without another dependency, and a declared set outside them is reported as an explicit translated error.
+- A file is read in the encoding its byte order mark names, otherwise in UTF-8 when it spells valid UTF-8, and otherwise in the encoding the settings declare for a file carrying no mark.
+- That declared encoding opens as Latin-1, because it is the only one that returns every byte it was given, so a file read in it is written back byte for byte even when the guess was wrong.
+- The buffer is read as the document really holds it rather than as the plain text of Qt, which rewrites a non-breaking space as a space and a line separator as a newline, so a file carrying either keeps it.
+- The block break of the document is the only character that becomes a newline, so one reading of the buffer serves both the bytes that are written and the text the language server is given.
+- Saving is refused when the encoding cannot spell a character the buffer holds, because writing a question mark in its place loses what the user typed.
+- Changing the declared encoding governs the next file that carries no mark and never re-reads a file already open.
+- The encoding in the status bar is the control that changes it, offering every encoding to read the bytes again in and every one to write them in.
+- An encoding the reader chose by hand outranks the one the project declares, which outranks the one the file was read in.
+- Reading the bytes again replaces what the buffer holds, so a document carrying unsaved work asks before it happens.
+- The same bytes read in another encoding spell another text, so a reading the reader asked for is applied whatever the digest says.
+- Writing in a chosen encoding rewrites the file whole even when nothing was typed, because the bytes on disk are what changed.
+- A mark is stripped from the bytes only when the file really starts with it, because an encoding chosen by hand names no mark those bytes have to carry.
+- A line longer than the highlighting bound keeps its text and loses only its colors, because running every pattern over generated content costs more than the colors are worth.
+- A line is bounded by how much decoration it accumulates as well as by its length, because the line being edited is laid out again on every keystroke and one carrying hundreds of ranges costs far more than the same text plain.
+- That bound is placed by measurement rather than by taste, at roughly one range for every eight characters of dense code, so a line a reader really reads keeps its colours and a table of values written as one statement does not.
+- Semantic tokens repaint only the lines whose tokens changed, and repaint the whole document only when most of them did, because repainting every line on every answer costs the whole file at the rhythm of typing.
+- A server decides how many tokens it sends, so they are decoded and grouped by line away from the thread that draws, and only the finished grouping returns to it.
+- A token type nothing paints is dropped where the answer is decoded rather than carried to the thread that draws and dropped there.
+- Every language and every language server the editor knows lives in the catalog file the plugin carries as a resource, so a language is added by one entry of data and never by interface code.
+- The patterns a language needs beyond its keywords are declared with it in that file, so no language is named in the code that colours it.
+- A pattern declares the role it paints rather than a colour, and the roles are a closed set a code colour scheme resolves.
+- The colouring of code is editor content rather than application chrome, so a code colour scheme is selected in the Code Editor independently of the application theme, exactly as the ANSI colours of a terminal are.
+- A scheme owns the surface the code is read on, covering its background, its current line, its selection and its line numbers, because ink alone cannot be read on a background it does not control.
+- The shared style sheet paints every text edit in the window colour, so a surface a scheme owns is declared on the widget itself where it wins rather than left to a palette that rule overrides.
+- Schemes live in the catalog file the plugin carries as a resource, so a scheme is added by one entry of data and never by interface code, and the name of a scheme lives with the scheme it names.
+- Every scheme colours every declared role, and a scheme that leaves one uncoloured, names a role nobody declares, repeats an identifier, carries a field nobody declares or spells a colour that is not one rejects the complete plugin.
+- The scheme catalog is parsed from the text of its file rather than from its path, so every rejection it declares is exercised by a test.
+- The closed role set covers every token type the protocol reports, so a class, a parameter and an enum member reach the reader as three colours rather than one.
+- A role nothing produces is an unused value, so every declared role is reached by a pattern, by a keyword set or by the map a language server answers into.
+- A role is declared only when it reads differently from the text around it, because a range that repaints the colour already there is laid out and painted on every line and shows nothing.
+- The order a rule is applied in decides which one wins, so the catalog declares what runs before the keywords of a language and what runs after them rather than leaving that order to the code.
+- A keyword a language already declares is painted in the more specific role when it belongs to the declared control-flow or primitive-type set, so no language needs its keywords split by hand.
+- Prose is not code, so a format that carries no expressions declares that the shared patterns do not apply to it and keeps only the marks it declares itself.
+- A colour scheme catalog a plugin cannot read rejects that plugin during initialization, exactly as an unreadable language catalog does.
+- A widget that owns a content surface receives that surface when it is built, because a widget that only has one after a second call has a state nobody can draw.
+- A shared component hands its surface over together with the layout it was built with, because a caller that recovers that layout by casting it back is one that dereferences a cast it never checked.
+- A value carrying two things a caller needs is taken apart where it arrives, so no name exists only to be unpacked into the two that are really used.
+- A strip of pages is read through a typed accessor of the view that owns it, so the cast that names the concrete page is written once and every caller iterates a list that already carries the type.
+- A cast whose subject came from a lookup is checked, because a lookup that finds nothing is a state to handle rather than a pointer to follow.
+- The catalog covers the common languages of the trade, from C and C++, Python, TypeScript, Go and Rust to PHP, Ruby, C#, Kotlin, Swift, Dart, Lua, SQL, TOML, XML and the configuration formats around them, without language-specific plugins.
+- Two languages never claim one extension, because the first that claims it answers for it and the second would never be reached, and the catalog ends with plain text because that is what an unknown file falls to.
+- The name of a language is declared once, with the language it names in that catalog, because a second copy in the translation catalog drifts and presents a key where a name belongs.
+- A catalog that is unavailable, malformed, claims an extension twice or names a language no entry declares rejects the complete plugin.
+- The language catalog is parsed once from the text of its file rather than from its path, so it is read one time at startup and every rejection it declares is exercised by a test.
+- What a catalog validates is checked against what that same parse produced rather than through the accessor it is building, because a static initializer that reaches its own accessor ends the process.
+- What the editor may be tuned with lives in that file as well, covering the reading bounds, the debounce intervals, the restart budget and the surfaces it opens with, and every one of them is refused outside the range that keeps it sane.
+- The caps that protect the process from a payload someone else decided the size of stay in the code that enforces them, because a limit that exists to keep the application alive is not a preference.
+- Language-server discovery resolves explicit executable and argument pairs so alternative servers never inherit incompatible command-line parameters.
+- The `clangd` server runs with its background index and its clang-tidy analysis, because the workspace symbol search, the cross-file references and the extra diagnostics only exist when it indexes.
+- Each language declares the servers that can serve it in order of preference, each named exactly as the program the plugin starts, and the first one installed is the one that runs.
+- Each workspace starts at most one asynchronous language-server process per language and communicates through standard JSON-RPC framing over standard input and output.
+- The process, the framing and the JSON of a language server live on a thread of their own, so a payload of any size is never read, parsed or written where the interface runs, and the client sees only messages already built.
+- That thread is asked to end and releases itself when it does, because closing a workspace must not wait for a child process to exit.
+- The language-server client validates header bounds, content lengths, JSON, JSON-RPC versions and bounded payload sizes before dispatch.
+- An outline nests only as deep as this project declares, because the server decides that depth and reading it costs one frame per level.
+- A client asks its transport for nothing once that transport is gone, because the thread that owns it ends before the client does.
+- Language-server initialization, document synchronization, diagnostics, completion, definition, hover, configuration requests, workspace-folder requests, shutdown and exit follow the current Language Server Protocol contract.
+- A capability a server announces through `client/registerCapability` decides what it may be asked for exactly as one its initialize result declared, and `client/unregisterCapability` takes it away again.
+- Registering one announces that the server is ready a second time, so a document asks again for the analysis that capability just made possible.
+- A message carrying a method is a server request or notification and only a message without one answers a request the client sent, because a server numbers its own requests and would otherwise be read as our response.
+- Every request this client sends is numbered from one, so a response identified any other way, or by a number nobody issued, answers none of them, because a value a parse can produce is not a value that may stand for no request.
+- The capabilities the initialize result declares decide what the client is allowed to send, so synchronization, save notifications, completion, definition and hover leave only for a server that offers them.
+- A request made before the server finished initializing was never sent, so the document asks for its analysis again when the client announces that the server is ready, otherwise a slow start leaves a file with its diagnostics and without its outline.
+- A server declaring incremental synchronization receives only the ranges that changed and a server declaring full synchronization receives the complete text.
+- Editor changes are queued against the text the server already holds and leave in one debounced notification, and a reload replaces that copy instead of describing it as an edit.
+- The wait before telling the server and the wait before asking it are both measured from the last keystroke rather than stacked, so the analysis wait is declared longer than the change wait and a catalog that declares otherwise rejects the plugin.
+- A saved document notifies the server and carries its text only when the server asked to receive it.
+- A superseded completion or hover request is cancelled at the server before the next one is sent, so an answer never reaches a cursor that has already moved.
+- Completion inserts the text the server declares through its edit or its insert text over the range it names, never the label the user reads.
+- A proposal is narrowed by the filter text the server declares rather than by the label it is read as, and the label is what the list shows.
+- A list the server declared incomplete is asked for again on the next keystroke rather than narrowed where it stands, because what such a list leaves out depends on what is typed.
+- A completion trigger character requests completion as soon as it is typed, after the queued change reached the server.
+- Go to definition answers the native definition key and the platform modifier click, and the location it returns opens the file when that file is not already open.
+- Hover answers the editor tooltip request and presents the plain text the server returned.
+- A language server that exits unexpectedly is started again at most five times inside three minutes, and reaching that limit stops the integration and is reported once.
+- A server that reached its limit leaves the workspace, so the next document that needs that language starts a new one instead of talking to a process that is gone.
+- An edit that does not fit the copy the server holds replaces that copy completely, because a client that keeps sending ranges against text it no longer shares corrupts the analysis silently.
+- A read or write that fails because the server died is a log rather than a failure, because the exit itself is what is reported and what the restart budget answers.
+- A server that does not answer initialization inside its start timeout is stopped and started again through the same budget, because an editor must never wait forever for an answer that is not coming.
+- Unknown server requests receive an explicit method-not-found response and process or protocol failures are published through plugin logs and shared alerts.
+- The standard error stream of a language server is its own diagnostic log and is published only as a debug plugin log, never as a shared alert, because a healthy server writes to it continuously.
+- A shared alert is reserved for a failure the user must act on, so a rejected completion, a restarted exit and a rejected shutdown are logged while a failed start, an exhausted restart budget, a rejected initialization and a protocol violation are reported.
+- The server messages arrive as plugin logs, and only a window message the server marks as an error is reported.
+- Diagnostics are centralized in the workspace Problems surface and activation focuses the affected document and source line, opening it when it is not already open.
+- The surface below the editor is sized by its splitter, opening tall enough to read and growing to wherever it is dragged, because a panel with a maximum height cuts the row the reader is looking for and refuses to be made larger.
+- The Problems surface is shown only while the workspace has at least one available language server, because no other source produces a diagnostic.
+- Diagnostics belong to the server that published them and to the file they name, so the Problems surface shows every file the workspace analysed and not only the one being read, which is what makes a header nobody opened still report its errors.
+- That surface carries a filter over the file and the message, because a panel holding every file the workspace analysed is narrowed by writing rather than by changing what is open.
+- An empty answer for a file is the server saying it has nothing left to report there, a server that stops takes its own diagnostics with it, and closing a document leaves them standing because the file still has them.
+- Diagnostics are also drawn in the text as a wave underline in the severity color, and the editor tooltip presents the diagnostic under the pointer before asking the server for anything else.
+- A diagnostic keeps the code and the origin its server declared, so the Problems surface names which check spoke and what it calls itself rather than showing only a sentence.
+- A range the server tagged unnecessary reads in the muted colour and one it tagged deprecated is struck through, because a wave alone does not say that the code is dead or that it should stop being used.
+- What a diagnostic points at opens from the row it belongs to, so the reader reaches the other end of it without searching for the file themselves.
+- A server that publishes diagnostics only on request is asked for them, so a pull-only server fills the same surface as a push server.
+- The symbols the server reports are presented in the workspace symbol panel, which shows the outline of the open document while its search field is empty and the workspace symbols matching the query while it is not.
+- The outline is rebuilt only when it says something different, because the server answers it again on every analysis and rebuilding a tree nobody changed is paid at the rhythm of typing.
+- References open in their own bottom surface beside the problems, because a result list is not a problem, and the surface is bounded and reports how many results arrived.
+- The workspace is searched for text from a third surface beside them, which needs no language server at all, and every match names its file, its line and the line it found.
+- That search reads the workspace away from the interface, skips a file whose bytes are not text or that is larger than the reading bound, stops at the match bound and says when it stopped there.
+- A query typed after another discards what the earlier one found, so a slow workspace never answers over a newer question.
+- Go to definition, declaration, type definition, implementation and find references are offered together with the native editor entries, only the ones the server declares are presented, and the query is about the symbol under the pointer rather than the caret left elsewhere.
+- The calls that reach a name and the calls that name makes are offered beside them, asked for in the two steps the protocol names, and shown in the surface the references already use with its title saying which of the two it holds.
+- The occurrences of the symbol under the cursor are tinted with the accent after the cursor settles, and a superseded highlight request is cancelled.
+- Every mark the editor paints is built once when it arrives and kept until it changes, because the cursor moves on every keystroke and rebuilding every mark with it would make typing pay for the whole file.
+- A document that loses its language server also loses the marks that server left in the text.
+- Semantic tokens repaint the text over the pattern highlighter, because the server knows what a name really is while a pattern only guessed from its shape.
+- A token carries the modifiers its server declared, so a name marked deprecated is struck through and a read only one is slanted, while the colour still comes from its type.
+- Only those two are presented, because a reader stops using what is deprecated and reads a constant differently, while a declaration and a static name are read exactly as the name they already are.
+- Completion is a filtering proposal list that keeps the server order, presents the detail beside the label, shows the documentation of the highlighted row and resolves that documentation when the server offers it.
+- A server decides how many candidates it answers, so they are read away from the thread that draws and bounded before they reach it, keeping the ones that server ranked first.
+- The proposal list owns the acceptance and navigation keys while it is open, so accepting a proposal never writes a line break instead.
+- Signature help answers the trigger characters the server declares and presents the active signature while the call is being written.
+- What a server reports beyond that is not kept, because a value the product never presents is one the reader never sees.
+- The indexing progress the server reports is presented in the workspace status bar and disappears when the work ends.
+- A file created, renamed or removed in the tree is reported to every running server, because the analysis of files nobody opened still depends on them.
+- The document is announced with the protocol language identifier of its own file, so a C file is never announced as C++.
+- Inlay hints are not requested, because a plain text editor cannot place a glyph that is not in the document without changing the file it would then save.
+- The `.editorconfig` files that apply to the open documents are watched, so creating, changing or removing one reindents the open documents of that workspace without reopening them.
+- The language-server preference disables the complete integration, so no server process is started, every running server is stopped and the Problems surface disappears.
+- Language-server shutdown is asynchronous and object destruction never waits on a child process from the GUI thread.
+- A language server dies with the transport that owns it rather than with a message that may not be delivered, so Qt never has to clean up a process that is still running.
+- That transport kills and reaps the server in its own destructor, which its own thread runs as it finishes, so nothing is abandoned to an event loop that has already been asked to stop.
+- A transport thread outlives the client that asked it to end, so every one of them is registered while it runs and drained at teardown, before the library it is running unloads and before the process exits.
+- A thread leaves that register by the identity it was entered with rather than by the thread the handler happens to run on, because the signal a thread ends with is delivered to the object that owns it and that object belongs to the thread that created it.
+- A client that stops its transport ends that thread with it, because a client started again would otherwise leave the previous thread running for the rest of the process.
+- A destructor never reaches across threads to disconnect an object it does not own, because its own destruction already disconnects everything it receives.
+- Workspace roots, open documents, document order, active selections, cursor positions and UTC timestamps persist in plugin-owned strict SQLite tables and every stored value is validated when the state loads.
+- The editor settings live in the settings document of the plugin, so word wrap, the font, its size and the language server switch never appear in its schema.
+- State persistence uses revision ordering, a guarded asynchronous context and a final queued snapshot during orderly plugin shutdown.
+- The language-servers settings section owns the enable toggle, detects installed language servers asynchronously and exposes an explicit translated Refresh action.
+- Plugin teardown drains active language-server discovery before unloading executable-resolution code.
+- Every Code Editor string and language name lives in the dedicated `CodeEditorTranslations.h` catalog.
+
+## Visual and layout standard
+
+- The interface is compact and flat, and its complete visual standard is the one defined in this document.
+- Borders separate major surfaces without shadows, gradients or ornamental containers.
+- The selected theme accent communicates selection, active state and success so every positive indicator follows the active theme, while warning and danger stay semantic.
+- Spacing is only as large as required to separate reading contexts.
+- Different responsibilities use one blank line and multiple decorative blank lines are prohibited.
+- Controls use content-driven width except fixed icon targets and bounded navigation rails.
+- Every numeric field steps through the shared stepper, which is a minus and a plus beside the value, whatever kind of spin box it is, because stacked native arrows are unreadable and not flat.
+- The shared style therefore paints no spin indicator at all, because a surface that never asks for one is a surface whose drawing nothing reaches.
+- The selectable list of a combo is a flat themed list, so the native popup with its scrolling bands is disabled by the shared style.
+- A selectable list is presented in alphabetical order whatever order it was built in, because it is read by looking for one entry.
+- That order folds case before comparing and uses case only to break a tie, so it is the same on every machine instead of depending on the locale the system happens to declare.
+- A list whose entries are a scale keeps the order of that scale, covering the reasoning effort and the log level, because reading it as a magnitude is what it is for.
+- A list whose entries are a progression keeps the order of that progression, covering the schedule kinds that read from no schedule to the most expressive one.
+- A list that opens with the choice meaning none keeps that choice first and sorts everything after it, covering the ungrouped bookmarks and the level filter that accepts every level.
+- Presenting a list alphabetically never changes which entry it opens on, so a provider still opens on the model it declares.
+- The horizontal scroll bar is styled exactly like the vertical one, so no surface falls back to the platform look.
+- The selectable field is the shared component that suppresses the platform drop-down and paints its own indicator from the theme, because the platform one draws a box the flat standard does not have.
+- A moment is written in the shared date and time field, which paints the same indicator and opens a calendar of this product rather than the platform one.
+- The editor of a spin box covers the whole field, so the press on that indicator is caught where it really lands, and a test that clicks it clicks the editor rather than the field.
+- That calendar is a month of cells sized from the theme, so no day is elided into dots, the days outside the month read as muted, the chosen day carries the accent and no weekend is painted in a colour that means nothing here.
+- Choosing a day keeps the time already written, because the two halves of a moment are edited independently.
+- Buttons use symmetric padding and native icons rather than emoji or text glyph substitutes.
+- Plugin views consume the complete right-side content area supplied by core.
+- Full-page data grids have no outer margin and extend to the left, right and bottom edges of their plugin content area.
+- Grid controls belong to a separate compact header so toolbar padding never indents the grid surface.
+- Layouts remain usable at the minimum window size.
+- Destructive actions use the shared confirmation surface with translated labels.
+- Notifications use the shared toast overlay with information, success, warning and error severities.
+- The toast overlay is a core-owned transparent child of the main window, stacks at most four live toasts in the bottom corner, fades in and out and never changes the geometry of the content below it.
+- The overlay is exactly as large as the stack of its live toasts and hides itself while it carries none, so it never sits over a point of the window that it does not own.
+- The overlay masks itself to the rectangles of its live toasts, so the gaps between stacked toasts stay click-through.
+- The overlay never uses transparency for mouse events, because that attribute also disables input for its children and silences the toast close button.
+- An empty region passed to a widget mask clears that mask instead of hiding the widget, so a surface that must stop intercepting input is hidden or resized rather than masked to nothing.
+- Alerts expand vertically for wrapped messages and never reduce or overlap the content widget geometry.
+- A dialog that shows a message grows to carry it through the shared growth, so the fields above it keep the room they had and no owner writes that resize itself.
+- A shape that must stay correct at any size is painted rather than styled, so a status indicator never depends on a radius matching its geometry.
+- A round control takes its size and its radius from one metric, so the radius is half that size by construction and the shape can never be drawn as an oval.
+- Every icon contribution uses a non-null `QIcon` and every icon is verified by rendering it before it ships.
+- An icon taken from a published set is reproduced as painted geometry rather than shipped as a file, so it follows the active theme like every other one, and the comment above it records where the shape comes from.
+- Every icon is stroked in the colour its caller passes and covers the same pixels whatever that colour is, so a theme changes the colour of a glyph and never its shape.
+- The complete icon set is answered by one accessor, so a new icon is covered by the cases that render and compare every one of them rather than by a list kept by hand.
+- The lint command refuses an accessor that disagrees with the icon enumeration, because the painter is held to every icon by the compiler while that list is not.
+- No two icons draw the same thing, because an icon names the destination it opens and two destinations drawn alike are one destination to the reader.
+- One action draws one glyph everywhere it appears, so editing is the same mark on a card, on a bookmark, on a connection and on a server row.
+- The plain addition mark belongs to the thing a surface is mostly for, so on the board it adds a task and the workspace carries the mark of a board instead.
+- A dialog that returns nothing to its caller is opened without a nested event loop, because that loop keeps running while the widget that opened it can be destroyed underneath it.
+- Such a surface is opened through the shared window opener, which names it and shows it as a window modal to the application, because a dialog modal to its parent is drawn as a sheet with none of the buttons a window carries.
+- A dialog whose answer nobody reads returns nothing, so a surface that only needs to know it closed connects to that instead of holding the event loop until it does.
+- A dialog that returns an answer runs its nested loop only when it was opened from a widget the surface never destroys.
+- Deferred deletion does not protect a widget from a nested modal loop, because that loop delivers the deletion it was posted for.
+- Icons placed on accent or destructive filled buttons use the theme on-accent color and never inherit the neutral icon color.
+
+## C++ implementation standard
+
+- The anonymous namespace is never used, so every constant, type and function belongs to a named namespace.
+- The lint command refuses an anonymous namespace, because a rule that hides nothing from the other files is one nobody notices being broken.
+- Every function is a member of a class and every class lives in the namespace of the area that owns it, so nothing is declared loose at namespace scope.
+- A helper that belongs to one file is a static member of a `<File>Helper` class declared and defined in that file, so the header of the file stays free of its implementation details.
+- A function the rest of the product calls is a static member of a class its own header declares, named for the responsibility it carries rather than for the file it happens to sit in.
+- The lint command refuses a function declared or defined at namespace scope, because a rule about where code lives is one that drifts the moment nobody checks it.
+- The lint command refuses a method nobody calls, reading a body written inline in a header as strictly as a prototype, telling a declaration from a call written as a statement by the return type that precedes it, and leaving a method that overrides another to whoever declared it.
+- That audit reads a definition written inline in a header exactly as it reads a declaration, because a body written beside the class is as loose as a prototype written above it.
+- A member defined out of line is not one of those, so the audit tells the two apart by the class name the definition carries.
+- A constant or a type that belongs to one implementation file is declared in the project namespace of that file, and its name is unique in the project because nothing hides it from the other files any more.
+- A header carries no comment that describes what a declaration does, and carries a one line comment only when it records a decision the declaration cannot express.
+- A comment above an implementation inside a header follows the same rules as a comment inside an implementation file.
+- A method reads as a beginning, a middle and an end, so a validation block, a mutation block and a return block are separated by one blank line.
+- A branch or a loop that spans lines is separated from the statements around it by one blank line, because a block glued to the paragraph above it reads as one more line of that paragraph.
+- Consecutive guard clauses stay together, because a run of validations that each return is one block rather than several.
+- No blank line follows the brace that opens a scope and none precedes the brace that closes it, because the scope already begins and ends there.
+- The lint command refuses either one, because a scope the formatter never touches drifts wherever it is edited.
+- A method that accumulates responsibilities is split into small named methods, and a linear sequence or a mapping table stays whole because splitting it would hide the flow.
+- Includes are one group for the header of the file, one group for project headers, one group for Qt headers, one group for platform and third-party headers and one group for standard headers, in that order.
+- The formatter owns the order inside a group, so the sorting is the case-sensitive one it applies and never a hand-made ordering.
+- The lint command refuses a group that mixes two of those kinds and a file whose groups fall out of that order, because the formatter sorts inside a group and never moves an include between them.
+- A header is included once per file, and the only repeated include is one the preprocessor selects between alternative branches.
+- Two blank lines never follow each other, which the formatter itself keeps rather than a reading, because it is the one tool that already visits every line.
+
+- All code, identifiers, error text and code comments are written in English.
+- A member variable carries the `m_` prefix and no identifier begins or ends with an underscore.
+- A value object holding configuration is named `<Owner>Settings`, a type that only loads and saves it is named `<Owner>SettingsStore`, a type that persists the entities of a plugin is named `<Owner>Repository` and carries the settings document of that plugin, and a settings surface is named `<Owner>SettingsView`.
+- The conversion between a settings document and its value object is named `settingsFromDocument` and `settingsDocument` in every owner that has such a value object, and an owner holding a single stored value needs none.
+- Every field of such a value object travels both ways through that pair, proven by a case that writes each of them away from its default and reads them all back, because a field either half forgot is a setting the reader loses on the next start.
+- Descriptive names make routine comments unnecessary.
+- Every comment is a complete sentence starting with a capital letter and ending with a period.
+- A sentence that must start with an identifier written in lowercase keeps its exact spelling, and the sentence is preferably rewritten so that identifier is not at the start.
+- The lint command refuses a comment that opens in lower case, so a sentence naming such an identifier is rewritten rather than left opening with it.
+- The comment above a function, method, class or module says what it does for whoever calls it and never how it is implemented inside.
+- Comments are objective and read naturally, never verbose, fragmented or narrative.
+- A sentence never spans more than one line and never continues on the next one.
+- A comment needing more than one sentence ends the current one with a period before the next one begins on the following line.
+- The `// clang-format off` and `// clang-format on` markers are formatter directives rather than comments and stay lowercase.
+- Comments explain context or intent and never narrate literal behavior.
+- Two comments never say the same clause, because the second explains nothing the first did not, and the lint command refuses the repetition.
+- Headers contain no comments describing methods, members or artificial sections.
+- A comment sits on the declaration it explains, so a comment followed by a blank line explains nothing and does not exist in the project.
+- The lint command refuses a comment separated from what it explains, a comment dividing a sentence with a semicolon and a comment that does not end its sentence, across the sources and the suite alike.
+- The lint command refuses a translation catalog whose language is built from another one, because no case reading the finished map can tell that apart.
+- The lint command refuses a translation key nothing reaches, accepting one the code names itself and one composed from a family the code names, because a sentence no caller asks for is one the reader never sees.
+- The lint command refuses a theme token no style sheet consumes and a token a style sheet writes that nothing substitutes, because the second one reaches the screen spelled as itself.
+- The lint command refuses a signal nothing emits or connects and a value of a closed set nothing names, because a declaration the reader never meets is one nobody removed.
+- The lint command refuses a future continuation that captures something without naming the object it reaches, because that object is what cancels it.
+- The lint command refuses a connection or a single shot timer whose lambda captures something without naming that context, holding both to what it already holds every continuation to.
+- The lint command refuses a dereferenced sender, because that is a null pointer whenever the slot is reached any other way.
+- The lint command refuses a call whose arguments do not match the sentence it formats, counting what each call really passes and holding both branches of a call that chooses between two sentences to the same count.
+- Complex methods use short intent comments only at important responsibility boundaries.
+- Validation, mutation, side effects and returns are visually separated.
+- Methods have a visually clear beginning, middle and end.
+- Early returns reduce nesting and no unnecessary `else` follows a return.
+- Helpers represent cohesive responsibilities and are not extracted only to reduce length.
+- Artificial abstractions, generic fallbacks and unknown-value behavior are prohibited.
+- Closed value sets are validated explicitly and invalid values produce explicit errors.
+- Includes are direct, minimal, grouped and ordered consistently, so every file includes the standard header of every standard symbol it names instead of receiving it through another header.
+- A header nothing in the file needs is removed, and the compiler decides that rather than a reading, because a type reached through a chain of calls is needed complete without ever being named.
+- Every function call remains complete on one physical line.
+- Every declaration, expression, assignment and return statement remains complete on one physical line, and a mapping table protected from the formatter is written on one line like every other one.
+- The lint command refuses a statement continued on the next line, because the formatter never wraps one and only a hand-written break survives it.
+- Arguments, parameters, chained calls, conditions and operators are never wrapped across lines.
+- The formatter uses an effectively unlimited column width and must not introduce line wrapping.
+- Each independent execution occupies its own complete line.
+- Values, `const`, references, RAII and smart pointers are preferred.
+- Unsafe casts, owning raw pointers and avoidable macros are prohibited.
+- A platform function answering into storage it shares with the whole process is called in its reentrant form, so a description or a record is never replaced under its reader by another thread asking the same question.
+- Public headers, implementations, namespaces, names and ownership stay aligned.
+- Prose never divides sentences with semicolons.
+- Documentation sentences begin with words rather than inline code markers.
+
+## Lambda formatting
+
+- Every C++ lambda is formatted manually.
+- Every lambda expression is enclosed by `// clang-format off` and `// clang-format on`.
+- Formatting markers are lowercase one-line comments.
+- Captures, parameters, calls and bodies remain compact and easy to scan.
+- Protection applies to inline lambdas, local lambda variables, predicates, threads and nested lambdas.
+- A complex lambda passed to a function is assigned to a named local variable first so the function call remains complete on one physical line.
+- The formatter must never rewrite a C++ lambda.
+- The lint command refuses a lambda without its markers and names every one it finds, because a rule audited by habit is a rule that drifts.
+- That audit strips string literals before it matches, so a literal spelling brackets and braces is not read as a lambda.
+
+## Automated testing standard
+
+- Every production behavior has automated coverage for success, failure, boundary and lifecycle
+  paths that are meaningful for its contract.
+- Tests are organized by ownership into core, Browser, Code Editor, Donate, logs, System Information, AI Tasks, terminal and web-server plugin suites.
+- CTest discovers every GoogleTest case independently and a missing test suite is an error.
+- Test targets reuse the production libraries or object libraries instead of recompiling alternate
+  implementations.
+- The entry point carrying the fixture servers is one object library every suite links, because a source belongs to one target in the test tree exactly as it does in the product.
+- A lifetime a single case cannot reach is covered by a stress case that repeats it, because an order the platform decides shows up in repetition and the sanitizers turn it into a report.
+- Production code receives external dependencies through explicit interfaces and factories when
+  deterministic testing requires a controlled implementation.
+- Fakes model PTY and host boundaries without shell processes, user state or external services.
+- A filesystem fake refuses exactly what the real service refuses, because a tool that only works against a permissive double is a tool that does not work.
+- A database fake answers only the columns the statement it received names, because a reader that forgot to select a column must fail in the suite exactly as it fails against the real database.
+- It answers the rows that statement selects and in the order it names, because a reader presenting the newest first must be exercised against the newest first.
+- A reader whose answer depends on real SQL is exercised against the real database rather than a double, because a double reproduces the statement and not the semantics that answer it.
+- What a plugin keeps between starts is written to a real database and read from a second start of that plugin, because a double enforces no column that must not be null, no value a check refuses and no row a cascade removes.
+- Integration tests load the real bundled plugin libraries and exercise discovery, dependency
+  ordering, localization, navigation, settings and application composition.
+- Network tests bind only to ephemeral loopback ports, never contact external hosts and answer only after the request arrives, because a server that writes before the client speaks is not answering a request.
+- Filesystem tests use unique temporary directories and never read or mutate user application data.
+- A case about what the agent reads asserts what its temporary workspace declares and never a total, because the machine roots hold whatever the reader of that machine put there and a count over both passes or fails by accident.
+- GUI tests use the offscreen Qt platform on macOS and Linux and the native platform plugin on Windows, where the offscreen plugin exposes no font database, and verify layout behavior through observable geometry,
+  signals and widget state.
+- A GUI test never waits for a window to be exposed, because a continuous integration session has no compositor to expose it.
+- A test that runs a command uses the shell of the running platform, because the runner starts the native one.
+- Concurrency tests synchronize through observable conditions and never depend on arbitrary sleeps.
+- Asynchronous waiting uses `workpane::test::waitUntil` inside a GoogleTest assertion so an expired condition fails the test instead of ending it silently.
+- A thread a case starts records what it saw and the case asserts it after joining, because a GoogleTest assertion is only thread safe where pthreads are and asserting from a second thread is undefined on Windows.
+- The asynchronous wait budget scales with the toolchain so an instrumented build waits longer for the same condition instead of relaxing the assertion.
+- A wait whose condition is many operations carries a budget measured by that count rather than the default one condition gets, because a case sitting at the edge of its budget fails whenever the machine is busy and teaches nobody anything.
+- A case that waits for work to finish reports what the work said when it failed, so a real failure is never read as slowness.
+- A case that waits for a signal reports the state that decides whether it is emitted, because an expired wait that says only that it expired cannot be told from work that correctly had nothing to report.
+- A wait names the answer it is about rather than the shape of one, because a server that reports on the file it pulled in as well satisfies a count before the answer the case is waiting for arrives.
+- Only one test runner reads a build directory at a time, because two of them rewrite the generated discovery files under each other and the parse error that follows reads as a product failure.
+- A case asserts what the product guarantees rather than what a platform usually does, so a save the platform refuses is answered the way the reader answers it instead of failing the case.
+- A case proving a layout that is decided by measured text supplies text no font could measure the other way, because the metrics of a font belong to the platform rather than to the product.
+- The registered case timeout scales with the same toolchain and always stays above that wait budget, so an expired condition fails its assertion instead of killing the process.
+- A case chains many of those conditions and the registered timeout covers the whole case, so that timeout stays far above the per-condition budget and only a stuck process is killed.
+- The discovery of a suite has its own timeout, because a suite that links Qt WebEngine needs seconds to answer the listing on a cold runner and the default of five seconds fails the whole run.
+- The shared `workpane::test::waitUntil` delegates to `QTest::qWaitFor`, so Qt Test owns the event-loop aware waiting while GoogleTest owns every assertion and outcome.
+- Qt Test assertion and waiting macros are prohibited inside GoogleTest cases because an expired `QTRY_` macro returns from the case and reports it as passed.
+- A test that clicks a rebuilt widget resolves that widget again after the rebuild instead of reusing the pointer captured before it.
+- A test that clicks an action waits for that action to become enabled, because a click on a disabled control is silently discarded.
+- The staged plugin copy the integration suite loads depends on the plugin libraries themselves, so a plugin change can never leave the suite validating a stale library.
+- A test never asserts that a recreated object differs by address, because an allocator legitimately reuses the address it just released.
+- Error tests assert stable structured error codes in addition to the absence of invalid mutation.
+- Persistence tests cover schema versions, migrations, transaction rollback, malformed values, duplicate identities, query failures and round trips.
+- Security-sensitive path and protocol tests cover traversal, symlink escape, invalid encoding,
+  malformed requests and configured resource limits.
+- Every parser that reads bytes somebody else decided is fed hostile input from a seeded generator, so it is proven to answer rather than to read past what it was given or never return.
+- The front matter of a skill is such bytes, because whoever prepared the workspace wrote it and this project only reads it.
+- A recursion whose depth comes from input carries a bound the code declares, because a stack is a resource the input must not choose the size of.
+- Time-dependent tests compare UTC values or bounded time ranges and do not depend on a fixed local
+  timezone.
+- Test doubles remain in the test tree and no test-only behavior is compiled into production code.
+- A method connected to a signal is declared a slot, which is what it is, and that is the only reason a case may reach one that is private.
+- Every test owns and deterministically releases its files, sockets, threads, widgets and processes.
+- Tests must be independent, repeatable and valid in any execution order or parallel schedule.
+- AddressSanitizer and UndefinedBehaviorSanitizer execute the complete registered suite when the
+  selected toolchain supports them.
+- The thread sanitizer is not part of that set, because Qt is consumed as a shared build it never instrumented, so every report it produces is a handoff whose synchronization it cannot see, and using it here would need a thread-sanitized Qt rather than the one the product ships against.
+- Coverage instrumentation applies to first-party core and plugin targets while excluding external
+  dependencies and test implementation code.
+- The counters of the previous run are cleared before the suite starts, because a report merged with counters belonging to the sources as they were then describes neither build, and a case that starts a child of the test binary reads that merge as output the child produced.
+- New behavior is incomplete until its success, error and relevant boundary cases are registered in
+  CTest and pass through the repository test command.
+
+## Development and validation workflow
+
+1. Read this guide and directly affected files.
+2. Determine whether ownership belongs to core, a plugin or the shared interface.
+3. Update contracts before implementations when a boundary changes.
+4. Update strict parsing and serialization together when state changes.
+5. Update lifecycle and ownership before connecting UI behavior.
+6. Add every visible string to the owning translation catalog.
+7. Protect and manually format every lambda.
+8. Run formatting and formatting verification.
+9. Audit lambda guards and comments, which the lint command does.
+10. Compile every target with warnings as errors.
+11. Add or update focused GoogleTest cases for every changed success, error and boundary contract.
+12. Run Cppcheck warning, performance and portability analysis.
+13. Run AddressSanitizer and UndefinedBehaviorSanitizer builds when supported.
+14. Launch with isolated current-format state for a native smoke test.
+15. Verify discovery, navigation, settings, translation, terminal startup and clean shutdown.
+16. Review the diff for dead code, obsolete interfaces, unbuilt sources and compatibility paths.
+17. Update this file whenever architecture or engineering rules change.
+
+## Supported repository commands
+
+- The doctor command is `python3 make.py doctor` and it names the Qt the build will use, because a machine carrying a Qt older than the declared minimum resolves that one first and the configure fails on it.
+- The version the build requires is declared once in the `find_package` call, and the runner reads it from there rather than repeating the number.
+- A Qt named through the environment is a Qt the reader chose, so the runner passes none of its own and only reads the installer layout when nobody named one.
+- The configure command is `python3 make.py configure`.
+- The build command is `python3 make.py build`.
+- The native run command is `python3 make.py run`.
+- The formatting command is `python3 make.py format`.
+- The verification command is `python3 make.py format-check`.
+- The audit command is `python3 make.py audit` and it runs every audit this project declares for itself, which needs no tool the platform has to supply.
+- The lint command is `python3 make.py lint` and it runs those audits before running Cppcheck.
+- The sanitizer command is `python3 make.py sanitize`.
+- The registered test command is `python3 make.py test`.
+- The coverage report command is `python3 make.py coverage`.
+- The aggregate command is `python3 make.py all` and it checks the formatting, runs the audits, builds and runs the registered suites, because a rule the aggregate skips is one nobody runs.
+- The clean commands are `python3 make.py clean` for the selected configuration and `python3 make.py distclean` for every generated build directory.
+- The application data reset command is `python3 make.py reset-data` and it removes the database and every plugin state after a typed confirmation, which `python3 make.py reset-data force` skips.
+- The version command is `python3 make.py version` and it prints the current version or writes a new `MAJOR.MINOR.PATCH` value.
+- The model catalog command is `python3 make.py models <path to a LiteLLM checkout>` and it rewrites the AI model catalog from that checkout.
+- The packaging command is `python3 make.py package`.
+- The package validation command is `python3 make.py validate-package`.
+
+## Continuous integration and release
+
+- Every push to the default branch and every pull request builds Linux, macOS and Windows through reusable GitHub Actions workflows.
+- Every one of those three builds the release configuration alone, so a failure only the debug configuration carries is invisible there and is found by building it by hand, which is what the object section limit of a large translation unit turned out to be.
+- A value built from nested initialisers is assembled through named locals rather than as one expression, because the MSVC front end runs out of heap on a deep enough one and answers with a fatal error rather than a warning, which is what a diagnostic carrying its related location turned out to be.
+- Each platform workflow installs the pinned Qt 6.11.2 shared build with Qt WebEngine, installs Zig for the pinned Ghostty dependency, configures with Ninja, builds, runs the registered CTest suite and produces the platform package.
+- The Linux workflow runs the audits before it builds, because they are the rules this project writes for itself and they need no tool whose version the runner decides.
+- The formatting check and Cppcheck stay local, because the runner ships versions two releases apart from the ones the project is written against and either would refuse code that is correct.
+- Every platform workflow validates the produced package before uploading its artifact.
+- Every workflow job declares its own timeout, because a runner that stalls installing a dependency would otherwise hold the job for the six hours the platform allows by default.
+- Every action a workflow uses is pinned to a version that runs on the interpreter the platform still supports, and which version that is comes from what the action itself declares rather than from what its release notes claim, because the two disagree.
+- macOS signing and notarization run only when the repository provides the signing certificate, the signing identity and the notarization credentials, and the build falls back to an ad-hoc signature for unsigned validation builds.
+- The macOS install step applies the hardened runtime and a secure timestamp only when a real signing identity is selected.
+- Tag pushes matching `v*` build every platform and publish one release containing the Debian package, the macOS disk image and the Windows installer.
+- The application version lives only in the root `project()` declaration, reaches the application through the generated `BuildInfo.h` and is shown in the application settings.
+- The bundle identifier is declared once beside the version and reaches both the macOS bundle and the Windows manifest, because Qt names an application after a company nobody owns when nothing declares it.
+
+## Build and packaging invariants
+
+- CMake configuration fails immediately when the selected Qt 6 installation is static.
+- The core executable, all eight feature plugins and every test target compile with warnings as errors.
+- Every bundled feature plugin is a shared library and no feature implementation is linked into the application executable.
+- macOS assembly places all eight plugins and the shared `hwinfo` component libraries in the application bundle before Qt deployment analyzes runtime dependencies.
+- macOS deployment includes the shared Qt frameworks, the Cocoa platform plugin, WebEngine frameworks, WebEngine resources and the WebEngine helper process.
+- Windows and Linux deployment analyze every plugin library in addition to the core executable so plugin-only Qt modules are never omitted.
+- Every plugin is installed beside the executable rather than beside the package root, because that is where the application looks for its own plugins and where the development build already puts them, and a package that puts them anywhere else opens nothing at all.
+- Windows ships the shared `hwinfo` components beside the executable, because a Windows loader resolves a dependent library from there and a plugin that cannot load stops the whole start.
+- Release packaging signs the assembled macOS application only after dependency paths and bundle contents are finalized.
+- Every platform produces exactly one file and that file is what the reader opens, which is a disk image on macOS, an installer on Windows and a Debian package on Linux.
+- Windows ships an installer rather than an archive, because an archive downloaded through a browser arrives inside a second archive and leaves the reader to decide where the application belongs.
+- The Windows installer places the application under Program Files, creates a Start Menu entry and a desktop shortcut pointing at the executable, and removes both when it is uninstalled.
+- The Debian package installs the whole application under `/opt/workpane`, because it carries its own Qt and shares no library with the distribution, and installs beside it a desktop entry, an application icon and the `workpane` command a shell already looks for.
+- The dependencies that package declares are read from the libraries it really carries rather than written by hand, and the bundled ones are resolved through the run paths those libraries already declare.
+- Package validation checks the executable, the plugins beside it, the WebEngine helper, Qt shipped as a shared library and the hardware components, on macOS the assembled signature and on Linux the desktop entry, the icon and the linked command.
+- That validation reads what the package really carries rather than its file name, because a check that only asks whether a file exists certifies one that cannot start.
+- The Debian package is read with `dpkg-deb`, which is the reader of that format, while macOS and Windows are held to the assembled tree their generator compressed, because neither a disk image nor an installer is an archive anything reads back and that tree is what the reader ends up with either way.
+
+## Detailed completion checklist
+
+- [x] Core discovery loads plugins without feature names.
+- [x] Qt interface casting rejects libraries outside the current contract.
+- [x] Identifiers, dependencies, catalogs, navigation and settings metadata are validated.
+- [x] Dependency order controls initialization and reverse order controls shutdown.
+- [x] Server sources compile only into their plugin target and the terminal engine compiles once as the shared core component.
+- [x] The core executable contains no feature implementation source.
+- [x] The mode bar and right-side views come entirely from plugin contributions.
+- [x] Settings categories and sections accept both core-owned and plugin-owned contributions.
+- [x] Plugins may contribute multiple independent settings groups with ordered sections.
+- [x] Every single-section settings group uses the General section identifier.
+- [x] Terminal and server preferences are owned by their plugins.
+- [x] Logs and AI contribute their own navigation, General settings and translations.
+- [x] System Information contributes its own secondary navigation, translations, themed hardware view and asynchronous refresh lifecycle.
+- [x] Every plugin exposes navigation exclusively as an ordered list and every settings section it declares is rendered by the settings shell.
+- [x] Browser contributes its own navigation, General settings, translations and isolated persistent state.
+- [x] Code Editor contributes its own navigation, General settings, translations and isolated persistent state.
+- [x] Every plugin catalog is isolated in its dedicated translations header.
+- [x] Donate owns its verified links, bundled profile image, translations and final-priority navigation item.
+- [x] Donate remains the final plugin feature and Settings remains the absolute last navigation item.
+- [x] Every visible string belongs to the appropriate catalog.
+- [x] Locale lookup follows full locale, base language, English and key order.
+- [x] The core Application settings list every supported language and persist the explicit selection.
+- [x] The core Application settings list Green, Blue and Red themes and persist the stable selected identifier.
+- [x] The abstract theme contract requires colors, metrics, fonts, identifiers and translated title keys from every concrete theme.
+- [x] Green is the first-run and unknown-identifier theme while invalid user selections are rejected explicitly.
+- [x] Theme changes reapply palette, fonts, shell styles, plugin styles, navigation icons and visible views without restarting plugin runtimes.
+- [x] Failed asynchronous theme persistence restores the last committed complete theme.
+- [x] Plugins receive the active theme through their scoped host and contribution contracts.
+- [x] Shared accent-button icons render in the on-accent color for Green, Blue and Red.
+- [x] Legacy duplicated application metrics and plugin-local application style implementations are removed.
+- [x] Duplicated tool-button factories, table configuration, page headers, section titles, empty states, stored timestamp handling, strict integer reading and exact-key payload checks are removed in favor of the shared contracts.
+- [x] The application tab system replaces the Qt tab visuals on every tabbed surface.
+- [x] AI task creation reports every invalid field as a validation message and a failed run stays visible on its card with its status badge.
+- [x] The terminal, the editor and the chat own independent font sizes and step them from their own views, because a zoom that reached every surface at once changed the terminal while the reader was in the editor.
+- [x] Zooming answers every combination a keyboard offers for a direction, measured on Windows where the single declared one left the plus of the keypad and the plus the standard key names doing nothing.
+- [x] Success indicators follow the active theme accent while warning and danger stay semantic.
+- [x] Every style sheet resolves its theme values through the single token substitution, no token is defined without a style sheet that consumes it and no style sheet writes one nothing substitutes, which the lint command now refuses.
+- [x] Every shared component, stored-value and payload contract has direct coverage for its success, rejection and boundary cases.
+- [x] A stored settings value the owner cannot use is the declared default and every other value still loads, and a key nobody declares changes nothing.
+- [x] Every field of the AI, terminal and editor settings survives the document and comes back, proven against the writer that forgot one.
+- [x] Every field of a task, its schedule included, survives the database and comes back, proven against the reader that stopped selecting a column.
+- [x] The tabs, the bookmarks, the web server configurations, the terminal workspace and the paging of the logs are all exercised against a real database, which none of those five suites did before.
+- [x] A second consecutive external edit reaches the open document, proven by a case that was intermittent while the watch was not rearmed.
+- [x] The shared page header, data grid, tool button, section title, empty state and timestamp primitives are owned by the core and consumed by every plugin.
+- [x] First-run language selection follows complete system locale, base language and English order.
+- [x] Manual language changes retranslate the active shell and plugin views without restarting plugin runtimes.
+- [x] Failed language persistence restores the committed locale and visible translations.
+- [x] Translation identifiers use the required lowercase three-component format.
+- [x] Requests and callbacks deliver asynchronously to guarded Qt contexts.
+- [x] The scoped host prevents sender impersonation and cross-plugin state access.
+- [x] Request callbacks cannot complete more than once.
+- [x] Requests time out, cancel on callback destruction and are released before plugin libraries unload.
+- [x] Missing targets and unknown request topics return explicit errors.
+- [x] Consumed event and request payloads are strictly validated.
+- [x] Central log events use scoped sender attribution and strict structured payloads.
+- [x] Server integration contains no terminal implementation dependency.
+- [x] Terminal integration crosses only the JSON message bus.
+- [x] Web Server creation, persistence, execution and logs operate without the Terminal plugin.
+- [x] Terminal-linked servers keep an independent identity and survive terminal closure.
+- [x] Core state stores only shell preferences, lifecycle state and plugin schema versions.
+- [x] No generic plugin state table or generic plugin state API exists.
+- [x] Every plugin owns its prefixed tables and rejects malformed owned data.
+- [x] Scoped SQL validation rejects cross-plugin table and index access, quoted-identifier bypasses, comma joins, parenthesized sources and multiple statements.
+- [x] The core schema is at version one, creates every table in one migration and rejects every other stored version.
+- [x] Every plugin declares one creating migration and composed mutations are transactional.
+- [x] Browser tabs restore URLs, titles, order, active state and UTC timestamps across application restarts.
+- [x] Browser navigation supports focused tab controls and validates every accepted address scheme.
+- [x] Browser session mutations persist asynchronously without blocking the GUI thread.
+- [x] Browser bookmarks and optional groups support translated creation, editing, removal and restart restoration.
+- [x] Browser bookmarks open in the current or a new tab and drag safely between ordered groups and the ungrouped collection.
+- [x] Bookmark persistence validates complete layouts and rolls back failed asynchronous writes.
+- [x] Code Editor restores folder and document tabs with active selections, ordering and cursor positions.
+- [x] Code Editor filesystem operations run through the generic asynchronous core service and use atomic writes.
+- [x] Code Editor rejects traversal, symbolic-link escape, binary input, invalid UTF-8 and oversized files.
+- [x] Code Editor opens and saves UTF-8, UTF-8 with a mark and both UTF-16 orders byte for byte, and names an encoding it cannot write back.
+- [x] The find bar reports the current match inside the total, marks every match and honours the case-sensitive and whole-word options.
+- [x] Code Editor observes external tree and file changes while preserving unsaved buffers on conflicts.
+- [x] Code Editor provides built-in multi-language syntax highlighting, find, line navigation, diagnostics and completion.
+- [x] Code Editor discovers explicit language-server executable and argument pairs including CMake support.
+- [x] The Code Editor language-server integration is disabled from settings, stopping every running server and hiding the Problems surface.
+- [x] Code Editor exchanges bounded JSON-RPC messages with language servers and handles initialization, server requests, diagnostics, completion and asynchronous shutdown.
+- [x] The language-server client negotiates capabilities, synchronizes incrementally, notifies saves, cancels superseded requests and restarts a crashed server inside a bounded budget.
+- [x] Completion inserts what the server declares, trigger characters request it, and definition and hover reach the document the location names.
+- [x] A capability the server announces only after initialization is honoured, proven against a server whose initialize result declares nothing but synchronization.
+- [x] A deprecated token reaches the text struck through and a read only one slanted, proven by reading the format the document really painted.
+- [x] A proposal whose label carries none of what was typed is kept by the filter text the server declared, and a list declared incomplete is asked for again instead of narrowed.
+- [x] The workspace presents the outline, the workspace symbol search, the references, the occurrences, the semantic tokens, the signature help and the indexing progress the server reports.
+- [x] Both directions of the call hierarchy answer, proven against a server that names the symbol first and then who reaches it and what it reaches.
+- [x] Text is searched across the whole workspace without any language server, proven from the search itself for the bounds and the binary it skips, and from the surface for the row it opens.
+- [x] Diagnostics are underlined in the text, presented in the tooltip and forgotten when their document closes.
+- [x] The code, the origin, the tags and the related location of a diagnostic reach the reader, proven by reading them back from a server that sends all four and by the format the editor really painted.
+- [x] An `.editorconfig` that appears, changes or disappears reindents the open documents of that workspace immediately.
+- [x] Configuration export waits behind pending database writes and produces one consistent SQLite snapshot.
+- [x] An export says it started and says it finished, leaves a database this version opens carrying what the shell held, and releases the transfer so the next one is not refused.
+- [x] Configuration import validates and stages the complete database before orderly restart and atomic replacement.
+- [x] Invalid configuration transfers preserve the current database and report explicit errors.
+- [x] Interrupted import finalization cannot reapply a database that was already rejected and rolled back.
+- [x] The process lock prevents concurrent writers.
+- [x] A start refused by that lock or by a data directory it cannot create is torn down without having built anything, and takes nothing from the instance that holds the lock.
+- [x] Each plugin owns one embedded creating migration for its prefixed tables and indexes.
+- [x] Composed plugin writes use rollback-safe database transactions.
+- [x] Logs load newest first in bounded pages and support filtering and explicit clearing.
+- [x] System Information collects operating-system, CPU, memory, GPU, mainboard, disk, battery and network data outside the GUI thread.
+- [x] System Information exposes unavailable platform fields honestly, publishes only complete snapshots and cancels active collection before unload.
+- [x] System Information displays UTC capture time in the current timezone and locale and formats hardware quantities through the system locale.
+- [x] The AI provider catalog is loaded from `providers.json` and `models.json`, declaring every supported provider, its wire protocol, its models and the parameters each model trait allows.
+- [x] A malformed catalog file rejects the complete plugin, exercised by loading the catalog from text in the suite.
+- [x] Every modality of every provider is reached through one resolver, and every way of declaring an endpoint wrongly is refused from text.
+- [x] Provider parameter validation rejects wrong types, out-of-range values, undeclared enumeration values and parameters the selected model does not declare.
+- [x] The extra parameters are merged over the declared fields, a dotted key reaches a nested field and a null removes one.
+- [x] AI Tasks groups tasks into renameable workspaces and renders the five kanban columns.
+- [x] AI tasks execute through the connection they name and record every run with its tokens, finish reason and content.
+- [x] AI Tasks persists its model connections, its default connection and its parallel limit, treats zero as unlimited and restores the queue after restart.
+- [x] One selector governs every per-provider section of the providers group, and a limit written there lands on the provider that selector names.
+- [x] A task stores only its connection key, resolves it when it starts and fails with a stable code when that connection is gone.
+- [x] Idle, Waiting and Running states, capacity changes and atomic stops are represented consistently in storage and kanban cards.
+- [x] AI Tasks supports editable one-time, interval and strict POSIX cron schedules with UTC persistence, timezone-aware calculation and atomic occurrence advancement.
+- [x] Queue capacity, queue restoration, stop behavior, cron parsing and provider dispatch have success and error coverage.
+- [x] Kanban drag behavior starts Doing tasks and stops active tasks moved elsewhere.
+- [x] Executions and execution logs replace the previous terminal-backed task output.
+- [x] UTC persistence and locale-aware local presentation apply to logs and AI schedules.
+- [x] Shared alerts use icon-bearing severity states above content instead of a bottom error bar.
+- [x] Error expansion grows every dialog that shows a message without compressing the fields above it.
+- [x] Every catalog spells every key in English and in Portuguese, proven by one case per owner.
+- [x] The translated mode bar expands to its longest word and wraps only at word boundaries.
+- [x] Core and plugin shortcuts are owned separately and use platform-specific combinations.
+- [x] Quitting answers a combination every keyboard carries, measured against a real Windows build where the standard key resolved to the `Exit` media key and the promised shortcut therefore did nothing.
+- [x] The terminal reserves the quit combination through the shared contract rather than through the standard key, and no longer reserves a preferences combination the application never registers.
+- [x] Plugin shortcuts are scoped to their focused view and cannot act on a hidden terminal.
+- [x] Window close, platform Quit and the core Quit shortcut share a translated cancellable confirmation.
+- [x] Plugin-specific styles are supplied by the owning plugin.
+- [x] Core styling contains only shell and shared design rules.
+- [x] Dead ABI, repositories, command surfaces and unused interfaces are removed.
+- [x] Plugin-owned asynchronous continuations are cancelled before shutdown clears repositories, hosts or runtime state.
+- [x] The shared toast overlay replaces the inline alert bar, stacks bounded toasts and never changes the content geometry.
+- [x] The toast overlay reapplies the active theme and is available to the core and to every plugin through the existing notification API.
+- [x] The selectable language set is English and Portuguese in the domain, the core catalog, every plugin catalog and the settings selector.
+- [x] The application version lives only in the root project declaration, reaches the application through the generated build header and is shown in the application settings.
+- [x] The repository exposes a version task that prints or writes the version and a package validation task.
+- [x] The Code Editor resolves EditorConfig files from the document directory to the workspace root and honours the documented pattern syntax.
+- [x] The Code Editor applies the resolved indentation, trailing whitespace, final newline, line ending and byte order mark rules.
+- [x] The Code Editor reports the cursor line and column, the indentation, the line ending, the character set and the word wrap state in its status bar.
+- [x] The Code Editor word wrap preference is persisted and shared by every open workspace.
+- [x] The Code Editor find bar supports the native find, find-next and find-previous shortcuts and wraps around the document.
+- [x] The native close shortcut closes the focused Code Editor document tab and the focused Browser tab, through every binding the platform declares rather than the first one, measured on real Windows where the second binding is the one readers press.
+- [x] An agent is created, edited and removed in its own settings group, carrying its identifier, name, description, connection, iteration limit and system prompt.
+- [x] The system prompt accepts only the tags the catalog declares, offers the template and the tag list, and refuses an unknown tag where it is written.
+- [x] A model without the system role receives the instructions as the first user message, decided from the capability the model catalog carries.
+- [x] A connection an agent runs on is refused while that agent exists, and removing an agent stops the tasks it was handed with the reason that names it.
+- [x] A task holds a conversation that outlives every run, projected into the shape the wire protocol names and summarized once.
+- [x] Opening a task shows that conversation with its streaming answer, its tool calls and a composer that queues a message typed while a turn is running.
+- [x] The conversation reads as a chat, with sided boxes, avatar discs, Markdown in every role, the line breaks a chat is written with, one width rule bounded at seventy percent, the time on the line when it fits and boxes that reflow with the surface.
+- [x] One surface answers for a task, carrying its conversation, executions, logs and output, following the run while it is open.
+- [x] A turn that is being written says so inside the bubble its answer will land in, and the surface stops it.
+- [x] The chat owns its reading size and steps it from its own view.
+- [x] The tree of an editor workspace is narrowed by the shared filter field.
+- [x] A selected row of a grid is painted in the accent and its actions switch to the ink that reads on it.
+- [x] A turn of several calls presents each result inside the card of the call it answers.
+- [x] A picture a tool read reaches the model in the request that follows the call.
+- [x] A command line agent is offered neither model discovery nor extra parameters, and coming back to a provider reached over a wire restores both.
+- [x] Every one of the nine catalogs declares both languages itself, so the case that reads them back can fail, and the five provider names that were only inherited are declared.
+- [x] A window whose reservation leaves no room fits the conversation down to the instructions and the task, and a model that declares no window still passes it whole.
+- [x] Fitting a conversation of eight hundred messages costs two milliseconds rather than the second it cost while every drop measured the whole conversation again.
+- [x] An import applied over a database whose log a crash left behind reads what the import brought, proven by a case that reads back the previous value without the replacement that discards it.
+- [x] Every byte a text file may carry survives being opened and saved, and a non-breaking space of a UTF-8 source file is still there afterwards.
+- [x] An agent asked to edit a file that is not UTF-8 is refused by name and every byte of that file is still where it was.
+- [x] A command whose output splits a character between two reads reports that character, proven by a fixture that writes the two halves apart.
+- [x] A file larger than one transfer chunk reaches the reader whole, which is the path every real asset of a page takes and which no case entered before.
+- [x] A settings row is the same height whatever control it carries, proven for the selectable field, the toggle, the text field, the button and the stepper rather than for two of them.
+- [x] A button beside a selectable field is the same height as it, measured from what the running style answers for such a field, because a number written here does not dominate the metrics Qt adds.
+- [x] A dialog opens on the field it asks for first, proven against the creation order that gave the focus and the whole tab traversal to the second one.
+- [x] Every prompt template names the same tags in every language, proven against a body with one tag dropped.
+- [x] A workspace of five hundred declared resources is read to the bound the catalog declares and answers, proven against the bound raised so the walk reads everything.
+- [x] A tool call presents its line unwrapped when the surface has room, proven by a case that reads two lines back without the precise measurement.
+- [x] The time takes a line of its own is proven by an answer no font fits on one line, found on a real Windows build where the previous text fitted and the time read inline while every other platform wrapped it.
+- [x] Every turn a summary replaced is still stored after the run that compacted it, because the history of a task is the memory of its agent.
+- [x] A plugin schema that gains a version keeps every row the previous one stored, proven by a case that loses the row against the comparison that read the migrations as text.
+- [x] A database two versions along refuses an older build by name instead of being rebuilt, and a schema that really cannot be used is still rebuilt.
+- [x] The application keeps its data where the platform says unless the reader names a directory, and every way of naming one badly is refused.
+- [x] A database the previous version of the product left keeps its workspaces, its tasks and its runs when the AI schema gains its second version, proven against the real schema rather than a sample one.
+- [x] A group of three bookmarks removed beside an existing ungrouped one keeps all four, keeps their order and writes them numbered from zero.
+- [x] A bookmark dragged between groups in the tree reaches the plugin as the layout the reader built, and a tree that lost one is refused and built again from what is stored.
+- [x] Closing one editor workspace and opening another keeps the widget of every workspace that stayed, proven by watching that none of them was destroyed.
+- [x] The bookmark editor opens on the choice that means none and sorts every group name after it, proven against the composition that would sort that choice into the names.
+- [x] A workspace that comes back without the terminal a server was created from drops that link and keeps the server, with its name, its root and its port as they were.
+- [x] Two snapshots of the tabs answering out of order leave the later one standing, and a failure after them rolls back to it rather than to the earlier one.
+- [x] Every write still waiting when the executor is destroyed reaches the disk, and a folder opened the moment before the product closes is there when it opens again.
+- [x] Rounds of overlapping writes, transactions and reads whose continuation contexts die mid-flight leave every row on the disk and answer nobody who is gone.
+- [x] The filesystem service is driven the same way, so the second serialized worker of the core carries the repetition its sibling does.
+- [x] Every owner that keeps a committed copy guards it by revision, proven for the editor and for the AI by cases that roll back to the older value without that guard.
+- [x] Every one of the hundred and twenty eight continuations names the object it reaches or reaches nothing at all, and the lint command now refuses any other.
+- [x] A run that compacted reports the tokens its summary spent, and a command line agent reports no cost at all.
+- [x] A credential in the environment never reaches a command line agent, proven by a run that reads it back as empty and reads it as the key without the clearing.
+- [x] The input of a command line agent is closed at once, so a program that reads what it was piped is not left waiting.
+- [x] A provider that needs no credential shows no field for one, and the hint under a field that fills itself reads in the muted ink and the caption size of the theme.
+- [x] Every call that formats a sentence passes exactly what that sentence declares, and the lint command refuses any other, including the shape where one branch takes an argument and the other does not.
+- [x] An agent saved with no identifier is given one spelled from its name, and nothing is written into that field while the name is typed.
+- [x] A card dropped into Doing whose agent is gone names that agent, proven against the message about a card that could not be saved.
+- [x] A command line agent is given the model the connection names and reports an estimate of what it spent, since it reports nothing itself.
+- [x] Every model a command line provider offers carries the window and the output bound its own service publishes.
+- [x] A conversation bound for a command line agent keeps the whole window of its model, proven against a model whose published output equals that window.
+- [x] An answer budget of zero is refused on a model whose maximum is its whole window, and a number the reader chooses opens that connection.
+- [x] A connection opens to every model every command line provider offers, carrying neither a credential nor an address, and what each opens with is a model it really offers.
+- [x] Every plugin releases what it already took before returning a failure from initialization, checked against all eight.
+- [x] The cost of a run reaches the reader in the execution history, proven through the fake that answers the columns the real schema has.
+- [x] The price of every model the catalog carries reaches it, a model nobody priced reports no cost, and a price of the wrong shape or below zero rejects the plugin.
+- [x] The view follows the reader instead of dragging them to the end of every message that arrives.
+- [x] AI tasks are grouped into renameable workspace tabs and rendered across the To Do, Doing, Blocked, Review and Done columns.
+- [x] AI task cards keep their own margin, use the filled play symbol and expose Play, Stop, Edit and Remove.
+- [x] The AI transport is an interface, so execution success, failure, cancellation and capacity are tested without a network.
+- [x] The task Information dialog presents the execution history, the logs of the selected execution and its returned content.
+- [x] Stopping an AI task always returns the card to To Do and records the execution as cancelled.
+- [x] Asynchronous test waiting fails the surrounding assertion instead of ending the test silently.
+- [x] No case asserts from a thread it started, found by a Windows debug build where the one that did died with an access violation while the same code passed on every other platform.
+- [x] Every C++ lambda has lowercase clang-format protection markers.
+- [x] Comments satisfy language, case, sentence and single-line rules.
+- [x] Formatting and format verification pass.
+- [x] The project builds with warnings as errors.
+- [x] Core, Browser, Code Editor, Donate, logs, System Information, AI, terminal and web-server GoogleTest suites are discovered as individual CTest cases.
+- [x] Success, error, boundary, lifecycle, persistence, UI, network and concurrency paths are tested.
+- [x] Available static analysis passes.
+- [x] Sanitizer builds pass when supported.
+- [x] An isolated smoke test loads all eight plugins and all ten plugin-owned settings groups.
+- [x] The smoke test starts a terminal and shuts down cleanly.
+- [x] Test targets reuse production implementations and contain deterministic boundary doubles only.
+- [x] A document announces its first load only after its caller could connect, proven with a read that is already finished when the continuation is attached.
+- [x] The project has no connection, continuation or timer without an owning context, no blocking wait outside teardown, no unused function, member, signal, enum value, translation key, theme token or icon, and the lint command now holds the signals, the closed value sets, the keys, the tokens and the icons to that rather than leaving it to a reading.
+- [x] Every member declared in every header was read back against every source, which is what found the paused flag the POSIX backend wrote in three places and read nowhere, since the notifier is what really stops its reading.
+- [x] Every one of the five hundred and six connections and nine single shot timers names the object its lambda reaches, and the lint command now refuses any other rather than leaving that to a reading.
+- [x] Nothing answers a capability once teardown begins, because releasing them after the plugins had shut down would have handed an invocation to a plugin that already stopped.
+- [x] Every case holds in a random order after the agent catalog and the capability seams arrived, proven across five schedules of the whole suite, three of them parallel and two one case at a time.
+- [x] They hold in a random order again after the two pseudo-terminal backends changed how they create their threads and after the notifiers lost their second owner, proven across the same five schedules and once more under the sanitizers.
+
+## Current architecture verification
+
+- [x] Runtime discovery, metadata validation and dependency ordering compile successfully.
+- [x] The shared terminal engine compiles once in the core and is linked by every plugin that embeds a terminal.
+- [x] The core executable contains no feature plugin implementation source.
+- [x] Native Qt integration verifies eight dynamic navigation contributions from eight plugins, System Information, ten plugin-owned settings groups and the Donate support view.
+- [x] The application creates the complete schema on a first run and reaches the interactive window without errors.
+- [x] Scoped plugin identities own state and message sender attribution inside the core.
+- [x] English and Portuguese catalog selection were exercised with isolated application state.
+- [x] SQLite persisted core state and independently versioned plugin tables.
+- [x] Formatting verification, warnings-as-errors builds and registered CTest execution passed.
+- [x] The suite declares 477 independent CTest cases and every case passes in the Debug and the AddressSanitizer with UndefinedBehaviorSanitizer configurations. One of them belongs to the POSIX pseudo-terminal backend and is not built on Windows, which therefore registers one fewer.
+- [x] That number is held to what the suite really registers by the lint command, because a number nobody keeps is a number nobody believes.
+- [x] Every case holds in a random order, proven across five schedules of the whole suite, three of them parallel and two one case at a time, which nothing had exercised before.
+- [x] A line-by-line review of the core, the shared terminal engine and every plugin removed the reaper lost wakeup, the workspace removal state corruption, the restarted task terminal binding, the immediate kanban card destruction, the immediate request timeout destruction and the unguarded monospaced family lookup.
+- [x] Every translation key in every catalog is reachable from product code, directly or through a key the code composes from a closed value set or the asset catalogs declare, and the lint command refuses any other rather than leaving it to a reading.
+- [x] Cppcheck completed warning, performance and portability analysis without findings.
+- [x] Package staging contains all eight plugins, all eight shared `hwinfo` components, shared Qt frameworks, Qt WebEngine resources and a valid assembled application signature.
+- [x] The repository package validation command opens the package on every platform and verifies the executable, the eight plugins beside it, the WebEngine helper, the shared Qt libraries and the eight hardware components, and the signature on macOS.
+- [x] A packaged Windows build starts, creates its schema and opens its first browser tab, which it could not do while its plugins were installed one directory above where the application looks.
+- [x] The editor reads and writes the five character sets EditorConfig declares, names the one in use in the status bar and changes it from there.
+- [x] The glob and the parser answer the cases the EditorConfig core test suite defines.
+- [x] Terminal output is selected by dragging and by double clicking a word, copied with the combination each platform uses, and the combination that interrupts the shell still reaches it.
+- [x] A drag held above the grid moves the viewport toward the older rows on every step and stops when the drag ends, which nothing exercised before.
+- [x] The focused terminal closes with the platform combination, which no shortcut answered before.
+- [x] A file is found by part of its name, ranked by the characters found in order, from a folder walked away from the interface and bounded by the catalog.
+- [x] The Problems surface carries every file the workspace analysed and is narrowed by a filter over the file and the message.
+- [x] The tree filter stops at the depth the code declares rather than following a folder that names itself, proven against a tree deeper than that bound.
+- [x] The tree filter narrows only the folder that loaded, measured on a workspace of three thousand six hundred folders as five to seventeen seconds of walking becoming two to four.
+- [x] The wait for forty thousand candidates produced by a child, framed, read and decoded is measured by that work rather than by the one condition a default budget covers, found on a real Windows debug build where the default expired at thirty seconds and the work honestly needed longer.
+- [x] The complete suite builds on real Windows hardware in the debug configuration, which continuous integration never exercises because it builds that platform in release, and building it there is what found the two defects below.
+- [x] Four of its cases ended in an access violation there until that machine was updated. The debug standard library of Visual Studio 17.4 locked a `std::mutex` that a Qt built with 17.8 or newer created, and that release added the constexpr constructor those objects rely on, so the lock read a null pointer. The debugger named the same `mtx_do_lock` frame under Qt6Core for the request log and under Qt WebEngine for the startup, the plugin interface and the browser surface, so one mismatch explained all four, and updating that machine to 17.14 left every one of them passing.
+- [x] What still fails there is the display environment of a session that has no interactive desktop rather than the product, because the same cases run under the same platform plugin on the Windows runner and pass. A case whose assertion reads where a line of text wraps is the one that notices, so the machine is a place to build the debug configuration rather than a second opinion on layout.
+- [x] Building it there at all needed the object section limit raised, and with that raised the terminal refused to start on a font database offering no fixed pitch family, which would have kept the application from opening on such a machine.
+- [x] Every read of the render snapshot goes through the lock that guards it.
+- [x] The Linux, macOS and Windows workflows build, test, package and validate the product on every push.
+- [x] The release workflow publishes the Debian package, the macOS disk image and the Windows installer for every `v*` tag.
+- [x] The final audit found no legacy ABI, migration, compatibility branch or unguarded lambda.
+- [x] A transport thread leaves the drain register by its own identity, so the register never holds a thread that was already destroyed.
+- [x] A server stopped and started again serves its tools without leaving the thread of the previous one running.
+- [x] Typing while a large file is being read keeps what was typed and reports the conflict instead of losing it.
+- [x] A second save asked for while the first is still being written reaches the file.
+- [x] A connection that bursts more than any request may occupy is refused and the server keeps serving.
+- [x] A client that opens a request and never finishes it is closed at the deadline the server declares, and the next request is answered.
+- [x] The real pseudo-terminal starts a shell, delivers what it wrote and reports its exit after it.
+- [x] Nothing destroys a socket notifier from inside the read that notifier is delivering.
+- [x] A completed plugin request leaves no guard behind on the context it was given.
+- [x] The restart after an import destroys nothing while the request that asked for it is still on the stack.
+- [x] A workspace opened through a symbolic link opens every file inside it.
+- [x] Many terminals created, shelved, reassigned and closed across tabs and layouts leave the workspace exactly as they found it.
+- [x] Many documents opened, edited, saved and closed in one workspace keep every edit and leave no document behind.
+- [x] Many tabs and bookmarks mutated in rounds keep the stored layout complete.
+- [x] A long sequence of agent turns and stops reaches a terminal state for every run.
+- [x] A server started and stopped many times leaves nothing behind.
+- [x] A long run of connections, including ones that leave without speaking, keeps the web server answering.
+- [x] Many overlapping settings saves commit what reached storage, which is what the next start reads back.
+- [x] An EditorConfig section that never closes its brace is read once instead of costing the whole tail per brace.
+- [x] The web server, the provider stream and the settings reader answer every hostile input a seeded generator produces.
+- [x] Both framing transports answer every malformed frame a fixture writes on purpose instead of reading past it.
+- [x] An MCP server answering with more than the permitted size is stopped while the bytes arrive, proven against the read that held whatever the server sent.
+- [x] A page larger than the fetch bound stops the transfer rather than being held whole, proven by a server that could not send everything it offered.
+- [x] An outline nested deeper than the declared bound is read to that bound rather than to the depth the server chose.
+- [x] A client that outlives its transport asks it for nothing.
+- [x] A completed plugin request leaves no guard on its context, proven through a request a loaded plugin really makes.
+- [x] Every plugin honours the identifier, navigation, settings and schema contract the standard states of all of them.
+- [x] The restart after an import destroys nothing while the request that asked for it is on the stack, proven by the window still standing.
+- [x] A database nobody may read is set aside, together with the write-ahead log that belongs to it whenever the failed open left one, which a database corrupted outright does not.
+- [x] Nothing this file records is deferred work, because a rule reaches it only once the product already guarantees what it says, and every name it cites exists.
+- [x] A chat client still waiting for its deferred deletion is released before the request gate it withdraws from, which crashed the product on the quit that followed a run and which the sanitizers name where a plain build only sometimes does.
+- [x] Every object a plugin parents was read against the members it reaches, and the chat client was the only one that reached any, because the command runner touches only its own process and the shutdown order destroys the window before the plugins its views name.
+- [x] A full review with the sanitizers, Cppcheck, clang-tidy and hand inspection found no orphan translation key, no unused theme role or icon, no legacy marker and no plugin that clears its host before its asynchronous context.
+- [x] The language-server transport disconnects from its process before ending it, so a read already queued never reaches it without one.
+- [x] The language-server transport kills and reaps its own child instead of abandoning it, which is what left a process object uncollected on every shutdown, since the deletion it was abandoned to needed the event loop that call had just ended.
+- [x] A request that was given its turn and stopped before hearing about it returns that turn, so a provider limited to one request at a time keeps admitting.
+- [x] Forty rounds of holders that withdraw, are destroyed mid-wait or release the ordinary way leave the gate holding nothing and still admitting, proven against a withdraw that keeps the place.
+- [x] No source is compiled by more than one target and every consumer links `WorkpaneUi` for the shared visual primitives.
+- [x] The README presents the product, its features and its screenshots and then indexes one document per area, and the lint command refuses a repository command that documentation never names.
+- [x] A plugin reveals its own navigation destination through the scoped host and the shell refuses a destination that plugin does not declare.
+- [x] A task that declares a working directory offers it to the Code Editor and to the Web Server, and the terminal offers the directory its shell stands in.
+- [x] Neither destination holds one folder twice, and the Web Server configures a folder through the same form that validates every other server.
+- [x] The mode bar keeps one width in every language and a word that does not fit wraps inside it.
+- [x] Every notification carries a sentence from the catalog of its owner while the structured error goes to the log with its code and detail.
+- [x] The editor looks at every open document again when the application is returned to, because a watched file can change without the platform reporting it.
+- [x] Every workflow job declares a timeout so a stalled runner fails in one hour instead of six.
+- [x] The structured error carries only the code, the message and the detail, and no field that no decision consults.
+- [x] The shell reads its own settings document through the shared strict readers, refusing a value of the wrong type as it does for every plugin.
+- [x] No surface holds the event loop for a dialog whose answer nobody reads.
+- [x] The stored timestamp format and the exact-key payload check each have exactly one implementation, used by the core and by every plugin.
+- [x] A run that reaches its iteration limit, is cut at the answer budget or repeats one tool ends with that reason and keeps what it produced, and only a failure and a cancellation are failures.
+- [x] A tool call the protocol left unreadable is answered to the model with what arrived, and repeating it stops the run through the same budget every other call answers to.
+- [x] A cron occurrence is chosen on the wall clock it was written in, answering the hour daylight saving skips and firing once on the hour it repeats.
+- [x] The projection satisfies what each protocol demands before the request leaves, joining consecutive turns of one role for the API that refuses them.
+- [x] The bytes of an image travel with the conversation, so a later run and a restart still show the model the picture it was shown.
+- [x] Skills are found in both published layouts, under the project roots and the machine roots, read through the asynchronous filesystem service and never on the thread that draws.
+- [x] The prompt tells the agent what this run really has, covering the model, its traits, the services configured and the servers connected.
+- [x] Nothing stored in a settings document keeps a feature from opening, because every value it cannot use is the declared default.
+- [x] Every refusal of a tool names the tool and the argument, proven for every declared tool from its own schema.
+- [x] Runtime state a signal can reach is held behind a shared pointer, and every transport thread is drained before the code it runs unloads.
+- [x] A terminal cell leaves no gap after its glyph or under its line, proven at four reading sizes against what the font itself declares.
+- [x] The terminal opens on a family a declared preference names rather than on the one that happens to sort first.
+- [x] A source file is painted in the colours of its scheme rather than in the accent and the text of the application theme, proven by counting the colours one file really carries.
+- [x] Every token type a language server reports keeps a colour of its own, and every declared role is produced by something.
+- [x] The surface of a scheme reaches the screen, proven by reading the pixel the editor drew under the shared style sheet.
+- [x] Every malformed colour scheme the catalog declares a refusal for is refused from text.
+- [x] A plain text file is not painted as code, and a Markdown document keeps only the marks it declares itself.
+- [x] The monospace role resolves a family whose glyphs really share one advance, proven against every built-in theme.
+- [x] A code span and a fenced block carry that family while the prose around them does not, read back from the document rather than from a style sheet it never received.
+- [x] Every platform reaches the declared family, proven after Windows reported a resolved name where macOS reports the generic one.
+- [x] Every reader of the settings contract is fed the hostile documents, including the text list that reads the arguments and roots of a stored server.
+- [x] Plain text carries no format range of its own, measured as forty percent of the ranges a source line used to carry for no visible difference.
+- [x] A line dense enough to cost more than its colours keeps its text and loses them, measured as the decoration adding 680ms to three hundred keystrokes inside such a line before the bound and 66ms after it.
+- [x] Every malformed language catalog the code declares a refusal for is refused from text, covering eighteen shapes across the languages, the servers, the highlighting and the limits.
+- [x] A prompt carrying every character a shell acts on reaches a command line agent unchanged, and every malformed command line provider is refused from text.
+- [x] An answer of tens of thousands of semantic tokens is decoded and grouped off the interface thread, measured as seventeen and twenty nine milliseconds becoming two and four.
+- [x] A server answering forty thousand completion candidates reaches the reader with the bound it declares rather than with all of them.
+- [x] A command line agent is started as a real process against a fixture, running where the task declares and reading a prompt carrying every character a shell acts on.
+- [x] A command line agent that exits without printing anything is reported with its exit code rather than with an empty message.
+- [x] Every argument the installed command line agents are given is accepted by them, which removed the three flags Kimi does not declare after its own parser refused the first of them.
+- [x] All five command line providers were verified against the program each one really starts, which is what proved that the flag a help page never prints can still be a hidden alias the parser accepts.
+- [x] A skill or an instruction written while the application is open reaches the next run, proven against the catalog that kept what it read for the whole session and made the reader restart to be heard.
+- [x] Runs starting at the same moment read the roots once between them, proven by counting the walks against the shape that read them once per run.
+- [x] Everyone waiting for a walk is answered with what that walk found, because a completion may forget the catalog and start another one before the others are answered.
+- [x] A flag the reader cannot see in a help page is believed only after the parser accepts it ahead of one nobody declares, because the absence of a line in that page is not a refusal.
+- [x] A command line provider whose argument list never carries the model is refused from text, so the model the reader chose can never be dropped in silence.
+- [x] A command that timed out, overflowed its output, found no working directory, did not start or ended abnormally reads on the card in the language of the interface rather than in the English of the log.
+- [x] Every condition the filesystem service reports reads in the editor as a sentence of its catalog naming the path, proven for the complete set the service can answer with.
+- [x] Each of those sentences is the one its condition really means, proven by driving the service into a directory it cannot create and reading back a creation failure rather than the missing directory it used to report.
+- [x] A paste the terminal has not finished reading, a shell that ended, a shell that cannot be run, a directory that is gone, a backend that stopped answering and a workspace that could not be saved all read in the language of the interface, while a fault of the emulator stays in the log.
+- [x] Every wheel notch reaches a program reading the mouse on both axes, proven by a case that read nothing sideways before the horizontal notch was reported.
+- [x] A drop carrying a line break, a carriage return or an address the shell has no path for delivers nothing, and one bad entry refuses the drop it arrived in.
+- [x] The POSIX and the Windows pseudo-terminal backends name their six shared conditions identically and describe them in one sentence, which the lint command now refuses to let drift.
+- [x] The stored schema version is read by the name of its column through the shared strict reader rather than by dereferencing the first iterator of the row.
+- [x] A command task runs a real process for both endings, moving to Done on a zero exit code and back to the board with its reason on any other, and the directory it ran in is proven by a command that only succeeds beside a file that directory holds.
+- [x] A paste the reader refused writes nothing to the shell, a confirmed one reaches it, text that only wraps is never asked about and the setting turned off writes without asking, all driven through the key a reader presses.
+- [x] A selection is indented and unindented as whole lines, leaving a line nobody selected alone and answering a document resolved to tabs with a tab.
+- [x] A card dropped anywhere but Doing moves, dropped into Doing starts and dragged out while running stops and returns to the board.
+- [x] An analysis wait that does not outlast the change wait rejects the catalog, because both are measured from the last keystroke.
+- [x] A catalog wrong in more than one way is refused for the reason its reader hits first.
+- [x] Every one of the eight plugins answers a topic it does not implement by the one shared name, asked through its own interface rather than sampled.
+- [x] The terminal, the editor and the shared document open on one monospaced family, and a family the user chose still wins over it.
+- [x] A system refusing a thread a pseudo-terminal backend needs refuses the start with a sentence of the catalog, on both platforms and by one code, because the POSIX one created it from a destructor and the Windows one from a constructor that throws, and no handler exists anywhere to catch either.
+- [x] Nothing in the product ends the process, proven by removing the twenty six unreachable markers that answered a closed switch with undefined behaviour and by a lint that refuses an assertion, an exception, a marker or a termination call anywhere under the sources.
+- [x] That lint was probed with each of the five constructs in turn, because an audit nobody has seen refuse anything is an audit nobody can trust.
+- [x] A blocking wait exists only in the four shutdowns that own one, and the lint refuses one written anywhere else.
+- [x] A language carries the key that names it in one declaration, so the lookup that answered an unknown language with undefined behaviour no longer exists.
+- [x] The Windows backend told its writer that the shell had ended without taking the lock that writer waits under, so the wakeup was lost and the writer idled until termination instead of leaving when the shell did. The change is now made under that lock, and the lint refuses the shape, which is what covers a file no machine here compiles.
+- [x] Every audit this project declares was probed with a deliberate violation, because an audit nobody has seen refuse anything is one that quietly enforces nothing.
+- [x] Every function of the product and of the suite is a member of a class, so nothing is declared or defined loose at namespace scope, and the audit that holds it there reads an inline body as strictly as a prototype.
+- [x] A speaking service is a provider of the catalog, so its address, its credential header, its body fields and its voices are data and the six functions that answered them by naming two services are gone.
+- [x] Every way of declaring a speaking endpoint wrongly is refused from text, covering a voice set and a voice catalog declared together, neither of them declared, and a missing credential header or text field.
+- [x] A picture is asked for the same way, so the credential header and the body fields of that request are data as well, proven from text against an endpoint that declares them and a conversation endpoint that must not.
+- [x] The request a service really receives carries the address, the credential header, the body fields and the model its endpoint declares, proven against a recorded service and probed by a descriptor spelling one of them wrongly.
+- [x] A provider that declares no protocol no longer has an empty optional read for one, which was undefined behaviour that only looked correct because the first enumerator is zero.
+- [x] The two functions nothing called are gone, and the lint command now refuses a method nobody calls rather than leaving that to a sweep by hand.
+- [x] That audit was probed with a deliberate violation, because an audit nobody has seen refuse anything is one that quietly enforces nothing.
+- [x] No caller recovers a layout by casting it back, because the shared settings surface and the shared action row hand over the layout they were built with.
+- [x] No caller casts a page of a tab strip, because the editor answers its documents and its workspaces as typed lists and the cast that names them is written once.
+- [x] Every division whose divisor is computed is guarded or clamped away from zero, checked across the terminal geometry, the layout icons, the wheel, the match stepping and the splitter ratio.
+- [x] Nothing is declared and never used, checked for every member of every header and every method the product declares, and the two functions that were is what the new audit now keeps out.
+- [x] The whole suite passes under the sanitizers and in a random order, run parallel three times and one case at a time once, after the shared settings surface and the editor page accessors changed.
+- [x] A removal refused because an operation is pending or its configuration is gone tells the reader so, proven by a case that fails against the silence it used to answer with.
+- [x] Every entry the agent catalog skips is named in the log, covering the one that declares no description and the one whose bytes could not be read, proven the same way.
+- [x] The chat says when a reading size could not be kept, which is what every other settings change of that plugin already did, proven by a case that fails against the silence and which nothing covered before.
+- [x] The POSIX day rule is written once and proven through the occurrence search the scheduler really walks, which is what removed a second copy of it that existed only for the suite to call.
+- [x] The remote address reaches every request log entry, which nothing asserted before, measured rather than assumed after the error path was suspected of losing it once the socket disconnects.
+- [x] A server writing past the bound over the stdio transport is refused by name and reported once, proven by a case that measured two reports before the pending request stopped answering for a stop it did not cause.
+- [x] The streamed transport reports one event once as well, proven by a case that measured the same sentence reaching the reader twice, and a server that exits with nothing waiting is now announced at all.
+- [x] The case that reads the diagnostics of one document waits for those diagnostics rather than for the first set of one to arrive, which is what made it fail under load while the server was also reporting on the header it pulled in.
+- [x] A response carrying an identifier this client never issued answers no pending request, covering the text the protocol allows and the numbers outside the ones it hands out, proven against a fixture that sends all three and against the reading that took them for the shutdown it was not waiting for and stopped the server on.
+- [x] A provider that holds no conversation declares no protocol, no model, no trait and no parameter, and one that answers nothing at all is refused, each proven from text.
+- [x] That probing found four audits that enforced less than they read as. The nodiscard audit still named the `utils` namespace that was removed, so it inspected no line at all while two hundred and sixty six declarations carried the attribute by habit. The anonymous namespace audit refused only the form written across lines. The translation audit accepted any key whose family appeared anywhere, which every family with one literal key satisfies, and now understands the two ways the code really composes a key. The backend audit compared the sentences of one code and never the codes of one sentence, so a shared condition renamed on one platform passed.
+- [x] The blocking wait audit named `QThread::wait` while the code writes `m_workerThread.wait()`, so it matched nothing. It now reads a wait carrying no second argument as a thread being joined, tells a definition from a call by whether the parameter list closes on its own line, and recognises a destructor written inside a class in the source.
+- [x] The task runner could not configure a build directory of its own on a machine carrying two Qt installations, because it named none and CMake resolved the older one, which the declared minimum then refused. The coverage command could not run at all. The runner now names the Qt it found and the doctor reports it.
+- [x] Every numeric field of every settings section of every plugin carries the stepper rather than the native arrows, proven by walking the built sections rather than by sampling one, and the assertion was probed with a field that keeps them.
+- [x] The spin indicators the shared style painted were reached by nothing, since every field the product builds hides them, so the drawing and its helper were removed.
+
+## Continuous verification
+
+- Static analysis runs clang-tidy with the bugprone, performance, misc and clang-analyzer checks over the compile database, and its reports are triaged rather than applied, because a sink parameter taken by value and moved is correct even when a check calls it a copy.
+- The `.clang-tidy` file declares exactly those families, so running the tool plainly gives what the workflow describes rather than a wider set nobody triages.
+- It leaves out the include cleaner, because the compiler decides which header a file needs, the internal linkage check, because it sees one translation unit and every shared function looks unused from there, and the recursion check, because a recursion this project bounds is one it allows.
+- A return of a value declared const and two adjacent parameters of one type are the reports that remain, and neither is applied, because the const is deliberate and the second is informational.
+- A widening report over a literal that already fits, a narrowing report over a flag set the drawing call takes as an integer and a multilevel pointer report over a C interop argument stay unapplied for the same reason, while a report that the value behind an optional was read without the analyzer seeing the guard is applied, because that one reads as a doubt in the code itself.
+- A destructor that reaches a container is reported as one an exception may escape, and it stays unapplied, because the allocation that would throw there has already ended the process by other means.
+- Two branches of a switch that answer one value are reported as clones and stay unapplied, because they name two roles that happen to agree today and merging them would collapse the two names into one.
+- A move of a trivially copyable value is applied, because it moves nothing and says that it does.
+- A leak reported where a style is handed to a proxy and the proxy to the application stays unapplied, because both of those calls take ownership and the analyzer models neither.
+- A local the checker asks to make const stays as it is where the platform call it is passed to requires a buffer it may write, which is what the Windows command line is.
+- The tool is run over the compile database rather than by a task of the runner, and on macOS it is given the platform sysroot, because a clang built apart from the platform toolchain does not find the standard headers on its own.
+- Its reports read as errors rather than as warnings, because the build treats warnings as errors and the tool inherits that, so a sweep that counts only the word warning reports a clean run over a set that is not empty.
+- A result a future continuation receives by value is the shape that library hands it, so a copy report over one is not applied, and neither is a report over a value that is only ever implicitly shared.
+- A report over a source only one platform compiles is read against that platform before it is believed, because the parse that produced it resolved the preprocessor branches of another one.
+- A lambda parameter never repeats the name of a parameter of the function that contains it, because GCC rejects it as a shadow while Clang accepts it and the failure only appears on the Linux build.
+- A sweep driven by the compiler covers only what the running platform compiles, so a change that touches a shared type is also searched by hand through the sources the other platforms own.
+- The argument vector a command line provider declares is verified against the help of the installed program, because a flag that program does not accept is refused before any work and ends every run of that provider.
+- Such a vector is verified by appending a flag nobody declares to it, because these parsers report the first unknown option and reaching that report proves every flag before it was accepted without spending a request.
+- That report is placed before and after the flag being judged, because the control is only sound once the parser is shown to name the first unknown option wherever it sits.
+- A program is verified against the one its own vendor publishes rather than the one a package manager answers that name with, because the Homebrew formula named after the Grok agent is an unrelated regular expression tool that would resolve on the path and fail every run of that provider.
+- A command in a test uses the shell of the running platform through the shared `workpane::test` process helpers, and the Windows wait uses ping with both channels redirected, because timeout refuses a redirected console and an inherited pipe keeps the test runner waiting for a command it already killed.
+- A test that cancels a command keeps that command short enough to end on its own, because a child surviving the shell it was started from holds the pipe the process object is closed on and the case expires waiting for it.
+- The application icon is rendered from its vector by `rsvg-convert`, because the ImageMagick renderer fills a gradient with black instead of resolving it and the Quick Look one composites the transparent corners onto white.
+- A rendered icon is read back before it ships, both as a picture and as the pixels of the regions its vector declares, because either renderer fails silently and produces a file that looks like a file.
+- A pace, a delay or an interval is asserted where it is applied rather than where its effect arrives, because an arrival also carries the setup of its own connection and the clock that timed it is not the one the waiting was measured on.
+- The same holds for a place in a queue, which is asserted on the queue itself rather than on the requests that reach a socket, because a request already on its way arrives whenever the platform delivers it.
+
+## Documentation writing standard
+
+- A sentence never begins with code, a path or a fenced block, so a line always opens with a word.
+- The lint command refuses a line of this file, of the backlog or of the README that opens with code, because prose nobody audits drifts exactly like code nobody audits.
+- Prose never divides sentences with semicolons and never repeats what the code already says.
+
+## Prohibited implementation patterns
+
+- Do not add feature knowledge to core runtime or window code.
+- Do not hardcode runtime plugin library names.
+- Do not directly call or include another plugin implementation.
+- Do not send pointers or implementation types through messages.
+- Do not accept malformed or partially valid consumed messages.
+- Do not add backward compatibility, legacy detection or version branches before the first release, because every schema is still created by its single migration.
+- Do not accept unknown persisted fields or cross-plugin database objects.
+- Do not add silent defaults for invalid state.
+- Do not add generic `else` behavior for unknown values.
+- Do not add dead code, unused APIs or unbuilt legacy sources.
+- Do not add redundant, decorative or section-label comments.
+- Do not let clang-format format lambdas.
+- Do not destroy a widget or a timer with `delete` when the destruction can be reached from a signal that object is emitting.
+- Deferred destruction is not enough on its own, because a modal dialog runs an event loop that processes it, so a widget that opened a dialog is still destroyed under the click that opened it.
+- A view that presents changing state reconciles the widgets it already has instead of rebuilding them, so a widget the user is interacting with survives the state that changed under it.
+- A widget a rebuild replaces leaves its parent and is destroyed through deferred deletion, because a rebuild can be reached from a signal one of those widgets is emitting.
+- Do not register plugin actions with application or window shortcut scope.
+- Do not forward a core or plugin action shortcut to terminal input.
+- Do not bypass the translated close confirmation for a normal application Quit request.
+- Do not use raw owning pointers when deterministic ownership exists.
+- Do not ignore persistence, plugin lifecycle, terminal, PTY or server errors.
+- Do not end the process from product code, so no assertion, no exception and no unreachable marker is what answers a lookup that failed, because a `Q_ASSERT` reaching a release of Qt built with Clang is a trap and the reader loses the application over a state the code could have handled.
+- The lint command refuses an assertion, a thrown exception, an unreachable marker and every termination call anywhere in the product, because an unreachable marker is undefined behaviour rather than a defined answer and a rule audited by habit is one that drifts back.
+- A switch that covers a closed set answers with the value it declares rather than with a marker, so an enum carrying something outside that set is a defined answer instead of a fall through the end of the function.
+- A failure that ends the start is shown to the reader rather than only logged, because a windowed application has no console and one that only writes to the log simply disappears.
+- A lookup that finds nothing is a state to handle, so a preset, a slot, a theme, a runtime session and a pane all answer with what they found and the caller decides.
+- Do not bind plugin-owned asynchronous state mutation to a context that survives plugin shutdown.

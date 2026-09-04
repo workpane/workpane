@@ -1,0 +1,6440 @@
+{
+  "providers": {
+    "anthropic": [
+      {
+        "context": 200000,
+        "id": "claude-3-7-sonnet-20250219",
+        "inputCost": 3e-06,
+        "output": 64000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-3-haiku-20240307",
+        "inputCost": 2.5e-07,
+        "output": 4096,
+        "outputCost": 1.25e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-3-opus-20240229",
+        "inputCost": 1.5e-05,
+        "output": 4096,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-4-opus-20250514",
+        "inputCost": 1.5e-05,
+        "output": 32000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-4-sonnet-20250514",
+        "inputCost": 3e-06,
+        "output": 64000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-fable-5",
+        "inputCost": 1e-05,
+        "output": 128000,
+        "outputCost": 5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-haiku-4-5",
+        "inputCost": 1e-06,
+        "output": 64000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-haiku-4-5-20251001",
+        "inputCost": 1e-06,
+        "output": 64000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-mythos-5",
+        "inputCost": 1e-05,
+        "output": 128000,
+        "outputCost": 5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-mythos-preview",
+        "inputCost": 1e-05,
+        "output": 128000,
+        "outputCost": 5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-opus-4-1",
+        "inputCost": 1.5e-05,
+        "output": 32000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-opus-4-1-20250805",
+        "inputCost": 1.5e-05,
+        "output": 32000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-opus-4-20250514",
+        "inputCost": 1.5e-05,
+        "output": 32000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-opus-4-5",
+        "inputCost": 5e-06,
+        "output": 64000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-opus-4-5-20251101",
+        "inputCost": 5e-06,
+        "output": 64000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-4-6",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-4-6-20260205",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-4-7",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-4-7-20260416",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-4-8",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-5",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-sonnet-4-20250514",
+        "inputCost": 3e-06,
+        "output": 64000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-sonnet-4-5",
+        "inputCost": 3e-06,
+        "output": 64000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "claude-sonnet-4-5-20250929",
+        "inputCost": 3e-06,
+        "output": 64000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-sonnet-4-6",
+        "inputCost": 3e-06,
+        "output": 128000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "claude-sonnet-5",
+        "inputCost": 2e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      }
+    ],
+    "antigravity-cli": [
+      {
+        "context": 1048576,
+        "id": "gemini-3.1-pro-high",
+        "output": 65536,
+        "traits": []
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.1-pro-low",
+        "output": 65536,
+        "traits": []
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.5-flash-high",
+        "output": 65535,
+        "traits": []
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.6-flash-high",
+        "output": 65536,
+        "traits": []
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.6-flash-medium",
+        "output": 65536,
+        "traits": []
+      }
+    ],
+    "cerebras": [
+      {
+        "context": 131072,
+        "id": "gpt-oss-120b",
+        "inputCost": 3.5e-07,
+        "output": 32768,
+        "outputCost": 7.5e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "llama-3.3-70b",
+        "inputCost": 8.5e-07,
+        "output": 128000,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "llama3.1-70b",
+        "inputCost": 6e-07,
+        "output": 128000,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "llama3.1-8b",
+        "inputCost": 1e-07,
+        "output": 128000,
+        "outputCost": 1e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "qwen-3-32b",
+        "inputCost": 4e-07,
+        "output": 128000,
+        "outputCost": 8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "zai-glm-4.6",
+        "inputCost": 2.25e-06,
+        "output": 128000,
+        "outputCost": 2.75e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "zai-glm-4.7",
+        "inputCost": 2.25e-06,
+        "output": 128000,
+        "outputCost": 2.75e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "claude-cli": [
+      {
+        "context": 1000000,
+        "id": "claude-opus-4-8",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 1000000,
+        "id": "claude-opus-5",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 1000000,
+        "id": "claude-sonnet-4-6",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 1000000,
+        "id": "claude-sonnet-5",
+        "output": 128000,
+        "traits": []
+      }
+    ],
+    "codex-cli": [
+      {
+        "context": 1050000,
+        "id": "gpt-5.4",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.4-mini",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 1050000,
+        "id": "gpt-5.5",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6-luna",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6-sol",
+        "output": 128000,
+        "traits": []
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6-terra",
+        "output": 128000,
+        "traits": []
+      }
+    ],
+    "deepinfra": [
+      {
+        "context": 4096,
+        "id": "Gryphe/MythoMax-L2-13b",
+        "inputCost": 8e-08,
+        "output": 4096,
+        "outputCost": 9e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "NousResearch/Hermes-3-Llama-3.1-405B",
+        "inputCost": 1e-06,
+        "output": 131072,
+        "outputCost": 1e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "Qwen/QwQ-32B",
+        "inputCost": 1.5e-07,
+        "output": 131072,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "Qwen/Qwen2.5-72B-Instruct",
+        "inputCost": 1.2e-07,
+        "output": 32768,
+        "outputCost": 3.9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "Qwen/Qwen2.5-VL-32B-Instruct",
+        "inputCost": 2e-07,
+        "output": 128000,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40960,
+        "id": "Qwen/Qwen3-14B",
+        "inputCost": 6e-08,
+        "output": 40960,
+        "outputCost": 2.4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40960,
+        "id": "Qwen/Qwen3-235B-A22B",
+        "inputCost": 1.8e-07,
+        "output": 40960,
+        "outputCost": 5.4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "inputCost": 9e-08,
+        "output": 262144,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3-235B-A22B-Thinking-2507",
+        "inputCost": 3e-07,
+        "output": 262144,
+        "outputCost": 2.9e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40960,
+        "id": "Qwen/Qwen3-30B-A3B",
+        "inputCost": 8e-08,
+        "output": 40960,
+        "outputCost": 2.9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40960,
+        "id": "Qwen/Qwen3-32B",
+        "inputCost": 1e-07,
+        "output": 40960,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+        "inputCost": 4e-07,
+        "output": 262144,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3-Coder-480B-A35B-Instruct-Turbo",
+        "inputCost": 2.9e-07,
+        "output": 262144,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+        "inputCost": 1.4e-07,
+        "output": 262144,
+        "outputCost": 1.4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3-Next-80B-A3B-Thinking",
+        "inputCost": 1.4e-07,
+        "output": 262144,
+        "outputCost": 1.4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-3-7-sonnet-latest",
+        "inputCost": 3.3e-06,
+        "output": 200000,
+        "outputCost": 1.65e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-4-opus",
+        "inputCost": 1.65e-05,
+        "output": 200000,
+        "outputCost": 8.25e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-4-sonnet",
+        "inputCost": 3.3e-06,
+        "output": 200000,
+        "outputCost": 1.65e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-ai/DeepSeek-R1",
+        "inputCost": 7e-07,
+        "output": 163840,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-ai/DeepSeek-R1-0528",
+        "inputCost": 5e-07,
+        "output": 163840,
+        "outputCost": 2.15e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "deepseek-ai/DeepSeek-R1-0528-Turbo",
+        "inputCost": 1e-06,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        "inputCost": 2.7e-07,
+        "output": 131072,
+        "outputCost": 2.7e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40960,
+        "id": "deepseek-ai/DeepSeek-R1-Turbo",
+        "inputCost": 1e-06,
+        "output": 40960,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-ai/DeepSeek-V3",
+        "inputCost": 3.8e-07,
+        "output": 163840,
+        "outputCost": 8.9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-ai/DeepSeek-V3-0324",
+        "inputCost": 2.5e-07,
+        "output": 163840,
+        "outputCost": 8.8e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-ai/DeepSeek-V3.1",
+        "inputCost": 2.7e-07,
+        "output": 163840,
+        "outputCost": 1e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-ai/DeepSeek-V3.1-Terminus",
+        "inputCost": 2.7e-07,
+        "output": 163840,
+        "outputCost": 1e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "google/gemini-2.0-flash-001",
+        "inputCost": 1e-07,
+        "output": 1000000,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "google/gemini-2.5-flash",
+        "inputCost": 3e-07,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "google/gemini-2.5-pro",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "google/gemma-3-12b-it",
+        "inputCost": 5e-08,
+        "output": 131072,
+        "outputCost": 1e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "google/gemma-3-27b-it",
+        "inputCost": 9e-08,
+        "output": 131072,
+        "outputCost": 1.6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "google/gemma-3-4b-it",
+        "inputCost": 4e-08,
+        "output": 131072,
+        "outputCost": 8e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Llama-3.2-3B-Instruct",
+        "inputCost": 2e-08,
+        "output": 131072,
+        "outputCost": 2e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Llama-3.3-70B-Instruct",
+        "inputCost": 2.3e-07,
+        "output": 131072,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "inputCost": 1.3e-07,
+        "output": 131072,
+        "outputCost": 3.9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
+        "inputCost": 1.5e-07,
+        "output": 1048576,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 327680,
+        "id": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+        "inputCost": 8e-08,
+        "output": 327680,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "inputCost": 3e-08,
+        "output": 8192,
+        "outputCost": 6e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Meta-Llama-3.1-70B-Instruct",
+        "inputCost": 4e-07,
+        "output": 131072,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        "inputCost": 1e-07,
+        "output": 131072,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "inputCost": 3e-08,
+        "output": 131072,
+        "outputCost": 5e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+        "inputCost": 2e-08,
+        "output": 131072,
+        "outputCost": 3e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 16384,
+        "id": "microsoft/phi-4",
+        "inputCost": 7e-08,
+        "output": 16384,
+        "outputCost": 1.4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "mistralai/Mistral-Nemo-Instruct-2407",
+        "inputCost": 2e-08,
+        "output": 131072,
+        "outputCost": 4e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "mistralai/Mistral-Small-24B-Instruct-2501",
+        "inputCost": 5e-08,
+        "output": 32768,
+        "outputCost": 8e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+        "inputCost": 7.5e-08,
+        "output": 128000,
+        "outputCost": 2e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "inputCost": 4e-07,
+        "output": 32768,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "moonshotai/Kimi-K2-Instruct",
+        "inputCost": 5e-07,
+        "output": 131072,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "moonshotai/Kimi-K2-Instruct-0905",
+        "inputCost": 5e-07,
+        "output": 262144,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "nvidia/Llama-3.1-Nemotron-70B-Instruct",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "nvidia/Llama-3.3-Nemotron-Super-49B-v1.5",
+        "inputCost": 1e-07,
+        "output": 131072,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "nvidia/NVIDIA-Nemotron-Nano-9B-v2",
+        "inputCost": 4e-08,
+        "output": 131072,
+        "outputCost": 1.6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-120b",
+        "inputCost": 5e-08,
+        "output": 131072,
+        "outputCost": 4.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-20b",
+        "inputCost": 4e-08,
+        "output": 131072,
+        "outputCost": 1.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "zai-org/GLM-4.5",
+        "inputCost": 4e-07,
+        "output": 131072,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "deepseek": [
+      {
+        "context": 131072,
+        "id": "deepseek-chat",
+        "inputCost": 2.8e-07,
+        "output": 8192,
+        "outputCost": 4.2e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "deepseek-coder",
+        "inputCost": 1.4e-07,
+        "output": 4096,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65536,
+        "id": "deepseek-r1",
+        "inputCost": 5.5e-07,
+        "output": 8192,
+        "outputCost": 2.19e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65536,
+        "id": "deepseek-v3",
+        "inputCost": 2.7e-07,
+        "output": 8192,
+        "outputCost": 1.1e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-v3.2",
+        "inputCost": 2.8e-07,
+        "output": 163840,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "deepseek-v4-flash",
+        "inputCost": 4.4e-07,
+        "output": 393216,
+        "outputCost": 1.32e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "deepseek-v4-pro",
+        "inputCost": 1.32e-06,
+        "output": 393216,
+        "outputCost": 3.96e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "fireworks": [
+      {
+        "context": 163840,
+        "id": "accounts/fireworks/models/deepseek-v3p2",
+        "inputCost": 5.6e-07,
+        "output": 163840,
+        "outputCost": 1.68e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/models/deepseek-v4-flash",
+        "inputCost": 1.4e-07,
+        "output": 384000,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/models/deepseek-v4-flash-0731",
+        "inputCost": 1.4e-07,
+        "output": 131072,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/models/deepseek-v4-pro",
+        "inputCost": 1.74e-06,
+        "output": 384000,
+        "outputCost": 3.48e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "accounts/fireworks/models/firefunction-v2",
+        "inputCost": 9e-07,
+        "output": 8192,
+        "outputCost": 9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "accounts/fireworks/models/glm-4p5",
+        "inputCost": 5.5e-07,
+        "output": 96000,
+        "outputCost": 2.19e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "accounts/fireworks/models/glm-4p5-air",
+        "inputCost": 2.2e-07,
+        "output": 96000,
+        "outputCost": 8.8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "accounts/fireworks/models/glm-4p6",
+        "inputCost": 5.5e-07,
+        "output": 202800,
+        "outputCost": 2.19e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "accounts/fireworks/models/glm-4p7",
+        "inputCost": 6e-07,
+        "output": 202800,
+        "outputCost": 2.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "accounts/fireworks/models/glm-5p1",
+        "inputCost": 1.4e-06,
+        "output": 131072,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/models/glm-5p2",
+        "inputCost": 1.4e-06,
+        "output": 131072,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "accounts/fireworks/models/gpt-oss-120b",
+        "inputCost": 1.5e-07,
+        "output": 32768,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "accounts/fireworks/models/gpt-oss-20b",
+        "inputCost": 7e-08,
+        "output": 32768,
+        "outputCost": 3e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "accounts/fireworks/models/kimi-k2-instruct",
+        "inputCost": 6e-07,
+        "output": 16384,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/kimi-k2-instruct-0905",
+        "inputCost": 6e-07,
+        "output": 32768,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/kimi-k2-thinking",
+        "inputCost": 6e-07,
+        "output": 262144,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/kimi-k2p5",
+        "inputCost": 6e-07,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/kimi-k2p6",
+        "inputCost": 9.5e-07,
+        "output": 32768,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/kimi-k2p7-code",
+        "inputCost": 9.5e-07,
+        "output": 32768,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/models/kimi-k3",
+        "inputCost": 3e-06,
+        "output": 131072,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "inputCost": 3e-06,
+        "output": 16384,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 204800,
+        "id": "accounts/fireworks/models/minimax-m2p1",
+        "inputCost": 3e-07,
+        "output": 204800,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 196608,
+        "id": "accounts/fireworks/models/minimax-m2p7",
+        "inputCost": 3e-07,
+        "output": 196608,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 512000,
+        "id": "accounts/fireworks/models/minimax-m3",
+        "inputCost": 3e-07,
+        "output": 512000,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65536,
+        "id": "accounts/fireworks/models/mixtral-8x22b-instruct-hf",
+        "inputCost": 1.2e-06,
+        "output": 65536,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "accounts/fireworks/models/muse-glimmer-30b",
+        "inputCost": 3.5e-07,
+        "output": 16384,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/nemotron-3-ultra-nvfp4",
+        "inputCost": 6e-07,
+        "output": 32768,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b",
+        "inputCost": 5e-08,
+        "output": 32768,
+        "outputCost": 2e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/models/qwen3p7-plus",
+        "inputCost": 4e-07,
+        "output": 65536,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "accounts/fireworks/routers/glm-5p1-fast",
+        "inputCost": 2.8e-06,
+        "output": 131072,
+        "outputCost": 8.8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/routers/glm-5p2-fast",
+        "inputCost": 2.1e-06,
+        "output": 131072,
+        "outputCost": 6.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/routers/glm-5p2-fast-us",
+        "inputCost": 2.1e-06,
+        "output": 131072,
+        "outputCost": 6.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/routers/kimi-k2p6-fast",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "accounts/fireworks/routers/kimi-k2p7-code-fast",
+        "inputCost": 1.9e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/routers/kimi-k3-fast",
+        "inputCost": 4.5e-06,
+        "output": 131072,
+        "outputCost": 2.25e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "accounts/fireworks/routers/kimi-k3-us",
+        "inputCost": 3.3e-06,
+        "output": 131072,
+        "outputCost": 1.65e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek-v4-flash",
+        "inputCost": 1.4e-07,
+        "output": 384000,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek-v4-flash-0731",
+        "inputCost": 1.4e-07,
+        "output": 131072,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek-v4-pro",
+        "inputCost": 1.74e-06,
+        "output": 384000,
+        "outputCost": 3.48e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "glm-4p7",
+        "inputCost": 6e-07,
+        "output": 202800,
+        "outputCost": 2.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "glm-5p1",
+        "inputCost": 1.4e-06,
+        "output": 131072,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "glm-5p1-fast",
+        "inputCost": 2.8e-06,
+        "output": 131072,
+        "outputCost": 8.8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "glm-5p2",
+        "inputCost": 1.4e-06,
+        "output": 131072,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "glm-5p2-fast",
+        "inputCost": 2.1e-06,
+        "output": 131072,
+        "outputCost": 6.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "glm-5p2-fast-us",
+        "inputCost": 2.1e-06,
+        "output": 131072,
+        "outputCost": 6.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gpt-oss-120b",
+        "inputCost": 1.5e-07,
+        "output": 32768,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gpt-oss-20b",
+        "inputCost": 7e-08,
+        "output": 32768,
+        "outputCost": 3e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2p5",
+        "inputCost": 6e-07,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2p6",
+        "inputCost": 9.5e-07,
+        "output": 32768,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2p6-fast",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2p7-code",
+        "inputCost": 9.5e-07,
+        "output": 32768,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2p7-code-fast",
+        "inputCost": 1.9e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "kimi-k3",
+        "inputCost": 3e-06,
+        "output": 131072,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "kimi-k3-fast",
+        "inputCost": 4.5e-06,
+        "output": 131072,
+        "outputCost": 2.25e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "kimi-k3-us",
+        "inputCost": 3.3e-06,
+        "output": 131072,
+        "outputCost": 1.65e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 204800,
+        "id": "minimax-m2p1",
+        "inputCost": 3e-07,
+        "output": 204800,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 196608,
+        "id": "minimax-m2p7",
+        "inputCost": 3e-07,
+        "output": 196608,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 512000,
+        "id": "minimax-m3",
+        "inputCost": 3e-07,
+        "output": 512000,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "muse-glimmer-30b",
+        "inputCost": 3.5e-07,
+        "output": 16384,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "nemotron-3-ultra-nvfp4",
+        "inputCost": 6e-07,
+        "output": 32768,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "nemotron-lightning-3p5-30b-a3b",
+        "inputCost": 5e-08,
+        "output": 32768,
+        "outputCost": 2e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen3p7-plus",
+        "inputCost": 4e-07,
+        "output": 65536,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      }
+    ],
+    "gemini": [
+      {
+        "context": 1048576,
+        "id": "gemini-2.0-flash",
+        "inputCost": 1e-07,
+        "output": 8192,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.0-flash-001",
+        "inputCost": 1e-07,
+        "output": 8192,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.0-flash-lite",
+        "inputCost": 7.5e-08,
+        "output": 8192,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.0-flash-lite-001",
+        "inputCost": 7.5e-08,
+        "output": 8192,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gemini-2.5-computer-use-preview-10-2025",
+        "inputCost": 1.25e-06,
+        "output": 64000,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-flash",
+        "inputCost": 3e-07,
+        "output": 65535,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-flash-lite",
+        "inputCost": 1e-07,
+        "output": 65535,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-flash-lite-preview-06-17",
+        "inputCost": 1e-07,
+        "output": 65535,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-flash-lite-preview-09-2025",
+        "inputCost": 1e-07,
+        "output": 65535,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-flash-preview-09-2025",
+        "inputCost": 3e-07,
+        "output": 65535,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-pro",
+        "inputCost": 1.25e-06,
+        "output": 65535,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-2.5-pro-preview-tts",
+        "inputCost": 1.25e-06,
+        "output": 65535,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3-flash-preview",
+        "inputCost": 5e-07,
+        "output": 65535,
+        "outputCost": 3e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3-pro-preview",
+        "inputCost": 2e-06,
+        "output": 65535,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.1-flash-lite",
+        "inputCost": 2.5e-07,
+        "output": 65536,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.1-flash-lite-preview",
+        "inputCost": 2.5e-07,
+        "output": 65536,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gemini-3.1-flash-live-preview",
+        "inputCost": 7.5e-07,
+        "output": 65536,
+        "outputCost": 4.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.1-pro-preview",
+        "inputCost": 2e-06,
+        "output": 65536,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.1-pro-preview-customtools",
+        "inputCost": 2e-06,
+        "output": 65536,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.5-flash",
+        "inputCost": 1.5e-06,
+        "output": 65535,
+        "outputCost": 9e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.5-flash-lite",
+        "inputCost": 3e-07,
+        "output": 65536,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.6-flash",
+        "inputCost": 7.5e-07,
+        "output": 65536,
+        "outputCost": 3.75e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-3.7-flash",
+        "inputCost": 7.5e-07,
+        "output": 65536,
+        "outputCost": 3.75e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-exp-1114",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 2097152,
+        "id": "gemini-exp-1206",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-flash-latest",
+        "inputCost": 3e-07,
+        "output": 65535,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-flash-lite-latest",
+        "inputCost": 1e-07,
+        "output": 65535,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "gemini-gemma-2-27b-it",
+        "inputCost": 3.5e-07,
+        "output": 8192,
+        "outputCost": 1.05e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "gemini-gemma-2-9b-it",
+        "inputCost": 3.5e-07,
+        "output": 8192,
+        "outputCost": 1.05e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-pro-latest",
+        "inputCost": 1.25e-06,
+        "output": 65535,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "gemini-robotics-er-1.5-preview",
+        "inputCost": 3e-07,
+        "output": 65535,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gemini-robotics-er-1.6-preview",
+        "inputCost": 1e-06,
+        "output": 65536,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gemini-robotics-er-2-preview",
+        "inputCost": 2e-06,
+        "output": 65536,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gemma-3-27b-it",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision"
+        ]
+      },
+      {
+        "context": 32767,
+        "id": "learnlm-1.5-pro-experimental",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      }
+    ],
+    "grok-cli": [
+      {
+        "context": 1000000,
+        "id": "grok-4.3",
+        "output": 1000000,
+        "traits": []
+      },
+      {
+        "context": 500000,
+        "id": "grok-4.5",
+        "output": 500000,
+        "traits": []
+      },
+      {
+        "context": 500000,
+        "id": "grok-4.6",
+        "output": 500000,
+        "traits": []
+      },
+      {
+        "context": 256000,
+        "id": "grok-build-0.1",
+        "output": 256000,
+        "traits": []
+      }
+    ],
+    "groq": [
+      {
+        "context": 8192,
+        "id": "gemma-7b-it",
+        "inputCost": 5e-08,
+        "output": 8192,
+        "outputCost": 8e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "llama-3.1-8b-instant",
+        "inputCost": 5e-08,
+        "output": 131072,
+        "outputCost": 8e-08,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "llama-3.3-70b-versatile",
+        "inputCost": 5.9e-07,
+        "output": 32768,
+        "outputCost": 7.9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/llama-4-maverick-17b-128e-instruct",
+        "inputCost": 2e-07,
+        "output": 8192,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "inputCost": 1.1e-07,
+        "output": 8192,
+        "outputCost": 3.4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "moonshotai/kimi-k2-instruct-0905",
+        "inputCost": 1e-06,
+        "output": 16384,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-120b",
+        "inputCost": 1.5e-07,
+        "output": 65536,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-20b",
+        "inputCost": 7.5e-08,
+        "output": 65536,
+        "outputCost": 3e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-safeguard-20b",
+        "inputCost": 7.5e-08,
+        "output": 65536,
+        "outputCost": 3e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131000,
+        "id": "qwen/qwen3-32b",
+        "inputCost": 2.9e-07,
+        "output": 131000,
+        "outputCost": 5.9e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "qwen/qwen3.6-27b",
+        "inputCost": 6e-07,
+        "output": 16384,
+        "outputCost": 3e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      }
+    ],
+    "kimi-cli": [
+      {
+        "context": 262144,
+        "id": "kimi-k2.6",
+        "output": 262144,
+        "traits": []
+      },
+      {
+        "context": 1048576,
+        "id": "kimi-k3",
+        "output": 1048576,
+        "traits": []
+      }
+    ],
+    "mistral": [
+      {
+        "context": 128000,
+        "id": "codestral-2508",
+        "inputCost": 3e-07,
+        "output": 128000,
+        "outputCost": 9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "codestral-latest",
+        "inputCost": 3e-07,
+        "output": 128000,
+        "outputCost": 9e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "devstral-2512",
+        "inputCost": 4e-07,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "devstral-latest",
+        "inputCost": 4e-07,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "devstral-medium-2507",
+        "inputCost": 4e-07,
+        "output": 128000,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "devstral-medium-latest",
+        "inputCost": 4e-07,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "devstral-small-2505",
+        "inputCost": 1e-07,
+        "output": 128000,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "devstral-small-2507",
+        "inputCost": 1e-07,
+        "output": 128000,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "devstral-small-latest",
+        "inputCost": 1e-07,
+        "output": 256000,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "glm-5-2",
+        "inputCost": 1.4e-06,
+        "output": 131072,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "labs-devstral-small-2512",
+        "inputCost": 1e-07,
+        "output": 256000,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "labs-leanstral-1-5",
+        "inputCost": 0.0,
+        "output": 131072,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-medium-1-2-2509",
+        "inputCost": 2e-06,
+        "output": 40000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-medium-2506",
+        "inputCost": 2e-06,
+        "output": 40000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-medium-2509",
+        "inputCost": 2e-06,
+        "output": 40000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-medium-latest",
+        "inputCost": 2e-06,
+        "output": 40000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-small-1-2-2509",
+        "inputCost": 5e-07,
+        "output": 40000,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-small-2506",
+        "inputCost": 5e-07,
+        "output": 40000,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 40000,
+        "id": "magistral-small-latest",
+        "inputCost": 5e-07,
+        "output": 40000,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "ministral-3-14b-2512",
+        "inputCost": 2e-07,
+        "output": 262144,
+        "outputCost": 2e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "ministral-3-3b-2512",
+        "inputCost": 1e-07,
+        "output": 131072,
+        "outputCost": 1e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "ministral-3-8b-2512",
+        "inputCost": 1.5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "ministral-8b-2512",
+        "inputCost": 1.5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "ministral-8b-latest",
+        "inputCost": 1.5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32000,
+        "id": "mistral-large-2402",
+        "inputCost": 4e-06,
+        "output": 8191,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "mistral-large-2407",
+        "inputCost": 3e-06,
+        "output": 128000,
+        "outputCost": 9e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "mistral-large-2411",
+        "inputCost": 2e-06,
+        "output": 128000,
+        "outputCost": 6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-large-2512",
+        "inputCost": 5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-large-3",
+        "inputCost": 5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-large-latest",
+        "inputCost": 5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "mistral-medium-2505",
+        "inputCost": 4e-07,
+        "output": 8191,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "mistral-medium-2508",
+        "inputCost": 4e-07,
+        "output": 131072,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-medium-2604",
+        "inputCost": 1.5e-06,
+        "output": 262144,
+        "outputCost": 7.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "mistral-medium-3-1-2508",
+        "inputCost": 4e-07,
+        "output": 131072,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-medium-3-5",
+        "inputCost": 1.5e-06,
+        "output": 262144,
+        "outputCost": 7.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-medium-latest",
+        "inputCost": 1.5e-06,
+        "output": 262144,
+        "outputCost": 7.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32000,
+        "id": "mistral-small",
+        "inputCost": 1e-07,
+        "output": 8191,
+        "outputCost": 3e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-small-2603",
+        "inputCost": 1.5e-07,
+        "output": 262144,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "mistral-small-3-2-2506",
+        "inputCost": 6e-08,
+        "output": 131072,
+        "outputCost": 1.8e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistral-small-latest",
+        "inputCost": 1.5e-07,
+        "output": 262144,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65336,
+        "id": "open-mixtral-8x22b",
+        "inputCost": 2e-06,
+        "output": 8191,
+        "outputCost": 6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32000,
+        "id": "open-mixtral-8x7b",
+        "inputCost": 7e-07,
+        "output": 8191,
+        "outputCost": 7e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "pixtral-12b-2409",
+        "inputCost": 1.5e-07,
+        "output": 128000,
+        "outputCost": 1.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "pixtral-large-2411",
+        "inputCost": 2e-06,
+        "output": 128000,
+        "outputCost": 6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "pixtral-large-latest",
+        "inputCost": 2e-06,
+        "output": 128000,
+        "outputCost": 6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "zai-glm-5-2",
+        "inputCost": 1.4e-06,
+        "output": 131072,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "moonshot": [
+      {
+        "context": 131072,
+        "id": "kimi-k2-0711-preview",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2-0905-preview",
+        "inputCost": 6e-07,
+        "output": 262144,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2-thinking",
+        "inputCost": 6e-07,
+        "output": 262144,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2-thinking-turbo",
+        "inputCost": 1.15e-06,
+        "output": 262144,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2-turbo-preview",
+        "inputCost": 1.15e-06,
+        "output": 262144,
+        "outputCost": 8e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2.5",
+        "inputCost": 6e-07,
+        "output": 262144,
+        "outputCost": 3e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "kimi-k2.6",
+        "inputCost": 9.5e-07,
+        "output": 262144,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "kimi-k3",
+        "inputCost": 3e-06,
+        "output": 1048576,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "kimi-latest",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "kimi-latest-128k",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "kimi-latest-32k",
+        "inputCost": 1e-06,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "kimi-latest-8k",
+        "inputCost": 2e-07,
+        "output": 8192,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "moonshot-v1-128k",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "moonshot-v1-128k-0430",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "moonshot-v1-128k-vision-preview",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "moonshot-v1-32k",
+        "inputCost": 1e-06,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "moonshot-v1-32k-0430",
+        "inputCost": 1e-06,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "moonshot-v1-32k-vision-preview",
+        "inputCost": 1e-06,
+        "output": 32768,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "moonshot-v1-8k",
+        "inputCost": 2e-07,
+        "output": 8192,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "moonshot-v1-8k-0430",
+        "inputCost": 2e-07,
+        "output": 8192,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "moonshot-v1-8k-vision-preview",
+        "inputCost": 2e-07,
+        "output": 8192,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "moonshot-v1-auto",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "nvidia": [],
+    "ollama": [
+      {
+        "context": 32768,
+        "id": "deepseek-coder-v2-instruct",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "deepseek-coder-v2-lite-instruct",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek-v3.1:671b-cloud",
+        "inputCost": 0.0,
+        "output": 163840,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gpt-oss:120b-cloud",
+        "inputCost": 0.0,
+        "output": 131072,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gpt-oss:20b-cloud",
+        "inputCost": 0.0,
+        "output": 131072,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "internlm2_5-20b-chat",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "llama3.1",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "mistral-7B-Instruct-v0.1",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "mistral-7B-Instruct-v0.2",
+        "inputCost": 0.0,
+        "output": 32768,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65536,
+        "id": "mistral-large-instruct-2407",
+        "inputCost": 0.0,
+        "output": 8192,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65536,
+        "id": "mixtral-8x22B-Instruct-v0.1",
+        "inputCost": 0.0,
+        "output": 65536,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "mixtral-8x7B-Instruct-v0.1",
+        "inputCost": 0.0,
+        "output": 32768,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen3-coder:480b-cloud",
+        "inputCost": 0.0,
+        "output": 262144,
+        "outputCost": 0.0,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "openai": [
+      {
+        "context": 400000,
+        "id": "chat-latest",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 3e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "chatgpt-4o-latest",
+        "inputCost": 5e-06,
+        "output": 4096,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1050000,
+        "id": "daybreak-blue-latest",
+        "inputCost": 4e-06,
+        "output": 128000,
+        "outputCost": 2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 400000,
+        "id": "daybreak-red-latest",
+        "inputCost": 1.25e-05,
+        "output": 128000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 16385,
+        "id": "gpt-3.5-turbo",
+        "inputCost": 5e-07,
+        "output": 4096,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 16385,
+        "id": "gpt-3.5-turbo-0125",
+        "inputCost": 5e-07,
+        "output": 4096,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 16385,
+        "id": "gpt-3.5-turbo-1106",
+        "inputCost": 1e-06,
+        "output": 4096,
+        "outputCost": 2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "gpt-4",
+        "inputCost": 3e-05,
+        "output": 4096,
+        "outputCost": 6e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4-0125-preview",
+        "inputCost": 1e-05,
+        "output": 4096,
+        "outputCost": 3e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "gpt-4-0613",
+        "inputCost": 3e-05,
+        "output": 4096,
+        "outputCost": 6e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4-1106-preview",
+        "inputCost": 1e-05,
+        "output": 4096,
+        "outputCost": 3e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4-turbo",
+        "inputCost": 1e-05,
+        "output": 4096,
+        "outputCost": 3e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4-turbo-2024-04-09",
+        "inputCost": 1e-05,
+        "output": 4096,
+        "outputCost": 3e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4-turbo-preview",
+        "inputCost": 1e-05,
+        "output": 4096,
+        "outputCost": 3e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "gpt-4.1",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "gpt-4.1-2025-04-14",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "gpt-4.1-mini",
+        "inputCost": 4e-07,
+        "output": 32768,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "gpt-4.1-mini-2025-04-14",
+        "inputCost": 4e-07,
+        "output": 32768,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "gpt-4.1-nano",
+        "inputCost": 1e-07,
+        "output": 32768,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "gpt-4.1-nano-2025-04-14",
+        "inputCost": 1e-07,
+        "output": 32768,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-2024-05-13",
+        "inputCost": 5e-06,
+        "output": 4096,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-2024-08-06",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-2024-11-20",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-audio-preview",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-audio-preview-2024-12-17",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-audio-preview-2025-06-03",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-mini",
+        "inputCost": 1.5e-07,
+        "output": 16384,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-mini-2024-07-18",
+        "inputCost": 1.5e-07,
+        "output": 16384,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-mini-audio-preview",
+        "inputCost": 1.5e-07,
+        "output": 16384,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-mini-audio-preview-2024-12-17",
+        "inputCost": 1.5e-07,
+        "output": 16384,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-mini-search-preview",
+        "inputCost": 1.5e-07,
+        "output": 16384,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-mini-search-preview-2025-03-11",
+        "inputCost": 1.5e-07,
+        "output": 16384,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-search-preview",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-4o-search-preview-2025-03-11",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-2025-08-07",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-mini",
+        "inputCost": 2.5e-07,
+        "output": 128000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-mini-2025-08-07",
+        "inputCost": 2.5e-07,
+        "output": 128000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-nano",
+        "inputCost": 5e-08,
+        "output": 128000,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-nano-2025-08-07",
+        "inputCost": 5e-08,
+        "output": 128000,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-search-api",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5-search-api-2025-10-14",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.1",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.1-2025-11-13",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.2",
+        "inputCost": 1.75e-06,
+        "output": 128000,
+        "outputCost": 1.4e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.2-2025-12-11",
+        "inputCost": 1.75e-06,
+        "output": 128000,
+        "outputCost": 1.4e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-5.2-chat-latest",
+        "inputCost": 1.75e-06,
+        "output": 16384,
+        "outputCost": 1.4e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-5.3-chat-latest",
+        "inputCost": 1.75e-06,
+        "output": 16384,
+        "outputCost": 1.4e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1050000,
+        "id": "gpt-5.4",
+        "inputCost": 2.5e-06,
+        "output": 128000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1050000,
+        "id": "gpt-5.4-2026-03-05",
+        "inputCost": 2.5e-06,
+        "output": 128000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.4-mini",
+        "inputCost": 7.5e-07,
+        "output": 128000,
+        "outputCost": 4.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.4-mini-2026-03-17",
+        "inputCost": 7.5e-07,
+        "output": 128000,
+        "outputCost": 4.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.4-nano",
+        "inputCost": 2e-07,
+        "output": 128000,
+        "outputCost": 1.25e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "gpt-5.4-nano-2026-03-17",
+        "inputCost": 2e-07,
+        "output": 128000,
+        "outputCost": 1.25e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1050000,
+        "id": "gpt-5.5",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 3e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1050000,
+        "id": "gpt-5.5-2026-04-23",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 3e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6",
+        "inputCost": 4e-06,
+        "output": 128000,
+        "outputCost": 2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 400000,
+        "id": "gpt-5.6-cyber",
+        "inputCost": 1.25e-05,
+        "output": 128000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6-luna",
+        "inputCost": 2e-07,
+        "output": 128000,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6-sol",
+        "inputCost": 4e-06,
+        "output": 128000,
+        "outputCost": 2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 922000,
+        "id": "gpt-5.6-terra",
+        "inputCost": 2e-06,
+        "output": 128000,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-audio",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-audio-1.5",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-audio-2025-08-28",
+        "inputCost": 2.5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-audio-mini",
+        "inputCost": 6e-07,
+        "output": 16384,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-audio-mini-2025-10-06",
+        "inputCost": 6e-07,
+        "output": 16384,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "gpt-audio-mini-2025-12-15",
+        "inputCost": 6e-07,
+        "output": 16384,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o1",
+        "inputCost": 1.5e-05,
+        "output": 100000,
+        "outputCost": 6e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o1-2024-12-17",
+        "inputCost": 1.5e-05,
+        "output": 100000,
+        "outputCost": 6e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o3",
+        "inputCost": 2e-06,
+        "output": 100000,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o3-2025-04-16",
+        "inputCost": 2e-06,
+        "output": 100000,
+        "outputCost": 8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o3-mini",
+        "inputCost": 1.1e-06,
+        "output": 100000,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o3-mini-2025-01-31",
+        "inputCost": 1.1e-06,
+        "output": 100000,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o4-mini",
+        "inputCost": 1.1e-06,
+        "output": 100000,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "o4-mini-2025-04-16",
+        "inputCost": 1.1e-06,
+        "output": 100000,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      }
+    ],
+    "openrouter": [
+      {
+        "context": 200000,
+        "id": "anthropic/claude-3-haiku",
+        "inputCost": 2.5e-07,
+        "output": 4096,
+        "outputCost": 1.25e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-3.5-sonnet",
+        "inputCost": 3e-06,
+        "output": 8192,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-3.7-sonnet",
+        "inputCost": 3e-06,
+        "output": 128000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-haiku-4.5",
+        "inputCost": 1e-06,
+        "output": 200000,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-opus-4",
+        "inputCost": 1.5e-05,
+        "output": 32000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-opus-4.1",
+        "inputCost": 1.5e-05,
+        "output": 32000,
+        "outputCost": 7.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "anthropic/claude-opus-4.5",
+        "inputCost": 5e-06,
+        "output": 32000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "anthropic/claude-opus-4.6",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "anthropic/claude-opus-4.7",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "anthropic/claude-opus-5",
+        "inputCost": 5e-06,
+        "output": 128000,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "anthropic/claude-sonnet-4",
+        "inputCost": 3e-06,
+        "output": 64000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "anthropic/claude-sonnet-4.5",
+        "inputCost": 3e-06,
+        "output": 1000000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "anthropic/claude-sonnet-4.6",
+        "inputCost": 3e-06,
+        "output": 128000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek/deepseek-chat-v3.1",
+        "inputCost": 2e-07,
+        "output": 163840,
+        "outputCost": 8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65336,
+        "id": "deepseek/deepseek-r1",
+        "inputCost": 5.5e-07,
+        "output": 8192,
+        "outputCost": 2.19e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65336,
+        "id": "deepseek/deepseek-r1-0528",
+        "inputCost": 5e-07,
+        "output": 8192,
+        "outputCost": 2.15e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek/deepseek-v3.2",
+        "inputCost": 2.8e-07,
+        "output": 163840,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 163840,
+        "id": "deepseek/deepseek-v3.2-exp",
+        "inputCost": 2e-07,
+        "output": 163840,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek/deepseek-v4-pro",
+        "inputCost": 1.32e-06,
+        "output": 384000,
+        "outputCost": 3.96e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek/deepseek-v4-pro-0813",
+        "inputCost": 1.32e-06,
+        "output": 384000,
+        "outputCost": 3.96e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-2.0-flash-001",
+        "inputCost": 1e-07,
+        "output": 8192,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-2.5-flash",
+        "inputCost": 3e-07,
+        "output": 8192,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-2.5-pro",
+        "inputCost": 1.25e-06,
+        "output": 8192,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-3-flash-preview",
+        "inputCost": 5e-07,
+        "output": 65535,
+        "outputCost": 3e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-3-pro-preview",
+        "inputCost": 2e-06,
+        "output": 65535,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-3.1-flash-lite",
+        "inputCost": 2.5e-07,
+        "output": 65536,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-3.1-flash-lite-preview",
+        "inputCost": 2.5e-07,
+        "output": 65536,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "google/gemini-3.1-pro-preview",
+        "inputCost": 2e-06,
+        "output": 65536,
+        "outputCost": 1.2e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 204800,
+        "id": "minimax/minimax-m2",
+        "inputCost": 2.55e-07,
+        "output": 204800,
+        "outputCost": 1.02e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 204000,
+        "id": "minimax/minimax-m2.1",
+        "inputCost": 2.7e-07,
+        "output": 64000,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 196608,
+        "id": "minimax/minimax-m2.5",
+        "inputCost": 3e-07,
+        "output": 65536,
+        "outputCost": 1.1e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistralai/devstral-2512",
+        "inputCost": 1.5e-07,
+        "output": 65536,
+        "outputCost": 6e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistralai/ministral-14b-2512",
+        "inputCost": 2e-07,
+        "output": 262144,
+        "outputCost": 2e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "mistralai/ministral-3b-2512",
+        "inputCost": 1e-07,
+        "output": 131072,
+        "outputCost": 1e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistralai/ministral-8b-2512",
+        "inputCost": 1.5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "mistralai/mistral-large-2512",
+        "inputCost": 5e-07,
+        "output": 262144,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "moonshotai/kimi-k2.5",
+        "inputCost": 6e-07,
+        "output": 262144,
+        "outputCost": 3e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "openai/gpt-4.1",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 8e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "openai/gpt-4.1-mini",
+        "inputCost": 4e-07,
+        "output": 32768,
+        "outputCost": 1.6e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1047576,
+        "id": "openai/gpt-4.1-nano",
+        "inputCost": 1e-07,
+        "output": 32768,
+        "outputCost": 4e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "openai/gpt-4o",
+        "inputCost": 2.5e-06,
+        "output": 4096,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "openai/gpt-4o-2024-05-13",
+        "inputCost": 5e-06,
+        "output": 4096,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 400000,
+        "id": "openai/gpt-5.1-codex-max",
+        "inputCost": 1.25e-06,
+        "output": 128000,
+        "outputCost": 1e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "openai/gpt-5.2",
+        "inputCost": 1.75e-06,
+        "output": 128000,
+        "outputCost": 1.4e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "openai/gpt-5.2-chat",
+        "inputCost": 1.75e-06,
+        "output": 16384,
+        "outputCost": 1.4e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 272000,
+        "id": "openai/gpt-5.2-pro",
+        "inputCost": 2.1e-05,
+        "output": 128000,
+        "outputCost": 0.000168,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-120b",
+        "inputCost": 1.8e-07,
+        "output": 32768,
+        "outputCost": 8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-20b",
+        "inputCost": 2e-08,
+        "output": 32768,
+        "outputCost": 1e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "openai/o1",
+        "inputCost": 1.5e-05,
+        "output": 100000,
+        "outputCost": 6e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "openai/o3-mini",
+        "inputCost": 1.1e-06,
+        "output": 65536,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "openai/o3-mini-high",
+        "inputCost": 1.1e-06,
+        "output": 65536,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 2000000,
+        "id": "openrouter/auto",
+        "inputCost": 0.0,
+        "output": 2000000,
+        "outputCost": 0.0,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "openrouter/free",
+        "inputCost": 0.0,
+        "output": 200000,
+        "outputCost": 0.0,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen/qwen3-235b-a22b-2507",
+        "inputCost": 7.1e-08,
+        "output": 262144,
+        "outputCost": 1e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen/qwen3-235b-a22b-thinking-2507",
+        "inputCost": 1.1e-07,
+        "output": 262144,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262100,
+        "id": "qwen/qwen3-coder",
+        "inputCost": 2.2e-07,
+        "output": 262100,
+        "outputCost": 9.5e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 997952,
+        "id": "qwen/qwen3-coder-plus",
+        "inputCost": 1e-06,
+        "output": 65536,
+        "outputCost": 5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen/qwen3.5-122b-a10b",
+        "inputCost": 4e-07,
+        "output": 65536,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen/qwen3.5-27b",
+        "inputCost": 3e-07,
+        "output": 65536,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen/qwen3.5-35b-a3b",
+        "inputCost": 2.5e-07,
+        "output": 65536,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "qwen/qwen3.5-397b-a17b",
+        "inputCost": 6e-07,
+        "output": 65536,
+        "outputCost": 3.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "qwen/qwen3.5-flash-02-23",
+        "inputCost": 1e-07,
+        "output": 65536,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "qwen/qwen3.5-plus-02-15",
+        "inputCost": 4e-07,
+        "output": 65536,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "qwen/qwen3.6-plus",
+        "inputCost": 3.25e-07,
+        "output": 65536,
+        "outputCost": 1.95e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "x-ai/grok-4",
+        "inputCost": 3e-06,
+        "output": 256000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "xiaomi/mimo-v2-flash",
+        "inputCost": 1e-07,
+        "output": 16384,
+        "outputCost": 3e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "xiaomi/mimo-v2.5",
+        "inputCost": 4e-07,
+        "output": 131072,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "xiaomi/mimo-v2.5-pro",
+        "inputCost": 1e-06,
+        "output": 16384,
+        "outputCost": 3e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "z-ai/glm-4.6",
+        "inputCost": 4e-07,
+        "output": 131000,
+        "outputCost": 1.75e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202800,
+        "id": "z-ai/glm-4.6:exacto",
+        "inputCost": 4.5e-07,
+        "output": 131000,
+        "outputCost": 1.9e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202752,
+        "id": "z-ai/glm-4.7",
+        "inputCost": 4e-07,
+        "output": 64000,
+        "outputCost": 1.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "z-ai/glm-4.7-flash",
+        "inputCost": 7e-08,
+        "output": 32000,
+        "outputCost": 4e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202752,
+        "id": "z-ai/glm-5",
+        "inputCost": 8e-07,
+        "output": 128000,
+        "outputCost": 2.56e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 202752,
+        "id": "z-ai/glm-5.1",
+        "inputCost": 1.05e-06,
+        "output": 65535,
+        "outputCost": 3.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "perplexity": [],
+    "sambanova": [
+      {
+        "context": 32768,
+        "id": "DeepSeek-V3-0324",
+        "inputCost": 3e-06,
+        "output": 32768,
+        "outputCost": 4.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "DeepSeek-V3.1",
+        "inputCost": 3e-06,
+        "output": 131072,
+        "outputCost": 4.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "DeepSeek-V3.2",
+        "inputCost": 3e-06,
+        "output": 32768,
+        "outputCost": 4.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "Llama-4-Maverick-17B-128E-Instruct",
+        "inputCost": 6.3e-07,
+        "output": 131072,
+        "outputCost": 1.8e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "Llama-4-Scout-17B-16E-Instruct",
+        "inputCost": 4e-07,
+        "output": 8192,
+        "outputCost": 7e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 16384,
+        "id": "Meta-Llama-3.1-405B-Instruct",
+        "inputCost": 5e-06,
+        "output": 16384,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 16384,
+        "id": "Meta-Llama-3.1-8B-Instruct",
+        "inputCost": 1e-07,
+        "output": 16384,
+        "outputCost": 2e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "Meta-Llama-3.3-70B-Instruct",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 196608,
+        "id": "MiniMax-M2.7",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 2.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "Qwen3-32B",
+        "inputCost": 4e-07,
+        "output": 8192,
+        "outputCost": 8e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "gpt-oss-120b",
+        "inputCost": 2.2e-07,
+        "output": 131072,
+        "outputCost": 5.9e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "together": [
+      {
+        "context": 524288,
+        "id": "MiniMaxAI/MiniMax-M3",
+        "inputCost": 3e-07,
+        "output": 524288,
+        "outputCost": 1.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "Qwen/Qwen3.5-9B",
+        "inputCost": 1.7e-07,
+        "output": 262144,
+        "outputCost": 2.5e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "deepseek-ai/DeepSeek-R1",
+        "inputCost": 3e-06,
+        "output": 20480,
+        "outputCost": 7e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 65536,
+        "id": "deepseek-ai/DeepSeek-V3",
+        "inputCost": 1.25e-06,
+        "output": 8192,
+        "outputCost": 1.25e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 128000,
+        "id": "deepseek-ai/DeepSeek-V3.1",
+        "inputCost": 6e-07,
+        "output": 16384,
+        "outputCost": 1.7e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek-ai/DeepSeek-V4-Flash-0731",
+        "inputCost": 1.4e-07,
+        "output": 1048576,
+        "outputCost": 2.8e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 512000,
+        "id": "deepseek-ai/DeepSeek-V4-Pro",
+        "inputCost": 1.74e-06,
+        "output": 512000,
+        "outputCost": 3.48e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "deepseek-ai/DeepSeek-V4-Pro-0813",
+        "inputCost": 1.32e-06,
+        "output": 1048576,
+        "outputCost": 3.96e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "google/gemma-4-31B-it",
+        "inputCost": 3.9e-07,
+        "output": 262144,
+        "outputCost": 9.7e-07,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "inputCost": 1.04e-06,
+        "output": 131072,
+        "outputCost": 1.04e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "moonshotai/Kimi-K2.5",
+        "inputCost": 5e-07,
+        "output": 256000,
+        "outputCost": 2.8e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 262144,
+        "id": "moonshotai/Kimi-K2.7-Code",
+        "inputCost": 9.5e-07,
+        "output": 262144,
+        "outputCost": 4e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048576,
+        "id": "moonshotai/Kimi-K3",
+        "inputCost": 3e-06,
+        "output": 1048576,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 512288,
+        "id": "nvidia/nemotron-3-ultra-550b-a55b",
+        "inputCost": 6e-07,
+        "output": 512288,
+        "outputCost": 3.6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "openai/gpt-oss-120b",
+        "inputCost": 1.5e-07,
+        "output": 131072,
+        "outputCost": 6e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 524288,
+        "id": "thinkingmachines/Inkling",
+        "inputCost": 1e-06,
+        "output": 524288,
+        "outputCost": 4.05e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "zai-org/GLM-4.6",
+        "inputCost": 6e-07,
+        "output": 200000,
+        "outputCost": 2.2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 200000,
+        "id": "zai-org/GLM-4.7",
+        "inputCost": 4.5e-07,
+        "output": 200000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1048575,
+        "id": "zai-org/GLM-5.2",
+        "inputCost": 1.4e-06,
+        "output": 1048575,
+        "outputCost": 4.4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      }
+    ],
+    "xai": [
+      {
+        "context": 131072,
+        "id": "grok-2",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-2-1212",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-2-latest",
+        "inputCost": 2e-06,
+        "output": 131072,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "grok-2-vision",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "grok-2-vision-1212",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 32768,
+        "id": "grok-2-vision-latest",
+        "inputCost": 2e-06,
+        "output": 32768,
+        "outputCost": 1e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3",
+        "inputCost": 3e-06,
+        "output": 131072,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-beta",
+        "inputCost": 3e-06,
+        "output": 131072,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-fast-beta",
+        "inputCost": 5e-06,
+        "output": 131072,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-fast-latest",
+        "inputCost": 5e-06,
+        "output": 131072,
+        "outputCost": 2.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-latest",
+        "inputCost": 3e-06,
+        "output": 131072,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-mini",
+        "inputCost": 3e-07,
+        "output": 131072,
+        "outputCost": 5e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-mini-beta",
+        "inputCost": 3e-07,
+        "output": 131072,
+        "outputCost": 5e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-mini-fast",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-mini-fast-beta",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-mini-fast-latest",
+        "inputCost": 6e-07,
+        "output": 131072,
+        "outputCost": 4e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-3-mini-latest",
+        "inputCost": 3e-07,
+        "output": 131072,
+        "outputCost": 5e-07,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-4",
+        "inputCost": 3e-06,
+        "output": 256000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-4-0709",
+        "inputCost": 3e-06,
+        "output": 256000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-4-latest",
+        "inputCost": 3e-06,
+        "output": 256000,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.20-0309-non-reasoning",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.20-0309-reasoning",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.20-beta-0309-non-reasoning",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.20-beta-0309-reasoning",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.20-multi-agent-0309",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.20-multi-agent-beta-0309",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.3",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 1000000,
+        "id": "grok-4.3-latest",
+        "inputCost": 1.25e-06,
+        "output": 1000000,
+        "outputCost": 2.5e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 500000,
+        "id": "grok-4.5",
+        "inputCost": 2e-06,
+        "output": 500000,
+        "outputCost": 6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 500000,
+        "id": "grok-4.5-latest",
+        "inputCost": 2e-06,
+        "output": 500000,
+        "outputCost": 6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 500000,
+        "id": "grok-4.6",
+        "inputCost": 2e-06,
+        "output": 500000,
+        "outputCost": 6e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 131072,
+        "id": "grok-beta",
+        "inputCost": 5e-06,
+        "output": 131072,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-build-0.1",
+        "inputCost": 1e-06,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-code-fast",
+        "inputCost": 1e-06,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-code-fast-1",
+        "inputCost": 1e-06,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 256000,
+        "id": "grok-code-fast-1-0825",
+        "inputCost": 1e-06,
+        "output": 256000,
+        "outputCost": 2e-06,
+        "traits": [
+          "reasoning",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      },
+      {
+        "context": 8192,
+        "id": "grok-vision-beta",
+        "inputCost": 5e-06,
+        "output": 8192,
+        "outputCost": 1.5e-05,
+        "traits": [
+          "sampling",
+          "function-calling",
+          "vision",
+          "system-prompt"
+        ]
+      }
+    ]
+  }
+}
