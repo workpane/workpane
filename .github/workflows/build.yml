@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "extras/**"
+      - ".gitignore"
+      - ".editorconfig"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "extras/**"
+      - ".gitignore"
+      - ".editorconfig"
+
+jobs:
+  linux:
+    uses: ./.github/workflows/build-linux.yml
+
+  macos:
+    uses: ./.github/workflows/build-macos.yml
+    secrets: inherit
+
+  windows:
+    uses: ./.github/workflows/build-windows.yml

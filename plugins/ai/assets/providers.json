@@ -1,0 +1,2247 @@
+{
+  "limits": {
+    "discoveryTimeoutMs": 20000,
+    "maximumAgentIterations": 200,
+    "maximumCommandTimeoutSeconds": 86400,
+    "maximumConcurrentRequests": 1024,
+    "maximumParallelExecutions": 64,
+    "maximumRequestDelayMs": 600000,
+    "maximumRequestsPerMinute": 100000,
+    "maximumRetryBackoffMs": 120000,
+    "maximumSamplingTokens": 200000,
+    "repeatedToolCallLimit": 3,
+    "requestTimeoutMs": 300000,
+    "retryBackoffMs": 1000,
+    "scheduleWakeupMs": 60000,
+    "serverStartTimeoutMs": 30000,
+    "summaryMaximumTokens": 1024,
+    "toolDeadlineMs": 300000
+  },
+  "promptTemplates": [
+    "application",
+    "code-review",
+    "security",
+    "website"
+  ],
+  "providers": [
+    {
+      "id": "anthropic",
+      "title": "ai.provider.anthropic",
+      "protocol": "anthropic",
+      "baseUrl": "https://api.anthropic.com",
+      "addressConfigurable": false,
+      "apiKeyVariable": "ANTHROPIC_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "claude-opus-5",
+        "claude-sonnet-5",
+        "claude-haiku-4-5"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {
+        "anthropic-version": "2023-06-01"
+      },
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 1.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "output_config.effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/v1/messages"
+        }
+      }
+    },
+    {
+      "id": "elevenlabs",
+      "title": "ai.provider.elevenlabs",
+      "baseUrl": "https://api.elevenlabs.io",
+      "apiKeyVariable": "ELEVENLABS_API_KEY",
+      "endpoints": {
+        "speech": {
+          "path": "/v1/text-to-speech/{voice}",
+          "voiceCatalogPath": "/v1/voices",
+          "authHeader": "xi-api-key",
+          "textField": "text"
+        }
+      }
+    },
+    {
+      "id": "openai",
+      "title": "ai.provider.openai",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.openai.com/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "OPENAI_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "gpt-5",
+        "gpt-5-mini",
+        "gpt-4o"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        },
+        "image": {
+          "path": "/images/generations",
+          "authHeader": "authorization",
+          "authPrefix": "Bearer ",
+          "textField": "prompt",
+          "body": {
+            "response_format": "b64_json"
+          }
+        },
+        "speech": {
+          "path": "/audio/speech",
+          "voices": [
+            "alloy",
+            "ash",
+            "ballad",
+            "coral",
+            "echo",
+            "fable",
+            "nova",
+            "onyx",
+            "sage",
+            "shimmer"
+          ],
+          "defaultVoice": "alloy",
+          "authHeader": "authorization",
+          "authPrefix": "Bearer ",
+          "textField": "input",
+          "voiceField": "voice",
+          "model": "gpt-4o-mini-tts"
+        }
+      }
+    },
+    {
+      "id": "openrouter",
+      "title": "ai.provider.openrouter",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "OPENROUTER_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "deepseek",
+      "title": "ai.provider.deepseek",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.deepseek.com/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "DEEPSEEK_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "deepseek-chat"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "xai",
+      "title": "ai.provider.xai",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.x.ai/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "XAI_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "grok-4"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "gemini",
+      "title": "ai.provider.gemini",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "addressConfigurable": false,
+      "apiKeyVariable": "GEMINI_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "gemini-2.5-pro",
+        "gemini-2.5-flash"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "moonshot",
+      "title": "ai.provider.moonshot",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "MOONSHOT_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "kimi-k2-0711-preview"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "groq",
+      "title": "ai.provider.groq",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.groq.com/openai/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "GROQ_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "mistral",
+      "title": "ai.provider.mistral",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.mistral.ai/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "MISTRAL_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [
+        "mistral-large-latest"
+      ],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "together",
+      "title": "ai.provider.together",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.together.xyz/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "TOGETHER_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "fireworks",
+      "title": "ai.provider.fireworks",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.fireworks.ai/inference/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "FIREWORKS_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "deepinfra",
+      "title": "ai.provider.deepinfra",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.deepinfra.com/v1/openai",
+      "addressConfigurable": false,
+      "apiKeyVariable": "DEEPINFRA_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "perplexity",
+      "title": "ai.provider.perplexity",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.perplexity.ai",
+      "addressConfigurable": false,
+      "apiKeyVariable": "PERPLEXITY_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "cerebras",
+      "title": "ai.provider.cerebras",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.cerebras.ai/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "CEREBRAS_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "sambanova",
+      "title": "ai.provider.sambanova",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://api.sambanova.ai/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "SAMBANOVA_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "nvidia",
+      "title": "ai.provider.nvidia",
+      "protocol": "openai-compatible",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "addressConfigurable": false,
+      "apiKeyVariable": "NVIDIA_API_KEY",
+      "requiresApiKey": true,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt",
+        "vision"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "ollama",
+      "title": "ai.provider.ollama",
+      "protocol": "openai-compatible",
+      "baseUrl": "http://localhost:11434/v1",
+      "addressConfigurable": true,
+      "apiKeyVariable": "",
+      "requiresApiKey": false,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "lm-studio",
+      "title": "ai.provider.lm-studio",
+      "protocol": "openai-compatible",
+      "baseUrl": "http://localhost:1234/v1",
+      "addressConfigurable": true,
+      "apiKeyVariable": "",
+      "requiresApiKey": false,
+      "userDefinedTraits": [
+        "function-calling",
+        "sampling",
+        "system-prompt"
+      ],
+      "preferredModels": [],
+      "requestMaxRetries": 2,
+      "streamIdleTimeoutMs": 60000,
+      "headers": {},
+      "queryParameters": {},
+      "parameters": [
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_tokens",
+          "trait": "sampling",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "maxOutputTokens",
+          "title": "ai.parameter.max-output-tokens",
+          "type": "integer",
+          "field": "max_completion_tokens",
+          "trait": "reasoning",
+          "minimum": 0,
+          "maximum": 200000,
+          "default": 8192,
+          "boundByModelOutput": true,
+          "modelMaximumWhenZero": true
+        },
+        {
+          "id": "temperature",
+          "title": "ai.parameter.temperature",
+          "type": "number",
+          "field": "temperature",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        {
+          "id": "topP",
+          "title": "ai.parameter.top-p",
+          "type": "number",
+          "field": "top_p",
+          "trait": "sampling",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.95
+        },
+        {
+          "id": "frequencyPenalty",
+          "title": "ai.parameter.frequency-penalty",
+          "type": "number",
+          "field": "frequency_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "presencePenalty",
+          "title": "ai.parameter.presence-penalty",
+          "type": "number",
+          "field": "presence_penalty",
+          "trait": "sampling",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0.0
+        },
+        {
+          "id": "reasoningEffort",
+          "title": "ai.parameter.reasoning-effort",
+          "type": "enumeration",
+          "field": "reasoning_effort",
+          "trait": "reasoning",
+          "default": "medium",
+          "options": [
+            {
+              "id": "low",
+              "title": "ai.effort.low"
+            },
+            {
+              "id": "medium",
+              "title": "ai.effort.medium"
+            },
+            {
+              "id": "high",
+              "title": "ai.effort.high"
+            }
+          ]
+        }
+      ],
+      "endpoints": {
+        "chat": {
+          "path": "/chat/completions"
+        }
+      }
+    },
+    {
+      "id": "grok-cli",
+      "title": "ai.provider.grok-cli",
+      "protocol": "command-line",
+      "command": {
+        "program": "grok",
+        "arguments": [
+          "--model",
+          "{model}",
+          "--no-auto-update",
+          "--cwd",
+          "{workdir}",
+          "--always-approve",
+          "--max-turns",
+          "100",
+          "-p",
+          "{prompt}",
+          "--output-format",
+          "plain"
+        ],
+        "clearedVariables": [
+          "XAI_API_KEY",
+          "GROK_API_KEY",
+          "XAI_BASE_URL"
+        ]
+      },
+      "requiresApiKey": false,
+      "userDefinedTraits": [],
+      "preferredModels": [
+        "grok-4.6"
+      ]
+    },
+    {
+      "id": "claude-cli",
+      "title": "ai.provider.claude-cli",
+      "protocol": "command-line",
+      "command": {
+        "program": "claude",
+        "arguments": [
+          "--model",
+          "{model}",
+          "--dangerously-skip-permissions",
+          "--max-turns",
+          "100",
+          "--no-session-persistence",
+          "--output-format",
+          "text",
+          "-p",
+          "{prompt}"
+        ],
+        "clearedVariables": [
+          "ANTHROPIC_API_KEY",
+          "ANTHROPIC_AUTH_TOKEN",
+          "ANTHROPIC_BASE_URL",
+          "CLAUDE_CODE_USE_BEDROCK",
+          "CLAUDE_CODE_USE_VERTEX"
+        ]
+      },
+      "requiresApiKey": false,
+      "userDefinedTraits": [],
+      "preferredModels": [
+        "claude-opus-5"
+      ]
+    },
+    {
+      "id": "codex-cli",
+      "title": "ai.provider.codex-cli",
+      "protocol": "command-line",
+      "command": {
+        "program": "codex",
+        "arguments": [
+          "exec",
+          "--model",
+          "{model}",
+          "--yolo",
+          "--ephemeral",
+          "--color",
+          "never",
+          "--cd",
+          "{workdir}",
+          "{prompt}"
+        ],
+        "clearedVariables": [
+          "OPENAI_API_KEY",
+          "OPENAI_BASE_URL",
+          "OPENAI_ORGANIZATION",
+          "OPENAI_PROJECT"
+        ]
+      },
+      "requiresApiKey": false,
+      "userDefinedTraits": [],
+      "preferredModels": [
+        "gpt-5.4"
+      ]
+    },
+    {
+      "id": "antigravity-cli",
+      "title": "ai.provider.antigravity-cli",
+      "protocol": "command-line",
+      "command": {
+        "program": "agy",
+        "arguments": [
+          "--model",
+          "{model}",
+          "-p",
+          "{prompt}",
+          "--dangerously-skip-permissions",
+          "--output-format",
+          "text",
+          "--print-timeout",
+          "1h"
+        ],
+        "clearedVariables": [
+          "GEMINI_API_KEY",
+          "GOOGLE_API_KEY",
+          "GOOGLE_GENAI_API_KEY",
+          "GOOGLE_APPLICATION_CREDENTIALS"
+        ]
+      },
+      "requiresApiKey": false,
+      "userDefinedTraits": [],
+      "preferredModels": [
+        "gemini-3.1-pro-high"
+      ]
+    },
+    {
+      "id": "kimi-cli",
+      "title": "ai.provider.kimi-cli",
+      "protocol": "command-line",
+      "command": {
+        "program": "kimi",
+        "arguments": [
+          "--model",
+          "{model}",
+          "--auto",
+          "--output-format",
+          "text",
+          "--prompt",
+          "{prompt}"
+        ],
+        "clearedVariables": [
+          "MOONSHOT_API_KEY",
+          "KIMI_API_KEY",
+          "MOONSHOT_BASE_URL"
+        ]
+      },
+      "requiresApiKey": false,
+      "userDefinedTraits": [],
+      "preferredModels": [
+        "kimi-k3"
+      ]
+    }
+  ]
+}

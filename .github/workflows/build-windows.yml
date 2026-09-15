@@ -1,0 +1,75 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+  QT_VERSION: 6.11.2
+
+jobs:
+  build:
+    name: Windows (x86_64)
+    runs-on: windows-2025
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # The runner image carries no NSIS, which is the compiler the installer is built with.
+      - name: Install build dependencies
+        run: choco install ninja nsis --no-progress --yes
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      # The released aqtinstall does not know the Windows repository layout that Qt introduced in 6.11.
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          aqtsource: "git+https://github.com/miurahr/aqtinstall.git@16db45a70b5905ad596941b223469bc86a56901e"
+          modules: qtwebengine qtwebchannel qtpositioning
+          cache: true
+
+      - name: Enable MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure
+        run: cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DWORKPANE_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build/release --parallel
+
+      - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu
+          QTWEBENGINE_DISABLE_SANDBOX: 1
+        run: ctest --test-dir build/release --output-on-failure --no-tests=error
+
+      - name: Package
+        run: cmake --build build/release --target package
+
+      - name: Validate package
+        run: python3 make.py validate-package
+
+      - name: Collect package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Get-ChildItem build/release -Filter "Workpane-*.exe" | Select-Object -First 1 | ForEach-Object { Copy-Item $_.FullName dist/workpane-windows-x86_64-installer.exe }
+          Get-ChildItem dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: workpane-windows-x86_64
+          if-no-files-found: error
+          path: dist/workpane-windows-x86_64-installer.exe

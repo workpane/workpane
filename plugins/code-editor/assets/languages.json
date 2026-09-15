@@ -1,0 +1,1294 @@
+{
+  "languages": [
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "c",
+        "cc",
+        "cpp",
+        "cxx",
+        "h",
+        "hh",
+        "hpp",
+        "hxx"
+      ],
+      "id": "cpp",
+      "keywords": "alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char char8_t char16_t char32_t class compl concept const consteval constexpr constinit const_cast continue co_await co_return co_yield decltype default delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected public reflexpr register reinterpret_cast requires return short signed sizeof static static_assert static_cast struct switch synchronized template this thread_local throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq",
+      "lineComment": "//",
+      "name": "C/C++",
+      "patterns": [
+        {
+          "pattern": "^\\s*#\\s*[A-Za-z_]+",
+          "role": "preprocessor"
+        }
+      ]
+    },
+    {
+      "blockCommentEnd": "]]",
+      "blockCommentStart": "#[[",
+      "fileNames": [
+        "CMakeLists.txt"
+      ],
+      "id": "cmake",
+      "keywords": "add_compile_definitions add_compile_options add_custom_command add_custom_target add_definitions add_dependencies add_executable add_library add_link_options add_subdirectory add_test aux_source_directory break build_command cmake_host_system_information cmake_language cmake_minimum_required cmake_parse_arguments cmake_path cmake_policy configure_file continue create_test_sourcelist define_property else elseif enable_language enable_testing endforeach endfunction endif endmacro endwhile execute_process file find_file find_library find_package find_path find_program fltk_wrap_ui foreach function get_cmake_property get_directory_property get_filename_component get_property if include include_directories include_external_msproject include_guard include_regular_expression install link_directories link_libraries list load_cache macro mark_as_advanced math message option project qt_add_executable qt_add_library qt_standard_project_setup return separate_arguments set set_directory_properties set_property set_source_files_properties set_target_properties set_tests_properties site_name source_group string target_compile_definitions target_compile_features target_compile_options target_include_directories target_link_directories target_link_libraries target_link_options target_precompile_headers target_sources try_compile try_run unset variable_watch while",
+      "lineComment": "#",
+      "name": "CMake"
+    },
+    {
+      "extensions": [
+        "py",
+        "pyi"
+      ],
+      "id": "python",
+      "keywords": "and as assert async await break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield",
+      "lineComment": "#",
+      "name": "Python",
+      "patterns": [
+        {
+          "pattern": "@[A-Za-z_][A-Za-z0-9_.]*",
+          "role": "decorator"
+        }
+      ]
+    },
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "js",
+        "jsx",
+        "mjs",
+        "cjs"
+      ],
+      "id": "javascript",
+      "keywords": "as async await break case catch class const continue debugger default delete do else export extends false finally for from function get if implements import in instanceof interface let new null of package private protected public return set static super switch this throw true try typeof undefined var void while with yield",
+      "lineComment": "//",
+      "name": "JavaScript",
+      "patterns": [
+        {
+          "pattern": "@[A-Za-z_][A-Za-z0-9_.]*",
+          "role": "decorator"
+        }
+      ]
+    },
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "ts",
+        "tsx",
+        "mts",
+        "cts"
+      ],
+      "id": "typescript",
+      "keywords": "abstract any as asserts async await bigint boolean break case catch class const constructor continue debugger declare default delete do else enum export extends false finally for from function get if implements import in infer instanceof interface is keyof let module namespace never new null number object of package private protected public readonly require return set static string super switch symbol this throw true try type typeof undefined unique unknown var void while with yield",
+      "lineComment": "//",
+      "name": "TypeScript",
+      "patterns": [
+        {
+          "pattern": "@[A-Za-z_][A-Za-z0-9_.]*",
+          "role": "decorator"
+        }
+      ]
+    },
+    {
+      "extensions": [
+        "json",
+        "jsonc"
+      ],
+      "id": "json",
+      "keywords": "true false null",
+      "lineComment": "//",
+      "name": "JSON"
+    },
+    {
+      "extensions": [
+        "yaml",
+        "yml"
+      ],
+      "id": "yaml",
+      "keywords": "true false null",
+      "lineComment": "#",
+      "name": "YAML"
+    },
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "rs"
+      ],
+      "id": "rust",
+      "keywords": "as async await break const continue crate dyn else enum extern false fn for if impl in let loop match mod move mut pub ref return self Self static struct super trait true type unsafe use where while",
+      "lineComment": "//",
+      "name": "Rust"
+    },
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "go"
+      ],
+      "id": "go",
+      "keywords": "break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var",
+      "lineComment": "//",
+      "name": "Go"
+    },
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "java"
+      ],
+      "id": "java",
+      "keywords": "abstract assert boolean break byte case catch char class const continue default do double else enum extends final finally float for goto if implements import instanceof int interface long native new package private protected public return short static strictfp super switch synchronized this throw throws transient try void volatile while true false null",
+      "lineComment": "//",
+      "name": "Java",
+      "patterns": [
+        {
+          "pattern": "@[A-Za-z_][A-Za-z0-9_.]*",
+          "role": "decorator"
+        }
+      ]
+    },
+    {
+      "extensions": [
+        "sh",
+        "bash",
+        "zsh"
+      ],
+      "id": "shellscript",
+      "keywords": "case do done elif else esac export fi for function if in local readonly return select then time until while",
+      "lineComment": "#",
+      "name": "Shell"
+    },
+    {
+      "blockCommentEnd": "-->",
+      "blockCommentStart": "<!--",
+      "extensions": [
+        "html",
+        "htm",
+        "xhtml"
+      ],
+      "id": "html",
+      "name": "HTML",
+      "patterns": [
+        {
+          "pattern": "</?[A-Za-z][^>]*>",
+          "role": "markup"
+        },
+        {
+          "pattern": "\\b[A-Za-z_:][A-Za-z0-9_.:-]*(?=\\s*=)",
+          "role": "attribute"
+        }
+      ]
+    },
+    {
+      "blockCommentEnd": "*/",
+      "blockCommentStart": "/*",
+      "extensions": [
+        "css",
+        "scss",
+        "sass",
+        "less"
+      ],
+      "id": "css",
+      "keywords": "important inherit initial revert unset var calc rgb rgba hsl hsla",
+      "lineComment": "//",
+      "name": "CSS"
+    },
+    {
+      "blockCommentEnd": "-->",
+      "blockCommentStart": "<!--",
+      "extensions": [
+        "md",
+        "markdown"
+      ],
+      "id": "markdown",
+      "name": "Markdown",
+      "patterns": [
+        {
+          "pattern": "^#{1,6}\\s+.*$",
+          "role": "heading"
+        },
+        {
+          "pattern": "`[^`]+`",
+          "role": "codeSpan"
+        },
+        {
+          "pattern": "\\*\\*[^*]+\\*\\*|__[^_]+__",
+          "role": "strong"
+        },
+        {
+          "pattern": "(?<![*_])[*_][^*_\\n]+[*_](?![*_])",
+          "role": "emphasis"
+        },
+        {
+          "pattern": "\\[[^\\]]*\\]\\([^)]*\\)",
+          "role": "link"
+        },
+        {
+          "pattern": "^\\s*(?:[-*+]|\\d+\\.)\\s+",
+          "role": "markup"
+        }
+      ],
+      "sharedPatterns": false
+    },
+    {
+      "fileNames": [
+        "Makefile",
+        "GNUmakefile"
+      ],
+      "id": "makefile",
+      "lineComment": "#",
+      "name": "Make"
+    },
+    {
+      "id": "objective-c",
+      "name": "Objective-C",
+      "extensions": [
+        "m",
+        "mm"
+      ],
+      "keywords": "auto break case char const continue default do double else enum extern float for goto if inline int long register return short signed sizeof static struct switch typedef union unsigned void volatile while id nil YES NO self super in out inout bycopy byref oneway",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/",
+      "patterns": [
+        {
+          "pattern": "^\\s*#\\s*[A-Za-z_]+",
+          "role": "preprocessor"
+        }
+      ]
+    },
+    {
+      "id": "csharp",
+      "name": "C#",
+      "extensions": [
+        "cs"
+      ],
+      "keywords": "abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using virtual void volatile while async await var record init nameof when where yield",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "php",
+      "name": "PHP",
+      "extensions": [
+        "php",
+        "phtml"
+      ],
+      "keywords": "abstract and array as break callable case catch class clone const continue declare default do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile enum extends final finally fn for foreach function global goto if implements include include_once instanceof insteadof interface isset list match namespace new or print private protected public readonly require require_once return static switch throw trait try unset use var while xor yield true false null",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby",
+      "extensions": [
+        "rb",
+        "rake",
+        "gemspec"
+      ],
+      "fileNames": [
+        "Gemfile",
+        "Rakefile"
+      ],
+      "keywords": "alias and begin break case class def defined? do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield require require_relative attr_accessor attr_reader attr_writer",
+      "lineComment": "#"
+    },
+    {
+      "id": "kotlin",
+      "name": "Kotlin",
+      "extensions": [
+        "kt",
+        "kts"
+      ],
+      "keywords": "as break by catch class companion const constructor continue crossinline data delegate do dynamic else enum external false final finally for fun get if import in infix init inline inner interface internal is lateinit lazy noinline null object open operator out override package private protected public reified return sealed set super suspend tailrec this throw true try typealias typeof val var vararg when where while",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/",
+      "patterns": [
+        {
+          "pattern": "@[A-Za-z_][A-Za-z0-9_.]*",
+          "role": "decorator"
+        }
+      ]
+    },
+    {
+      "id": "swift",
+      "name": "Swift",
+      "extensions": [
+        "swift"
+      ],
+      "keywords": "actor any as associatedtype async await break case catch class continue default defer deinit do else enum extension fallthrough false fileprivate final for func guard if import in indirect init inout internal is lazy let mutating nil nonisolated open operator private protocol public repeat rethrows return self Self some static struct subscript super switch throw throws true try typealias var weak where while",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "dart",
+      "name": "Dart",
+      "extensions": [
+        "dart"
+      ],
+      "keywords": "abstract as assert async await base break case catch class const continue covariant default deferred do dynamic else enum export extends extension external factory false final finally for get hide if implements import in interface is late library mixin new null on operator part required rethrow return sealed set show static super switch sync this throw true try typedef var void when while with yield",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/",
+      "patterns": [
+        {
+          "pattern": "@[A-Za-z_][A-Za-z0-9_.]*",
+          "role": "decorator"
+        }
+      ]
+    },
+    {
+      "id": "lua",
+      "name": "Lua",
+      "extensions": [
+        "lua"
+      ],
+      "keywords": "and break do else elseif end false for function goto if in local nil not or repeat return then true until while",
+      "lineComment": "--",
+      "blockCommentStart": "--[[",
+      "blockCommentEnd": "]]"
+    },
+    {
+      "id": "sql",
+      "name": "SQL",
+      "extensions": [
+        "sql"
+      ],
+      "keywords": "add all alter and as asc begin between by case cast check column commit constraint create cross database default delete desc distinct drop else end exists foreign from full group having if in index inner insert intersect into is join key left like limit not null offset on or order outer primary references right rollback select set table then transaction union unique update using values view when where with",
+      "lineComment": "--",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "toml",
+      "name": "TOML",
+      "extensions": [
+        "toml"
+      ],
+      "fileNames": [
+        "Cargo.lock"
+      ],
+      "keywords": "true false",
+      "lineComment": "#"
+    },
+    {
+      "id": "ini",
+      "name": "INI",
+      "extensions": [
+        "ini",
+        "cfg",
+        "conf",
+        "properties"
+      ],
+      "keywords": "true false",
+      "lineComment": ";"
+    },
+    {
+      "id": "xml",
+      "name": "XML",
+      "extensions": [
+        "xml",
+        "xsd",
+        "xsl",
+        "svg",
+        "plist",
+        "qrc",
+        "ui"
+      ],
+      "blockCommentStart": "<!--",
+      "blockCommentEnd": "-->",
+      "patterns": [
+        {
+          "pattern": "\\b[A-Za-z_:][A-Za-z0-9_.:-]*(?=\\s*=)",
+          "role": "attribute"
+        }
+      ]
+    },
+    {
+      "id": "powershell",
+      "name": "PowerShell",
+      "extensions": [
+        "ps1",
+        "psm1",
+        "psd1"
+      ],
+      "keywords": "begin break catch class continue data define do dynamicparam else elseif end enum exit filter finally for foreach from function hidden if in param process return static switch throw trap try until using var while",
+      "lineComment": "#",
+      "blockCommentStart": "<#",
+      "blockCommentEnd": "#>"
+    },
+    {
+      "id": "batch",
+      "name": "Batch",
+      "extensions": [
+        "bat",
+        "cmd"
+      ],
+      "keywords": "call echo else endlocal exit for goto if in not set setlocal shift",
+      "lineComment": "::"
+    },
+    {
+      "id": "perl",
+      "name": "Perl",
+      "extensions": [
+        "pl",
+        "pm"
+      ],
+      "keywords": "and cmp continue do else elsif eq eval exit for foreach ge gt if last le local lt my ne next no not or our package print printf redo ref require return sub such unless until use wantarray while",
+      "lineComment": "#"
+    },
+    {
+      "id": "r",
+      "name": "R",
+      "extensions": [
+        "r"
+      ],
+      "keywords": "break else for function if in next repeat return while TRUE FALSE NULL Inf NaN NA",
+      "lineComment": "#"
+    },
+    {
+      "id": "scala",
+      "name": "Scala",
+      "extensions": [
+        "scala",
+        "sc"
+      ],
+      "keywords": "abstract case catch class def do else enum export extends false final finally for given if implicit import lazy match new null object override package private protected return sealed super then this throw trait true try type using val var while with yield",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "groovy",
+      "name": "Groovy",
+      "extensions": [
+        "groovy",
+        "gradle"
+      ],
+      "keywords": "abstract as assert boolean break byte case catch char class const continue def default do double else enum extends false final finally float for goto if implements import in instanceof int interface long native new null package private protected public return short static strictfp super switch synchronized this threadsafe throw throws trait transient true try void volatile while",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "haskell",
+      "name": "Haskell",
+      "extensions": [
+        "hs",
+        "lhs"
+      ],
+      "keywords": "case class data default deriving do else foreign if import in infix infixl infixr instance let module newtype of then type where",
+      "lineComment": "--",
+      "blockCommentStart": "{-",
+      "blockCommentEnd": "-}"
+    },
+    {
+      "id": "elixir",
+      "name": "Elixir",
+      "extensions": [
+        "ex",
+        "exs"
+      ],
+      "keywords": "after alias and case catch cond def defexception defimpl defmacro defmodule defp defprotocol defstruct do else end fn for if import in nil not or quote raise receive require rescue try unless unquote use when with false true",
+      "lineComment": "#"
+    },
+    {
+      "id": "erlang",
+      "name": "Erlang",
+      "extensions": [
+        "erl",
+        "hrl"
+      ],
+      "keywords": "after and andalso band begin bnot bor bsl bsr bxor case catch cond div end fun if let not of or orelse receive rem try when xor",
+      "lineComment": "%"
+    },
+    {
+      "id": "clojure",
+      "name": "Clojure",
+      "extensions": [
+        "clj",
+        "cljs",
+        "cljc",
+        "edn"
+      ],
+      "keywords": "def defn defmacro defprotocol defrecord deftype do fn if let loop ns quote recur require use var when cond case try catch finally throw true false nil",
+      "lineComment": ";"
+    },
+    {
+      "id": "ocaml",
+      "name": "OCaml",
+      "extensions": [
+        "ml",
+        "mli"
+      ],
+      "keywords": "and as assert begin class constraint do done downto else end exception external false for fun function functor if in include inherit initializer lazy let match method module mutable new nonrec object of open or private rec sig struct then to true try type val virtual when while with",
+      "blockCommentStart": "(*",
+      "blockCommentEnd": "*)"
+    },
+    {
+      "id": "julia",
+      "name": "Julia",
+      "extensions": [
+        "jl"
+      ],
+      "keywords": "abstract baremodule begin break catch const continue do else elseif end export false finally for function global if import let local macro module mutable primitive quote return struct true try type using where while",
+      "lineComment": "#",
+      "blockCommentStart": "#=",
+      "blockCommentEnd": "=#"
+    },
+    {
+      "id": "zig",
+      "name": "Zig",
+      "extensions": [
+        "zig"
+      ],
+      "keywords": "align allowzero and anyframe anytype asm async await break callconv catch comptime const continue defer else enum errdefer error export extern fn for if inline noalias noinline nosuspend opaque or orelse packed pub resume return struct suspend switch test threadlocal try union unreachable usingnamespace var volatile while",
+      "lineComment": "//"
+    },
+    {
+      "id": "nix",
+      "name": "Nix",
+      "extensions": [
+        "nix"
+      ],
+      "keywords": "assert else if in inherit let or rec then with builtins true false null",
+      "lineComment": "#",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "terraform",
+      "name": "Terraform",
+      "extensions": [
+        "tf",
+        "tfvars",
+        "hcl"
+      ],
+      "keywords": "data locals module output provider resource terraform variable for_each count depends_on lifecycle true false null",
+      "lineComment": "#",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "dockerfile",
+      "name": "Dockerfile",
+      "extensions": [
+        "dockerfile"
+      ],
+      "fileNames": [
+        "Dockerfile",
+        "Containerfile"
+      ],
+      "keywords": "ADD ARG CMD COPY ENTRYPOINT ENV EXPOSE FROM HEALTHCHECK LABEL MAINTAINER ONBUILD RUN SHELL STOPSIGNAL USER VOLUME WORKDIR AS",
+      "lineComment": "#"
+    },
+    {
+      "id": "graphql",
+      "name": "GraphQL",
+      "extensions": [
+        "graphql",
+        "gql"
+      ],
+      "keywords": "directive enum extend fragment implements input interface mutation on query scalar schema subscription type union true false null",
+      "lineComment": "#"
+    },
+    {
+      "id": "protobuf",
+      "name": "Protocol Buffers",
+      "extensions": [
+        "proto"
+      ],
+      "keywords": "bool bytes double enum extend extensions fixed32 fixed64 float import int32 int64 map message oneof option optional package public repeated required reserved returns rpc service sfixed32 sfixed64 sint32 sint64 stream string syntax uint32 uint64",
+      "lineComment": "//",
+      "blockCommentStart": "/*",
+      "blockCommentEnd": "*/"
+    },
+    {
+      "id": "vue",
+      "name": "Vue",
+      "extensions": [
+        "vue"
+      ],
+      "keywords": "as async await break case catch class const continue default delete do else export extends false finally for from function if import in instanceof let new null of return super switch this throw true try typeof undefined var void while yield",
+      "lineComment": "//",
+      "blockCommentStart": "<!--",
+      "blockCommentEnd": "-->",
+      "patterns": [
+        {
+          "pattern": "\\b[A-Za-z_:][A-Za-z0-9_.:-]*(?=\\s*=)",
+          "role": "attribute"
+        }
+      ]
+    },
+    {
+      "id": "svelte",
+      "name": "Svelte",
+      "extensions": [
+        "svelte"
+      ],
+      "keywords": "as async await break case catch class const continue default delete do else export extends false finally for from function if import in instanceof let new null of return super switch this throw true try typeof undefined var void while yield",
+      "lineComment": "//",
+      "blockCommentStart": "<!--",
+      "blockCommentEnd": "-->",
+      "patterns": [
+        {
+          "pattern": "\\b[A-Za-z_:][A-Za-z0-9_.:-]*(?=\\s*=)",
+          "role": "attribute"
+        }
+      ]
+    },
+    {
+      "extensions": [
+        "txt"
+      ],
+      "id": "plaintext",
+      "name": "Plain Text",
+      "sharedPatterns": false
+    }
+  ],
+  "servers": [
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--background-index",
+            "--clang-tidy"
+          ],
+          "executable": "clangd"
+        }
+      ],
+      "language": "cpp"
+    },
+    {
+      "candidates": [
+        {
+          "executable": "cmake-language-server"
+        }
+      ],
+      "language": "cmake"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "basedpyright-langserver"
+        },
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "pyright-langserver"
+        },
+        {
+          "executable": "pylsp"
+        }
+      ],
+      "language": "python"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "typescript-language-server"
+        }
+      ],
+      "language": "javascript"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "typescript-language-server"
+        }
+      ],
+      "language": "typescript"
+    },
+    {
+      "candidates": [
+        {
+          "executable": "rust-analyzer"
+        }
+      ],
+      "language": "rust"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "serve"
+          ],
+          "executable": "gopls"
+        }
+      ],
+      "language": "go"
+    },
+    {
+      "candidates": [
+        {
+          "executable": "jdtls"
+        }
+      ],
+      "language": "java"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "vscode-json-language-server"
+        }
+      ],
+      "language": "json"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "yaml-language-server"
+        }
+      ],
+      "language": "yaml"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "vscode-html-language-server"
+        }
+      ],
+      "language": "html"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "--stdio"
+          ],
+          "executable": "vscode-css-language-server"
+        }
+      ],
+      "language": "css"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "start"
+          ],
+          "executable": "bash-language-server"
+        }
+      ],
+      "language": "shellscript"
+    },
+    {
+      "candidates": [
+        {
+          "arguments": [
+            "server"
+          ],
+          "executable": "marksman"
+        }
+      ],
+      "language": "markdown"
+    },
+    {
+      "language": "objective-c",
+      "candidates": [
+        {
+          "executable": "clangd",
+          "arguments": [
+            "--background-index",
+            "--clang-tidy"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "csharp",
+      "candidates": [
+        {
+          "executable": "omnisharp",
+          "arguments": [
+            "-lsp"
+          ]
+        },
+        {
+          "executable": "csharp-ls",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "php",
+      "candidates": [
+        {
+          "executable": "intelephense",
+          "arguments": [
+            "--stdio"
+          ]
+        },
+        {
+          "executable": "phpactor",
+          "arguments": [
+            "language-server"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "ruby",
+      "candidates": [
+        {
+          "executable": "ruby-lsp",
+          "arguments": []
+        },
+        {
+          "executable": "solargraph",
+          "arguments": [
+            "stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "kotlin",
+      "candidates": [
+        {
+          "executable": "kotlin-language-server",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "swift",
+      "candidates": [
+        {
+          "executable": "sourcekit-lsp",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "dart",
+      "candidates": [
+        {
+          "executable": "dart",
+          "arguments": [
+            "language-server",
+            "--protocol=lsp"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "lua",
+      "candidates": [
+        {
+          "executable": "lua-language-server",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "sql",
+      "candidates": [
+        {
+          "executable": "sqls",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "toml",
+      "candidates": [
+        {
+          "executable": "taplo",
+          "arguments": [
+            "lsp",
+            "stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "xml",
+      "candidates": [
+        {
+          "executable": "lemminx",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "powershell",
+      "candidates": [
+        {
+          "executable": "powershell-editor-services",
+          "arguments": [
+            "--stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "perl",
+      "candidates": [
+        {
+          "executable": "perlnavigator",
+          "arguments": [
+            "--stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "r",
+      "candidates": [
+        {
+          "executable": "r-languageserver",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "scala",
+      "candidates": [
+        {
+          "executable": "metals",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "groovy",
+      "candidates": [
+        {
+          "executable": "groovy-language-server",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "haskell",
+      "candidates": [
+        {
+          "executable": "haskell-language-server-wrapper",
+          "arguments": [
+            "--lsp"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "elixir",
+      "candidates": [
+        {
+          "executable": "elixir-ls",
+          "arguments": []
+        },
+        {
+          "executable": "language_server.sh",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "erlang",
+      "candidates": [
+        {
+          "executable": "erlang_ls",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "clojure",
+      "candidates": [
+        {
+          "executable": "clojure-lsp",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "ocaml",
+      "candidates": [
+        {
+          "executable": "ocamllsp",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "julia",
+      "candidates": [
+        {
+          "executable": "julia-lsp",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "zig",
+      "candidates": [
+        {
+          "executable": "zls",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "nix",
+      "candidates": [
+        {
+          "executable": "nixd",
+          "arguments": []
+        },
+        {
+          "executable": "nil",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "language": "terraform",
+      "candidates": [
+        {
+          "executable": "terraform-ls",
+          "arguments": [
+            "serve"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "dockerfile",
+      "candidates": [
+        {
+          "executable": "docker-langserver",
+          "arguments": [
+            "--stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "graphql",
+      "candidates": [
+        {
+          "executable": "graphql-lsp",
+          "arguments": [
+            "server",
+            "-m",
+            "stream"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "protobuf",
+      "candidates": [
+        {
+          "executable": "buf",
+          "arguments": [
+            "beta",
+            "lsp"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "vue",
+      "candidates": [
+        {
+          "executable": "vue-language-server",
+          "arguments": [
+            "--stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "language": "svelte",
+      "candidates": [
+        {
+          "executable": "svelteserver",
+          "arguments": [
+            "--stdio"
+          ]
+        }
+      ]
+    }
+  ],
+  "highlighting": {
+    "semantic": {
+      "namespace": "namespace",
+      "type": "type",
+      "class": "type",
+      "struct": "type",
+      "enum": "enumeration",
+      "interface": "type",
+      "typeParameter": "type",
+      "concept": "type",
+      "variable": "variable",
+      "parameter": "parameter",
+      "property": "property",
+      "enumMember": "constant",
+      "event": "property",
+      "operator": "operator",
+      "decorator": "decorator",
+      "label": "label",
+      "function": "function",
+      "method": "method",
+      "macro": "macro",
+      "keyword": "keyword",
+      "modifier": "keyword",
+      "string": "string",
+      "number": "number",
+      "comment": "comment",
+      "regexp": "regexp"
+    },
+    "beforeKeywords": [
+      {
+        "pattern": "[+\\-*/%=<>!&|^~?:]+",
+        "role": "operator"
+      },
+      {
+        "pattern": "\\b[A-Z][A-Za-z0-9_]*\\b",
+        "role": "type"
+      },
+      {
+        "pattern": "\\b[A-Z][A-Z0-9_]{2,}\\b",
+        "role": "constant"
+      },
+      {
+        "pattern": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()",
+        "role": "function"
+      }
+    ],
+    "afterKeywords": [
+      {
+        "pattern": "\\b(?:0[xX][0-9a-fA-F]+|0[bB][01]+|\\d+(?:\\.\\d+)?)\\b",
+        "role": "number"
+      },
+      {
+        "pattern": "\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'",
+        "role": "string"
+      }
+    ],
+    "controlFlow": [
+      "if",
+      "else",
+      "elif",
+      "elsif",
+      "unless",
+      "switch",
+      "case",
+      "default",
+      "for",
+      "foreach",
+      "while",
+      "do",
+      "loop",
+      "break",
+      "continue",
+      "return",
+      "yield",
+      "goto",
+      "try",
+      "catch",
+      "except",
+      "finally",
+      "throw",
+      "throws",
+      "raise",
+      "match",
+      "when",
+      "guard",
+      "defer",
+      "await",
+      "async",
+      "end"
+    ],
+    "primitiveTypes": [
+      "void",
+      "bool",
+      "boolean",
+      "char",
+      "byte",
+      "short",
+      "int",
+      "integer",
+      "long",
+      "float",
+      "double",
+      "string",
+      "str",
+      "str8",
+      "number",
+      "decimal",
+      "signed",
+      "unsigned",
+      "size_t",
+      "usize",
+      "isize",
+      "i8",
+      "i16",
+      "i32",
+      "i64",
+      "u8",
+      "u16",
+      "u32",
+      "u64",
+      "f32",
+      "f64",
+      "auto",
+      "var",
+      "let",
+      "any",
+      "object",
+      "nil",
+      "null",
+      "none"
+    ]
+  },
+  "limits": {
+    "maximumFileBytes": 16777216,
+    "maximumHighlightedLineLength": 5000,
+    "maximumHighlightedMatchesPerLine": 300,
+    "maximumSemanticTokenLines": 20000,
+    "maximumSearchMatches": 5000,
+    "partialRepaintDivisor": 4,
+    "changeDebounceMs": 150,
+    "analysisDebounceMs": 400,
+    "highlightDebounceMs": 250,
+    "externalChangeDebounceMs": 100,
+    "maximumRestarts": 5,
+    "restartWindowMs": 180000,
+    "initializeTimeoutMs": 15000,
+    "maximumReferences": 1000,
+    "maximumWorkspaceFiles": 20000,
+    "maximumProblems": 1000,
+    "maximumCompletions": 500,
+    "bottomPanelMinimumHeight": 120,
+    "bottomPanelInitialHeight": 220
+  }
+}
