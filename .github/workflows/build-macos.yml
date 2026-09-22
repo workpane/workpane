@@ -1,0 +1,112 @@
+name: Build macOS
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+  QT_VERSION: 6.11.2
+
+jobs:
+  build:
+    name: macOS (arm64)
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install build dependencies
+        run: brew install ninja
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          aqtversion: ">=3.3.0"
+          modules: qtwebengine qtwebchannel qtpositioning
+          cache: true
+
+      - name: Resolve signing configuration
+        id: signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          SIGNING_IDENTITY: ${{ secrets.SIGNING_IDENTITY }}
+          NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+        run: |
+          if [ -n "$MACOS_CERTIFICATE" ] && [ -n "$SIGNING_IDENTITY" ]; then
+            echo "sign=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "sign=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -n "$MACOS_CERTIFICATE" ] && [ -n "$SIGNING_IDENTITY" ] && [ -n "$NOTARIZATION_USERNAME" ]; then
+            echo "notarize=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "notarize=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Import signing certificate
+        if: steps.signing.outputs.sign == 'true'
+        uses: apple-actions/import-codesign-certs@v7
+        with:
+          keychain: ${{ github.run_id }}
+          keychain-password: ${{ github.run_id }}
+          p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
+          p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+
+      - name: Configure
+        env:
+          SIGNING_IDENTITY: ${{ secrets.SIGNING_IDENTITY }}
+          SIGNING_ENABLED: ${{ steps.signing.outputs.sign }}
+        run: |
+          identity="-"
+          if [ "$SIGNING_ENABLED" = "true" ]; then
+            identity="$SIGNING_IDENTITY"
+          fi
+          cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DWORKPANE_BUILD_TESTS=ON -DWORKPANE_CODESIGN_IDENTITY="$identity"
+
+      - name: Build
+        run: cmake --build build/release --parallel $(sysctl -n hw.ncpu)
+
+      - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu
+          QTWEBENGINE_DISABLE_SANDBOX: 1
+        run: ctest --test-dir build/release --output-on-failure --no-tests=error
+
+      - name: Package
+        run: cmake --build build/release --target package
+
+      - name: Validate package
+        run: python3 make.py validate-package
+
+      - name: Collect package
+        run: |
+          mkdir -p dist
+          find build/release -maxdepth 1 -name "Workpane-*.dmg" -exec cp {} dist/workpane-macos-arm64.dmg \;
+          ls -l dist
+
+      - name: Notarize and staple
+        if: steps.signing.outputs.notarize == 'true'
+        env:
+          NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
+          NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+          NOTARIZATION_TEAM_ID: ${{ secrets.NOTARIZATION_TEAM_ID }}
+        run: |
+          xcrun notarytool submit dist/workpane-macos-arm64.dmg --apple-id "$NOTARIZATION_USERNAME" --password "$NOTARIZATION_PASSWORD" --team-id "$NOTARIZATION_TEAM_ID" --wait
+          xcrun stapler staple dist/workpane-macos-arm64.dmg
+          xcrun stapler validate dist/workpane-macos-arm64.dmg
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: workpane-macos-arm64
+          if-no-files-found: error
+          path: dist/workpane-macos-arm64.dmg

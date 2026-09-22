@@ -1,0 +1,71 @@
+name: Build Linux
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+  QT_VERSION: 6.11.2
+
+jobs:
+  build:
+    name: Linux (x86_64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build dpkg-dev libgl1-mesa-dev libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libnss3 libnspr4 libasound2t64 libxdamage1 libxtst6 libxcomposite1 libxrandr2 libdrm2 libgbm1 libpulse0
+
+      - name: Audit
+        run: python3 make.py audit
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          aqtversion: ">=3.3.0"
+          modules: qtwebengine qtwebchannel qtpositioning
+          cache: true
+
+      - name: Configure
+        run: cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DWORKPANE_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build/release --parallel $(nproc)
+
+      - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu --no-sandbox
+          QTWEBENGINE_DISABLE_SANDBOX: 1
+        run: ctest --test-dir build/release --output-on-failure --no-tests=error
+
+      - name: Package
+        run: cmake --build build/release --target package
+
+      - name: Validate package
+        run: python3 make.py validate-package
+
+      - name: Collect package
+        run: |
+          mkdir -p dist
+          find build/release -maxdepth 1 -name "workpane_*.deb" -exec cp {} dist/workpane-linux-x86_64.deb \;
+          ls -l dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: workpane-linux-x86_64
+          if-no-files-found: error
+          path: dist/workpane-linux-x86_64.deb

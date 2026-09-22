@@ -1,0 +1,452 @@
+{
+  "schemes": [
+    {
+      "id": "workpane-dark",
+      "name": "Workpane Dark",
+      "surface": {
+        "background": "#21252b",
+        "currentLine": "#2c313a",
+        "selection": "#3e4451",
+        "selectionText": "#ffffff",
+        "lineNumber": "#4b5263",
+        "currentLineNumber": "#abb2bf",
+        "lineNumberBackground": "#21252b"
+      },
+      "roles": {
+        "text": {
+          "foreground": "#abb2bf"
+        },
+        "keyword": {
+          "foreground": "#c678dd",
+          "bold": true
+        },
+        "controlFlow": {
+          "foreground": "#c678dd",
+          "bold": true,
+          "italic": true
+        },
+        "primitiveType": {
+          "foreground": "#56b6c2"
+        },
+        "type": {
+          "foreground": "#e5c07b"
+        },
+        "namespace": {
+          "foreground": "#e5c07b"
+        },
+        "enumeration": {
+          "foreground": "#e5c07b"
+        },
+        "constant": {
+          "foreground": "#d19a66"
+        },
+        "function": {
+          "foreground": "#61afef"
+        },
+        "method": {
+          "foreground": "#61afef"
+        },
+        "macro": {
+          "foreground": "#be5046"
+        },
+        "parameter": {
+          "foreground": "#abb2bf",
+          "italic": true
+        },
+        "variable": {
+          "foreground": "#e06c75"
+        },
+        "property": {
+          "foreground": "#e06c75"
+        },
+        "number": {
+          "foreground": "#d19a66"
+        },
+        "string": {
+          "foreground": "#98c379"
+        },
+        "regexp": {
+          "foreground": "#56b6c2"
+        },
+        "comment": {
+          "foreground": "#7f848e",
+          "italic": true
+        },
+        "operator": {
+          "foreground": "#56b6c2"
+        },
+        "preprocessor": {
+          "foreground": "#c678dd"
+        },
+        "label": {
+          "foreground": "#e5c07b"
+        },
+        "decorator": {
+          "foreground": "#61afef",
+          "italic": true
+        },
+        "attribute": {
+          "foreground": "#d19a66"
+        },
+        "heading": {
+          "foreground": "#61afef",
+          "bold": true
+        },
+        "emphasis": {
+          "foreground": "#abb2bf",
+          "italic": true
+        },
+        "strong": {
+          "foreground": "#abb2bf",
+          "bold": true
+        },
+        "link": {
+          "foreground": "#61afef",
+          "underline": true
+        },
+        "markup": {
+          "foreground": "#e06c75"
+        },
+        "codeSpan": {
+          "foreground": "#98c379"
+        }
+      }
+    },
+    {
+      "id": "workpane-light",
+      "name": "Workpane Light",
+      "surface": {
+        "background": "#ffffff",
+        "currentLine": "#f4f4f5",
+        "selection": "#d7d9dd",
+        "selectionText": "#383a42",
+        "lineNumber": "#9d9d9f",
+        "currentLineNumber": "#383a42",
+        "lineNumberBackground": "#fafafa"
+      },
+      "roles": {
+        "text": {
+          "foreground": "#383a42"
+        },
+        "keyword": {
+          "foreground": "#a626a4",
+          "bold": true
+        },
+        "controlFlow": {
+          "foreground": "#a626a4",
+          "bold": true,
+          "italic": true
+        },
+        "primitiveType": {
+          "foreground": "#0184bc"
+        },
+        "type": {
+          "foreground": "#c18401"
+        },
+        "namespace": {
+          "foreground": "#c18401"
+        },
+        "enumeration": {
+          "foreground": "#c18401"
+        },
+        "constant": {
+          "foreground": "#986801"
+        },
+        "function": {
+          "foreground": "#4078f2"
+        },
+        "method": {
+          "foreground": "#4078f2"
+        },
+        "macro": {
+          "foreground": "#b3403d"
+        },
+        "parameter": {
+          "foreground": "#383a42",
+          "italic": true
+        },
+        "variable": {
+          "foreground": "#e45649"
+        },
+        "property": {
+          "foreground": "#e45649"
+        },
+        "number": {
+          "foreground": "#986801"
+        },
+        "string": {
+          "foreground": "#50a14f"
+        },
+        "regexp": {
+          "foreground": "#0184bc"
+        },
+        "comment": {
+          "foreground": "#a0a1a7",
+          "italic": true
+        },
+        "operator": {
+          "foreground": "#0184bc"
+        },
+        "preprocessor": {
+          "foreground": "#a626a4"
+        },
+        "label": {
+          "foreground": "#c18401"
+        },
+        "decorator": {
+          "foreground": "#4078f2",
+          "italic": true
+        },
+        "attribute": {
+          "foreground": "#986801"
+        },
+        "heading": {
+          "foreground": "#4078f2",
+          "bold": true
+        },
+        "emphasis": {
+          "foreground": "#383a42",
+          "italic": true
+        },
+        "strong": {
+          "foreground": "#383a42",
+          "bold": true
+        },
+        "link": {
+          "foreground": "#4078f2",
+          "underline": true
+        },
+        "markup": {
+          "foreground": "#e45649"
+        },
+        "codeSpan": {
+          "foreground": "#50a14f"
+        }
+      }
+    },
+    {
+      "id": "solarized-dark",
+      "name": "Solarized Dark",
+      "surface": {
+        "background": "#002b36",
+        "currentLine": "#073642",
+        "selection": "#0a4b58",
+        "selectionText": "#93a1a1",
+        "lineNumber": "#586e75",
+        "currentLineNumber": "#93a1a1",
+        "lineNumberBackground": "#002b36"
+      },
+      "roles": {
+        "text": {
+          "foreground": "#839496"
+        },
+        "keyword": {
+          "foreground": "#859900",
+          "bold": true
+        },
+        "controlFlow": {
+          "foreground": "#859900",
+          "bold": true,
+          "italic": true
+        },
+        "primitiveType": {
+          "foreground": "#2aa198"
+        },
+        "type": {
+          "foreground": "#b58900"
+        },
+        "namespace": {
+          "foreground": "#b58900"
+        },
+        "enumeration": {
+          "foreground": "#b58900"
+        },
+        "constant": {
+          "foreground": "#cb4b16"
+        },
+        "function": {
+          "foreground": "#268bd2"
+        },
+        "method": {
+          "foreground": "#268bd2"
+        },
+        "macro": {
+          "foreground": "#d33682"
+        },
+        "parameter": {
+          "foreground": "#839496",
+          "italic": true
+        },
+        "variable": {
+          "foreground": "#268bd2"
+        },
+        "property": {
+          "foreground": "#268bd2"
+        },
+        "number": {
+          "foreground": "#2aa198"
+        },
+        "string": {
+          "foreground": "#2aa198"
+        },
+        "regexp": {
+          "foreground": "#dc322f"
+        },
+        "comment": {
+          "foreground": "#586e75",
+          "italic": true
+        },
+        "operator": {
+          "foreground": "#859900"
+        },
+        "preprocessor": {
+          "foreground": "#cb4b16"
+        },
+        "label": {
+          "foreground": "#b58900"
+        },
+        "decorator": {
+          "foreground": "#6c71c4",
+          "italic": true
+        },
+        "attribute": {
+          "foreground": "#b58900"
+        },
+        "heading": {
+          "foreground": "#268bd2",
+          "bold": true
+        },
+        "emphasis": {
+          "foreground": "#839496",
+          "italic": true
+        },
+        "strong": {
+          "foreground": "#839496",
+          "bold": true
+        },
+        "link": {
+          "foreground": "#268bd2",
+          "underline": true
+        },
+        "markup": {
+          "foreground": "#6c71c4"
+        },
+        "codeSpan": {
+          "foreground": "#2aa198"
+        }
+      }
+    },
+    {
+      "id": "solarized-light",
+      "name": "Solarized Light",
+      "surface": {
+        "background": "#fdf6e3",
+        "currentLine": "#eee8d5",
+        "selection": "#ddd6c1",
+        "selectionText": "#586e75",
+        "lineNumber": "#93a1a1",
+        "currentLineNumber": "#586e75",
+        "lineNumberBackground": "#fdf6e3"
+      },
+      "roles": {
+        "text": {
+          "foreground": "#657b83"
+        },
+        "keyword": {
+          "foreground": "#859900",
+          "bold": true
+        },
+        "controlFlow": {
+          "foreground": "#859900",
+          "bold": true,
+          "italic": true
+        },
+        "primitiveType": {
+          "foreground": "#2aa198"
+        },
+        "type": {
+          "foreground": "#b58900"
+        },
+        "namespace": {
+          "foreground": "#b58900"
+        },
+        "enumeration": {
+          "foreground": "#b58900"
+        },
+        "constant": {
+          "foreground": "#cb4b16"
+        },
+        "function": {
+          "foreground": "#268bd2"
+        },
+        "method": {
+          "foreground": "#268bd2"
+        },
+        "macro": {
+          "foreground": "#d33682"
+        },
+        "parameter": {
+          "foreground": "#657b83",
+          "italic": true
+        },
+        "variable": {
+          "foreground": "#268bd2"
+        },
+        "property": {
+          "foreground": "#268bd2"
+        },
+        "number": {
+          "foreground": "#2aa198"
+        },
+        "string": {
+          "foreground": "#2aa198"
+        },
+        "regexp": {
+          "foreground": "#dc322f"
+        },
+        "comment": {
+          "foreground": "#93a1a1",
+          "italic": true
+        },
+        "operator": {
+          "foreground": "#859900"
+        },
+        "preprocessor": {
+          "foreground": "#cb4b16"
+        },
+        "label": {
+          "foreground": "#b58900"
+        },
+        "decorator": {
+          "foreground": "#6c71c4",
+          "italic": true
+        },
+        "attribute": {
+          "foreground": "#b58900"
+        },
+        "heading": {
+          "foreground": "#268bd2",
+          "bold": true
+        },
+        "emphasis": {
+          "foreground": "#657b83",
+          "italic": true
+        },
+        "strong": {
+          "foreground": "#657b83",
+          "bold": true
+        },
+        "link": {
+          "foreground": "#268bd2",
+          "underline": true
+        },
+        "markup": {
+          "foreground": "#6c71c4"
+        },
+        "codeSpan": {
+          "foreground": "#2aa198"
+        }
+      }
+    }
+  ]
+}
