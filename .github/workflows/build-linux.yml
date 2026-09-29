@@ -1,0 +1,67 @@
+name: Build Linux
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Linux (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            architecture: x86_64
+          - runner: ubuntu-24.04-arm
+            architecture: arm64
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # GLFW draws through X11 and OpenGL, and the web view embeds WebKitGTK inside GTK, so their development files are what the build needs.
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git ninja-build dpkg-dev perl pkg-config libgl1-mesa-dev libx11-dev libxext-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxkbcommon-dev libgtk-3-dev libwebkit2gtk-4.1-dev xvfb
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: build/release/_deps
+          key: deps-linux-${{ matrix.architecture }}-${{ hashFiles('cmake/Dependencies.cmake', 'cmake/patches/**') }}
+
+      - name: Configure
+        run: cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DWORKPANE_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build/release --parallel $(nproc)
+
+      # The web view and the input method tests need an X display, which Xvfb gives the runner.
+      - name: Run tests
+        run: xvfb-run -a -s "-screen 0 1600x1000x24" ctest --test-dir build/release --parallel $(nproc) --output-on-failure --no-tests=error
+
+      - name: Package
+        run: cmake --build build/release --target package
+
+      - name: Validate package
+        run: python3 make.py validate-package
+
+      - name: Collect package
+        run: |
+          mkdir -p dist
+          find build/release -maxdepth 1 -name "workpane_*.deb" -exec cp {} dist/workpane-linux-${{ matrix.architecture }}.deb \;
+          ls -l dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: workpane-linux-${{ matrix.architecture }}
+          if-no-files-found: error
+          path: dist/workpane-linux-${{ matrix.architecture }}.deb
