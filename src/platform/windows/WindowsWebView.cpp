@@ -6,6 +6,7 @@
 
 #include <wrl.h>
 
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <memory>
@@ -95,16 +96,40 @@ Result<void> WindowsWebView::setHtml(std::string_view html) {
     return Result<void>::success();
 }
 
+// A script asked for before the page opened, or before the first document it opens with loaded, runs in that document once it is in place, as it would on a view built at once.
 Result<void> WindowsWebView::evaluate(std::string_view script) {
+    if (m_refused) {
+        return Result<void>::failure({"webview_evaluate_failed", "The web view could not be built, so it runs no script", {}});
+    }
+
+    if (!m_open || m_awaitingDocument) {
+        m_scripts.push_back(WindowsText::wide(script));
+        return Result<void>::success();
+    }
+
+    return execute(WindowsText::wide(script));
+}
+
+Result<void> WindowsWebView::execute(const std::wstring& script) {
     // clang-format off
     const auto finished = [](HRESULT, LPCWSTR) -> HRESULT { return S_OK; };
     // clang-format on
 
-    if (!m_open || FAILED(m_browser->ExecuteScript(WindowsText::wide(script).c_str(), Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>(finished).Get()))) {
+    if (FAILED(m_browser->ExecuteScript(script.c_str(), Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>(finished).Get()))) {
         return Result<void>::failure({"webview_evaluate_failed", "The web view refused the script", {}});
     }
 
     return Result<void>::success();
+}
+
+// Runs the scripts asked for while the page was not ready, in the order they were asked for.
+void WindowsWebView::runScripts() {
+    std::vector<std::wstring> scripts = std::move(m_scripts);
+    m_scripts.clear();
+
+    for (const std::wstring& script : scripts) {
+        std::ignore = execute(script);
+    }
 }
 
 // The controller is built for the child window of the view, and a controller arriving after its view went is closed at once.
@@ -179,6 +204,12 @@ void WindowsWebView::attach(ICoreWebView2Controller* controller) {
 
     const auto completed = [this](ICoreWebView2*, ICoreWebView2NavigationCompletedEventArgs*) -> HRESULT {
         m_loading = false;
+
+        if (m_awaitingDocument) {
+            m_awaitingDocument = false;
+            runScripts();
+        }
+
         refresh();
 
         return S_OK;
@@ -260,10 +291,17 @@ void WindowsWebView::attach(ICoreWebView2Controller* controller) {
 
 // The page opens what was asked of it before it existed, and a window a page opened takes its place.
 void WindowsWebView::open() {
+    // A window a page opened and a page given a document before it opened wait for that first document before the scripts asked for run.
+    const bool adopted = m_opening.has_value();
     m_open = true;
+    m_awaitingDocument = adopted || m_content.has_value();
     finishOpening(true);
 
     if (!m_content.has_value()) {
+        if (!m_awaitingDocument) {
+            runScripts();
+        }
+
         return;
     }
 
@@ -280,6 +318,8 @@ void WindowsWebView::open() {
 
 // A page that could not be built reports once in place of the page, and a page that asked for it as a window is refused.
 void WindowsWebView::refuse(HRESULT result) {
+    m_refused = true;
+    m_scripts.clear();
     finishOpening(false);
     failed(WindowsWebEnvironment::failure(result));
 }
@@ -408,28 +448,44 @@ void WindowsWebView::finishOpening(bool shown) {
     opening.deferral->Complete();
 }
 
-// A download reports once when it completed or was interrupted, and nothing once its view is gone.
+// A download is held until it completed or was interrupted, since WebView2 tells nothing about an operation nobody holds, and it reports once then, and nothing once its view is gone.
 void WindowsWebView::follow(ICoreWebView2DownloadOperation* operation, std::filesystem::path path) {
     const std::weak_ptr<bool> alive = m_alive;
     // clang-format off
     const auto changed = [this, alive, path](ICoreWebView2DownloadOperation* sender, IUnknown*) -> HRESULT {
-        COREWEBVIEW2_DOWNLOAD_STATE state = COREWEBVIEW2_DOWNLOAD_STATE_IN_PROGRESS;
-
-        if (alive.expired() || FAILED(sender->get_State(&state)) || state == COREWEBVIEW2_DOWNLOAD_STATE_IN_PROGRESS) {
-            return S_OK;
+        if (!alive.expired()) {
+            settle(sender, path);
         }
-
-        COREWEBVIEW2_DOWNLOAD_INTERRUPT_REASON reason = COREWEBVIEW2_DOWNLOAD_INTERRUPT_REASON_NONE;
-        std::ignore = sender->get_InterruptReason(&reason);
-        const bool finished = state == COREWEBVIEW2_DOWNLOAD_STATE_COMPLETED;
-        downloaded({path, finished, finished ? std::string() : "WebView2 interrupted the download with reason " + std::to_string(static_cast<int>(reason))});
 
         return S_OK;
     };
     // clang-format on
 
+    m_downloading.emplace_back(operation);
     EventRegistrationToken token{};
     operation->add_StateChanged(Microsoft::WRL::Callback<ICoreWebView2StateChangedEventHandler>(changed).Get(), &token);
+
+    // A download that ended before its handler was in place is reported now.
+    settle(operation, path);
+}
+
+// Reports a download that completed or was interrupted, once, and lets go of it.
+void WindowsWebView::settle(ICoreWebView2DownloadOperation* operation, const std::filesystem::path& path) {
+    // clang-format off
+    const auto held = std::ranges::find_if(m_downloading, [operation](const Microsoft::WRL::ComPtr<ICoreWebView2DownloadOperation>& kept) { return kept.Get() == operation; });
+    // clang-format on
+    COREWEBVIEW2_DOWNLOAD_STATE state = COREWEBVIEW2_DOWNLOAD_STATE_IN_PROGRESS;
+
+    if (held == m_downloading.end() || FAILED(operation->get_State(&state)) || state == COREWEBVIEW2_DOWNLOAD_STATE_IN_PROGRESS) {
+        return;
+    }
+
+    COREWEBVIEW2_DOWNLOAD_INTERRUPT_REASON reason = COREWEBVIEW2_DOWNLOAD_INTERRUPT_REASON_NONE;
+    std::ignore = operation->get_InterruptReason(&reason);
+    const bool finished = state == COREWEBVIEW2_DOWNLOAD_STATE_COMPLETED;
+    m_downloading.erase(held);
+
+    downloaded({path, finished, finished ? std::string() : "WebView2 interrupted the download with reason " + std::to_string(static_cast<int>(reason))});
 }
 
 void WindowsWebView::refresh() {

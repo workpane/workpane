@@ -64,9 +64,12 @@ class WindowsWebView final : public TrackedWebView {
     void attach(ICoreWebView2Controller* controller);
     void open();
     void refuse(HRESULT result);
+    void runScripts();
+    [[nodiscard]] Result<void> execute(const std::wstring& script);
     void openPopup(ICoreWebView2NewWindowRequestedEventArgs* request);
     void finishOpening(bool shown);
     void follow(ICoreWebView2DownloadOperation* operation, std::filesystem::path path);
+    void settle(ICoreWebView2DownloadOperation* operation, const std::filesystem::path& path);
     void refresh();
 
     HWND m_widget;
@@ -85,11 +88,15 @@ class WindowsWebView final : public TrackedWebView {
     std::filesystem::path m_downloads;
     std::optional<Opening> m_opening;
     std::optional<Content> m_content;
+    std::vector<std::wstring> m_scripts;
+    std::vector<Microsoft::WRL::ComPtr<ICoreWebView2DownloadOperation>> m_downloading;
     std::shared_ptr<bool> m_alive{std::make_shared<bool>(true)};
     RECT m_area{};
     bool m_debug;
     bool m_shown{false};
     bool m_open{false};
+    bool m_awaitingDocument{false};
+    bool m_refused{false};
     bool m_loading{false};
 };
 
