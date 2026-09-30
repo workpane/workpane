@@ -556,8 +556,12 @@ TEST(ConfigurationTransfer, KeepsThePreviousExportWhenAnExportFails) {
     std::filesystem::create_directories(partial / "held");
 
     EXPECT_EQ(ConfigurationTransfer::exportTo(database, destination).error().code, "configuration_export_failed");
-    std::ifstream kept(destination, std::ios::binary);
-    EXPECT_EQ(std::string((std::istreambuf_iterator<char>(kept)), std::istreambuf_iterator<char>()), "previous");
+
+    // The file is read and closed again before the next export, since Windows never replaces a file another handle holds open.
+    {
+        std::ifstream kept(destination, std::ios::binary);
+        EXPECT_EQ(std::string((std::istreambuf_iterator<char>(kept)), std::istreambuf_iterator<char>()), "previous");
+    }
 
     std::filesystem::remove_all(partial);
     ASSERT_TRUE(ConfigurationTransfer::exportTo(database, destination).hasValue());

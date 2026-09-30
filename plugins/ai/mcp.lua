@@ -13,6 +13,8 @@ local protocolVersion = "2025-06-18"
 local maximumMessageBytes = 8 * 1024 * 1024
 local methodNotFound = -32601
 local internalError = -32603
+-- The post that carries a request lasts past the deadline of that request by this grace, so the deadline decides first and withdraws the request at the server.
+local postGraceMs = 1000
 
 function mcp.new(descriptor, startTimeoutMs, handlers)
     return setmetatable({ descriptor = descriptor, startTimeoutMs = startTimeoutMs, handlers = handlers, pending = {}, nextId = 0, tools = {}, ready = false, running = false, stopping = false, renewing = false, buffer = "" }, Client)
@@ -262,7 +264,7 @@ function Client:receive(chunks)
     end
 end
 
--- The streamable transport posts every message to one address within the deadline of its request and reads either one answer or an event stream.
+-- The streamable transport posts every message to one address within the deadline of its request and a grace after it, and reads either one answer or an event stream.
 -- A post that fails answers only its own request, and a key written as a reference to the environment is read from it.
 function Client:post(message, timeoutMs)
     if self.stopping then
@@ -290,9 +292,10 @@ function Client:post(message, timeoutMs)
     end
 
     workpane.task(function()
-        local response, failure = http.client.requestRaw({ url = self.descriptor.url, method = "POST", headers = headers, body = codec.encode(message), timeoutSeconds = (timeoutMs or self.startTimeoutMs) / 1000, maxResponseBytes = maximumMessageBytes }):await()
+        local response, failure = http.client.requestRaw({ url = self.descriptor.url, method = "POST", headers = headers, body = codec.encode(message), timeoutSeconds = ((timeoutMs or self.startTimeoutMs) + postGraceMs) / 1000, maxResponseBytes = maximumMessageBytes }):await()
 
-        if self.stopping then
+        -- A post whose request already ended, withdrawn at its deadline or cancelled, has nothing left to report.
+        if self.stopping or (id ~= nil and self.pending[id] == nil) then
             return
         end
 
