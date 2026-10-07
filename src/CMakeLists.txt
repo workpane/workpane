@@ -1,0 +1,517 @@
+set(WORKPANE_CORE_SOURCES
+    Error.h
+    Result.h
+    app/Application.cpp
+    app/Application.h
+    app/ApplicationPaths.cpp
+    app/ApplicationPaths.h
+    app/ApplicationPathsResolver.cpp
+    app/ApplicationPathsResolver.h
+    app/CommandLine.cpp
+    app/CommandLine.h
+    app/CommandLineOptions.cpp
+    app/CommandLineOptions.h
+    app/CorePreferences.cpp
+    app/CorePreferences.h
+    app/FrameDemand.h
+    app/FrameScheduler.cpp
+    app/FrameScheduler.h
+    app/GeometryRecorder.cpp
+    app/GeometryRecorder.h
+    app/Product.cpp
+    app/Product.h
+    app/ProductInterface.h
+    audio/AudioOutput.h
+    audio/MiniaudioOutput.cpp
+    audio/MiniaudioOutput.h
+    execution/MainThreadQueue.cpp
+    execution/MainThreadQueue.h
+    execution/WorkerPool.cpp
+    execution/WorkerPool.h
+    files/DirectoryEntry.h
+    files/DirectoryListing.cpp
+    files/DirectoryListing.h
+    files/TextSearch.cpp
+    files/TextSearch.h
+    files/TreeWalk.cpp
+    files/TreeWalk.h
+    http/MimeTypes.cpp
+    http/MimeTypes.h
+    http/RequestRecord.h
+    http/ResolvedFile.h
+    http/StaticFileResolver.cpp
+    http/StaticFileResolver.h
+    http/StaticFileServer.cpp
+    http/StaticFileServer.h
+    json/ObjectReader.cpp
+    json/ObjectReader.h
+    localization/CoreCatalog.cpp
+    localization/CoreCatalog.h
+    localization/Language.h
+    localization/Localization.cpp
+    localization/Localization.h
+    localization/TextArgument.cpp
+    localization/TextArgument.h
+    logging/LogEntry.h
+    logging/LogLevels.cpp
+    logging/LogLevels.h
+    logging/LogService.cpp
+    logging/LogService.h
+    persistence/ConfigurationTransfer.cpp
+    persistence/ConfigurationTransfer.h
+    persistence/CoreSchema.cpp
+    persistence/CoreSchema.h
+    persistence/Database.cpp
+    persistence/Database.h
+    persistence/DatabaseBootstrap.cpp
+    persistence/DatabaseBootstrap.h
+    persistence/DatabaseExecutor.cpp
+    persistence/DatabaseExecutor.h
+    persistence/Execution.h
+    persistence/InstanceLock.cpp
+    persistence/InstanceLock.h
+    persistence/OpenedDatabase.h
+    persistence/PluginAuthorizer.cpp
+    persistence/PluginAuthorizer.h
+    persistence/PluginDatabase.cpp
+    persistence/PluginDatabase.h
+    persistence/SchemaTextHelper.cpp
+    persistence/SchemaTextHelper.h
+    persistence/PreferenceStore.cpp
+    persistence/PreferenceStore.h
+    persistence/Statement.h
+    persistence/StatementGuard.cpp
+    persistence/StatementGuard.h
+    platform/ApplicationMenu.h
+    platform/DialogService.h
+    platform/DownloadTarget.cpp
+    platform/DownloadTarget.h
+    platform/FallbackFace.h
+    platform/FileAccess.h
+    platform/FileReplacement.h
+    platform/FileFilter.h
+    platform/InputMethod.h
+    platform/InstalledFont.h
+    platform/KeyRepeat.h
+    platform/MappedFile.cpp
+    platform/MappedFile.h
+    platform/NativeDialogService.cpp
+    platform/NativeDialogService.h
+    platform/NativeProcesses.h
+    platform/NativePseudoTerminals.h
+    platform/NativeSystemInspector.cpp
+    platform/NativeSystemInspector.h
+    platform/NativeSystemServices.h
+    platform/NativeViews.h
+    platform/NativeWindowStyle.h
+    platform/ParentConsole.h
+    platform/PathTextHelper.h
+    platform/PlatformWindow.cpp
+    platform/PlatformWindow.h
+    platform/ProcessDirectory.h
+    platform/ProcessSignals.h
+    platform/ScrollWheel.h
+    platform/ShellCommand.h
+    platform/ShellThreads.cpp
+    platform/ShellThreads.h
+    platform/SystemInspector.h
+    platform/SystemServices.h
+    platform/TerminalEnvironment.cpp
+    platform/TerminalEnvironment.h
+    platform/TrackedWebView.cpp
+    platform/TrackedWebView.h
+    platform/UrlPolicy.cpp
+    platform/UrlPolicy.h
+    platform/WebViewTracker.cpp
+    platform/WebViewTracker.h
+    platform/WindowGeometry.h
+    process/Process.h
+    process/ProcessEnd.h
+    process/ProcessEnvironment.cpp
+    process/ProcessEnvironment.h
+    process/ProcessEvents.h
+    process/ProcessLaunch.h
+    process/ProcessLauncher.h
+    process/ProcessStream.h
+    process/ProcessText.cpp
+    process/ProcessText.h
+    scripting/ApplicationHost.cpp
+    scripting/ApplicationHost.h
+    scripting/ApplicationInfo.h
+    scripting/AudioHost.cpp
+    scripting/AudioHost.h
+    scripting/FileHost.cpp
+    scripting/FileHost.h
+    scripting/HostOwners.cpp
+    scripting/HostOwners.h
+    scripting/HostReply.cpp
+    scripting/HostReply.h
+    scripting/HostServices.h
+    scripting/HttpHost.cpp
+    scripting/HttpHost.h
+    scripting/InterfaceHost.cpp
+    scripting/InterfaceHost.h
+    scripting/PluginManifest.h
+    scripting/Identifier.cpp
+    scripting/Identifier.h
+    scripting/PluginRegistry.cpp
+    scripting/PluginRegistry.h
+    scripting/ProcessHost.cpp
+    scripting/ProcessHost.h
+    scripting/ReplyChannel.cpp
+    scripting/ReplyChannel.h
+    scripting/ScriptRuntime.cpp
+    scripting/ScriptRuntime.h
+    scripting/StorageHost.cpp
+    scripting/StorageHost.h
+    scripting/SystemHost.cpp
+    scripting/SystemHost.h
+    text/Base64Helper.cpp
+    text/Base64Helper.h
+    text/IntegerHelper.cpp
+    text/IntegerHelper.h
+    text/Utf8Helper.cpp
+    text/Utf8Helper.h
+    time/LocalMoment.h
+    time/TimestampHelper.cpp
+    time/TimestampHelper.h
+    ui/AssetPath.cpp
+    ui/AssetPath.h
+    ui/ButtonState.cpp
+    ui/ButtonState.h
+    ui/Color.cpp
+    ui/Color.h
+    ui/FindBar.cpp
+    ui/FindBar.h
+    ui/FontScope.cpp
+    ui/FontScope.h
+    ui/FontFamilies.cpp
+    ui/FontFamilies.h
+    ui/Fonts.cpp
+    ui/Fonts.h
+    ui/Icon.h
+    ui/IconCatalog.cpp
+    ui/IconCatalog.h
+    ui/MenuItem.h
+    ui/Menus.cpp
+    ui/Menus.h
+    ui/NativeViewHost.h
+    ui/NativeWebView.h
+    ui/PseudoTerminal.h
+    ui/PseudoTerminalHost.h
+    ui/TerminalLaunch.h
+    ui/WebDownload.h
+    ui/WebNavigation.h
+    ui/WebPermission.h
+    ui/Painter.cpp
+    ui/Painter.h
+    ui/ParagraphCache.cpp
+    ui/ParagraphCache.h
+    ui/RowContent.h
+    ui/TextCaseHelper.cpp
+    ui/TextCaseHelper.h
+    ui/TextAreaOptions.h
+    ui/TextFieldOptions.h
+    ui/TextFieldResult.h
+    ui/TextMatcher.cpp
+    ui/TextMatcher.h
+    ui/Texture.cpp
+    ui/Texture.h
+    ui/TextureCache.cpp
+    ui/TextureCache.h
+    ui/WheelScale.cpp
+    ui/WheelScale.h
+    ui/WidgetHelper.cpp
+    ui/WidgetHelper.h
+    ui/components/StandardComponents.cpp
+    ui/components/StandardComponents.h
+    ui/components/buttons/Button.cpp
+    ui/components/buttons/Button.h
+    ui/components/buttons/ButtonVariants.cpp
+    ui/components/buttons/ButtonVariants.h
+    ui/components/buttons/Chip.cpp
+    ui/components/buttons/Chip.h
+    ui/components/buttons/MenuButton.cpp
+    ui/components/buttons/MenuButton.h
+    ui/components/buttons/Popover.cpp
+    ui/components/buttons/Popover.h
+    ui/components/choices/Checkbox.cpp
+    ui/components/choices/Checkbox.h
+    ui/components/choices/ChoiceOption.h
+    ui/components/choices/ChoiceOptions.cpp
+    ui/components/choices/ChoiceOptions.h
+    ui/components/choices/Combo.cpp
+    ui/components/choices/Combo.h
+    ui/components/choices/LayoutSwatch.cpp
+    ui/components/choices/LayoutSwatch.h
+    ui/components/choices/RadioGroup.cpp
+    ui/components/choices/RadioGroup.h
+    ui/components/choices/Toggle.cpp
+    ui/components/choices/Toggle.h
+    ui/components/collections/List.cpp
+    ui/components/collections/List.h
+    ui/components/collections/ListItem.h
+    ui/components/collections/Table.cpp
+    ui/components/collections/Table.h
+    ui/components/collections/TableAction.h
+    ui/components/collections/TableCell.h
+    ui/components/collections/TableColumn.h
+    ui/components/collections/TableRow.h
+    ui/components/collections/Tree.cpp
+    ui/components/collections/Tree.h
+    ui/components/collections/TreeItem.h
+    ui/components/containers/Axis.h
+    ui/components/containers/Borders.h
+    ui/components/containers/Card.cpp
+    ui/components/containers/Card.h
+    ui/components/containers/Column.cpp
+    ui/components/containers/Column.h
+    ui/components/containers/Divider.cpp
+    ui/components/containers/Divider.h
+    ui/components/containers/FormField.cpp
+    ui/components/containers/FormField.h
+    ui/components/containers/Grid.cpp
+    ui/components/containers/Grid.h
+    ui/components/containers/LinearContainer.cpp
+    ui/components/containers/LinearContainer.h
+    ui/components/containers/Row.cpp
+    ui/components/containers/Row.h
+    ui/components/containers/Scroll.cpp
+    ui/components/containers/Scroll.h
+    ui/components/containers/Spacer.cpp
+    ui/components/containers/Spacer.h
+    ui/components/containers/Splitter.cpp
+    ui/components/containers/Splitter.h
+    ui/components/containers/Stack.cpp
+    ui/components/containers/Stack.h
+    ui/components/containers/TabItem.h
+    ui/components/containers/Tabs.cpp
+    ui/components/containers/Tabs.h
+    ui/components/indicators/Avatar.cpp
+    ui/components/indicators/Avatar.h
+    ui/components/indicators/Badge.cpp
+    ui/components/indicators/Badge.h
+    ui/components/indicators/BusyIndicator.cpp
+    ui/components/indicators/BusyIndicator.h
+    ui/components/indicators/IconGraphic.cpp
+    ui/components/indicators/IconGraphic.h
+    ui/components/indicators/Image.cpp
+    ui/components/indicators/Image.h
+    ui/components/indicators/IndicatorSizes.cpp
+    ui/components/indicators/IndicatorSizes.h
+    ui/components/indicators/Progress.cpp
+    ui/components/indicators/Progress.h
+    ui/components/indicators/StatusIndicator.cpp
+    ui/components/indicators/StatusIndicator.h
+    ui/components/indicators/Tones.cpp
+    ui/components/indicators/Tones.h
+    ui/components/inputs/FilterField.cpp
+    ui/components/inputs/FilterField.h
+    ui/components/inputs/NumberField.cpp
+    ui/components/inputs/NumberField.h
+    ui/components/inputs/NumericInput.cpp
+    ui/components/inputs/NumericInput.h
+    ui/components/inputs/SecretField.cpp
+    ui/components/inputs/SecretField.h
+    ui/components/inputs/Slider.cpp
+    ui/components/inputs/Slider.h
+    ui/components/inputs/TextArea.cpp
+    ui/components/inputs/TextArea.h
+    ui/components/inputs/TextField.cpp
+    ui/components/inputs/TextField.h
+    ui/components/pickers/ColorField.cpp
+    ui/components/pickers/ColorField.h
+    ui/components/pickers/DateTimeField.cpp
+    ui/components/pickers/DateTimeField.h
+    ui/components/settings/SettingsActions.cpp
+    ui/components/settings/SettingsActions.h
+    ui/components/settings/SettingsForm.cpp
+    ui/components/settings/SettingsForm.h
+    ui/components/settings/SettingsRow.cpp
+    ui/components/settings/SettingsRow.h
+    ui/components/terminal/Terminal.cpp
+    ui/components/terminal/Terminal.h
+    ui/components/terminal/TerminalCursor.h
+    ui/components/terminal/TerminalFinder.cpp
+    ui/components/terminal/TerminalFinder.h
+    ui/components/terminal/TerminalKeys.cpp
+    ui/components/terminal/TerminalKeys.h
+    ui/components/terminal/TerminalPalette.cpp
+    ui/components/terminal/TerminalPalette.h
+    ui/components/terminal/TerminalPoint.h
+    ui/components/terminal/TerminalScreen.cpp
+    ui/components/terminal/TerminalScreen.h
+    ui/components/terminal/TerminalSelection.cpp
+    ui/components/terminal/TerminalSelection.h
+    ui/components/terminal/TerminalSignals.h
+    ui/components/text/Alert.cpp
+    ui/components/text/Alert.h
+    ui/components/text/EmptyState.cpp
+    ui/components/text/EmptyState.h
+    ui/components/text/Label.cpp
+    ui/components/text/Label.h
+    ui/components/text/Markdown.cpp
+    ui/components/text/Markdown.h
+    ui/components/text/PageHeader.cpp
+    ui/components/text/PageHeader.h
+    ui/components/text/SectionTitle.cpp
+    ui/components/text/SectionTitle.h
+    ui/components/views/CodeCompletion.cpp
+    ui/components/views/CodeCompletion.h
+    ui/components/views/Canvas.cpp
+    ui/components/views/Canvas.h
+    ui/components/views/CodeEditor.cpp
+    ui/components/views/CodeEditor.h
+    ui/components/views/CodeFinder.cpp
+    ui/components/views/CodeFinder.h
+    ui/components/views/CodeLanguage.cpp
+    ui/components/views/CodeLanguage.h
+    ui/components/views/CodeText.cpp
+    ui/components/views/CodeText.h
+    ui/components/views/DarkModern.cpp
+    ui/components/views/DarkModern.h
+    ui/components/views/WebView.cpp
+    ui/components/views/WebView.h
+    ui/LucideGlyphs.cpp
+    ui/LucideGlyphs.h
+    ui/markdown/Block.h
+    ui/markdown/BlockReader.cpp
+    ui/markdown/BlockReader.h
+    ui/markdown/InlineReader.cpp
+    ui/markdown/InlineReader.h
+    ui/markdown/Layout.h
+    ui/markdown/LayoutBuilder.cpp
+    ui/markdown/LayoutBuilder.h
+    ui/markdown/Parser.cpp
+    ui/markdown/Parser.h
+    ui/markdown/Run.h
+    ui/markdown/Shape.h
+    ui/markdown/SourceTextHelper.cpp
+    ui/markdown/SourceTextHelper.h
+    ui/markdown/Span.cpp
+    ui/markdown/Span.h
+    ui/model/CommonProperties.h
+    ui/model/Component.cpp
+    ui/model/Component.h
+    ui/model/ComponentRegistry.cpp
+    ui/model/ComponentRegistry.h
+    ui/model/ContentFontSize.cpp
+    ui/model/ContentFontSize.h
+    ui/model/DragValue.cpp
+    ui/model/DragValue.h
+    ui/model/EventSink.cpp
+    ui/model/EventSink.h
+    ui/model/Insets.cpp
+    ui/model/Insets.h
+    ui/model/NodeId.h
+    ui/model/RenderContext.cpp
+    ui/model/RenderContext.h
+    ui/model/Surface.h
+    ui/model/SurfaceStore.cpp
+    ui/model/SurfaceStore.h
+    ui/model/TextValue.cpp
+    ui/model/TextValue.h
+    ui/model/UiEvent.h
+    ui/shell/BandItem.cpp
+    ui/shell/BandItem.h
+    ui/shell/DialogAnswer.h
+    ui/shell/DialogButton.h
+    ui/shell/DialogHost.cpp
+    ui/shell/DialogHost.h
+    ui/shell/DialogRequest.h
+    ui/shell/KeyChords.cpp
+    ui/shell/KeyChords.h
+    ui/shell/ModeBar.cpp
+    ui/shell/ModeBar.h
+    ui/shell/ModeEntry.h
+    ui/shell/NavigationItem.cpp
+    ui/shell/NavigationItem.h
+    ui/shell/NavigationShortcut.h
+    ui/shell/SettingsGroup.cpp
+    ui/shell/SettingsGroup.h
+    ui/shell/SettingsSection.h
+    ui/shell/SettingsView.cpp
+    ui/shell/SettingsView.h
+    ui/shell/Shell.cpp
+    ui/shell/Shell.h
+    ui/shell/ToastOverlay.cpp
+    ui/shell/ToastOverlay.h
+    ui/theme/AccentTheme.cpp
+    ui/theme/AccentTheme.h
+    ui/theme/BlueTheme.cpp
+    ui/theme/BlueTheme.h
+    ui/theme/FontRole.h
+    ui/theme/GreenTheme.cpp
+    ui/theme/GreenTheme.h
+    ui/theme/RedTheme.cpp
+    ui/theme/RedTheme.h
+    ui/theme/Style.cpp
+    ui/theme/Style.h
+    ui/theme/Theme.h
+    ui/theme/ThemeCatalog.cpp
+    ui/theme/ThemeCatalog.h
+    ui/theme/ThemeColorNames.cpp
+    ui/theme/ThemeColorNames.h
+    ui/theme/ThemeManager.cpp
+    ui/theme/ThemeManager.h
+)
+
+# Every source belongs to one library, which the executable and every suite link instead of compiling it again.
+add_library(WorkpaneCore STATIC ${WORKPANE_CORE_SOURCES} ${WORKPANE_PLATFORM_SOURCES})
+target_include_directories(WorkpaneCore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}/generated")
+target_link_libraries(WorkpaneCore PUBLIC workpane_imgui workpane_text_editor workpane_sqlite workpane_miniaudio workpane_vterm workpane_file_dialogs workpane_http workpane_stb varn::varn nlohmann_json::nlohmann_json Threads::Threads ${WORKPANE_PLATFORM_LIBRARIES})
+target_compile_options(WorkpaneCore PRIVATE $<$<COMPILE_LANGUAGE:OBJCXX>:-fobjc-arc>)
+
+if(WIN32)
+    target_compile_definitions(WorkpaneCore PUBLIC NOMINMAX)
+endif()
+
+workpane_set_warnings(WorkpaneCore)
+workpane_enable_coverage(WorkpaneCore)
+workpane_enable_sanitizers(WorkpaneCore)
+
+# The manifest makes UTF-8 the code page of the process, so every narrow path and text the product hands Windows is read as UTF-8.
+if(WIN32)
+    set(WORKPANE_EXECUTABLE_RESOURCES "${PROJECT_SOURCE_DIR}/extras/windows/Workpane.rc" "${PROJECT_SOURCE_DIR}/extras/windows/Workpane.manifest")
+endif()
+
+add_executable(Workpane MACOSX_BUNDLE WIN32 main.cpp ${WORKPANE_EXECUTABLE_RESOURCES})
+target_link_libraries(Workpane PRIVATE WorkpaneCore)
+add_dependencies(Workpane WorkpaneResources)
+
+# The executable of Windows opens no console of its own, and it starts at the entry of the C runtime that calls main instead of WinMain.
+if(MSVC)
+    target_link_options(Workpane PRIVATE /ENTRY:mainCRTStartup)
+endif()
+
+workpane_set_warnings(Workpane)
+workpane_enable_coverage(Workpane)
+workpane_enable_sanitizers(Workpane)
+
+if(APPLE)
+    # The bundle carries its resources and the Lua runtime library inside itself, which is the layout a disk image installs.
+    set_target_properties(
+        Workpane
+        PROPERTIES
+            MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/extras/macos/Info.plist.in"
+            MACOSX_BUNDLE_GUI_IDENTIFIER "${WORKPANE_BUNDLE_IDENTIFIER}"
+            MACOSX_BUNDLE_BUNDLE_NAME "${WORKPANE_PRODUCT_NAME}"
+            MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+            MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+            MACOSX_BUNDLE_ICON_FILE "logo.icns"
+            INSTALL_RPATH "@executable_path/../Frameworks"
+            BUILD_WITH_INSTALL_RPATH ON
+    )
+    add_custom_command(
+        TARGET Workpane POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:Workpane>/Frameworks"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:varn::varn>" "$<TARGET_BUNDLE_CONTENT_DIR:Workpane>/Frameworks/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_SONAME_FILE:varn::varn>" "$<TARGET_BUNDLE_CONTENT_DIR:Workpane>/Frameworks/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_SOURCE_DIR}/extras/images/logo.icns" "$<TARGET_BUNDLE_CONTENT_DIR:Workpane>/Resources/logo.icns"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:Workpane>/Resources/pt.lproj"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_SOURCE_DIR}/extras/macos/pt.lproj/InfoPlist.strings" "$<TARGET_BUNDLE_CONTENT_DIR:Workpane>/Resources/pt.lproj/InfoPlist.strings"
+        VERBATIM
+    )
+elseif(UNIX)
+    set_target_properties(Workpane PROPERTIES INSTALL_RPATH "$ORIGIN/../lib" BUILD_WITH_INSTALL_RPATH ON)
+endif()

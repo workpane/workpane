@@ -1,0 +1,424 @@
+{
+  "templates": [
+    {
+      "id": "general",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "general",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "ios",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "ios",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "android",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "android",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "flutter",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "flutter",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "react-native",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "react-native",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "react",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "react",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "vue",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "vue",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "angular",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "angular",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "svelte",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "svelte",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "website",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "website",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "desktop",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "desktop",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "node",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "node",
+        "code-style",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "report"
+      ]
+    },
+    {
+      "id": "python",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "python",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "php",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "php",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "java-kotlin",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "java-kotlin",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "dotnet",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "dotnet",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "go",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "go",
+        "code-style",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "report"
+      ]
+    },
+    {
+      "id": "rust",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "rust",
+        "code-style",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "report"
+      ]
+    },
+    {
+      "id": "rails",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "rails",
+        "code-style",
+        "interface",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "images",
+        "report"
+      ]
+    },
+    {
+      "id": "cpp",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "cpp",
+        "code-style",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "report"
+      ]
+    },
+    {
+      "id": "tooling",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "tooling",
+        "code-style",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "report"
+      ]
+    },
+    {
+      "id": "devops",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "devops",
+        "code-style",
+        "security-builder",
+        "testing",
+        "git",
+        "documentation",
+        "report"
+      ]
+    },
+    {
+      "id": "code-review",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-review",
+        "code-review",
+        "code-style",
+        "security-builder",
+        "report"
+      ]
+    },
+    {
+      "id": "security-web",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-review",
+        "security-web",
+        "report"
+      ]
+    },
+    {
+      "id": "security-mobile",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-review",
+        "security-mobile",
+        "report"
+      ]
+    },
+    {
+      "id": "testing",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "test-engineering",
+        "testing",
+        "code-style",
+        "git",
+        "report"
+      ]
+    },
+    {
+      "id": "readme",
+      "sections": [
+        "opening",
+        "principles",
+        "workflow-build",
+        "readme",
+        "documentation",
+        "images",
+        "git",
+        "report"
+      ]
+    }
+  ]
+}

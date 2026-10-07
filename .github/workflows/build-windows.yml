@@ -1,0 +1,87 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Windows (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2025
+            architecture: x86_64
+            msvc: x64
+            ninja: ninja-win.zip
+            ninjaDigest: 07FC8261B42B20E71D1720B39068C2E14FFCEE6396B76FB7A795FB460B78DC65
+          - runner: windows-11-arm
+            architecture: arm64
+            msvc: arm64
+            ninja: ninja-winarm64.zip
+            ninjaDigest: E52F0BDEF9DFB1003229DBD6508A508C4073FD017247002ADC66E5E806CB0391
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # The runner images carry neither Ninja nor NSIS, the compiler of the installer, so both come from their release archives pinned by their digests.
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          $tools = Join-Path $env:RUNNER_TEMP "tools"
+          Invoke-WebRequest -Uri "https://github.com/ninja-build/ninja/releases/download/v1.13.2/${{ matrix.ninja }}" -OutFile ninja.zip -MaximumRetryCount 5 -RetryIntervalSec 10
+          Invoke-WebRequest -Uri "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.11/nsis-3.11.zip" -OutFile nsis.zip -UserAgent "curl" -MaximumRetryCount 5 -RetryIntervalSec 10
+          if ((Get-FileHash ninja.zip -Algorithm SHA256).Hash -ne "${{ matrix.ninjaDigest }}") { throw "The Ninja archive does not match its digest." }
+          if ((Get-FileHash nsis.zip -Algorithm SHA256).Hash -ne "C7D27F780DDB6CFFB4730138CD1591E841F4B7EDB155856901CDF5F214394FA1") { throw "The NSIS archive does not match its digest." }
+          Expand-Archive ninja.zip -DestinationPath $tools
+          Expand-Archive nsis.zip -DestinationPath $tools
+          Remove-Item ninja.zip, nsis.zip
+          $tools | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          (Join-Path $tools "nsis-3.11") | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: build/release/_deps
+          key: deps-windows-${{ matrix.architecture }}-${{ hashFiles('cmake/Dependencies.cmake', 'cmake/patches/**') }}
+
+      - name: Enable MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc }}
+
+      - name: Configure
+        run: cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DWORKPANE_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build/release --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build/release --parallel 4 --output-on-failure --no-tests=error
+
+      - name: Package
+        run: cmake --build build/release --target package
+
+      - name: Validate package
+        run: python make.py validate-package
+
+      - name: Collect package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Get-ChildItem build/release -Filter "Workpane-*.exe" | Select-Object -First 1 | ForEach-Object { Copy-Item $_.FullName dist/workpane-windows-${{ matrix.architecture }}-installer.exe }
+          Get-ChildItem dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: workpane-windows-${{ matrix.architecture }}
+          if-no-files-found: error
+          path: dist/workpane-windows-${{ matrix.architecture }}-installer.exe
