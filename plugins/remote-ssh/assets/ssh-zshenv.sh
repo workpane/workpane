@@ -1,0 +1,8 @@
+if [[ -r "${WORKPANE_USER_ZDOTDIR}/.zshenv" ]]; then
+    ZDOTDIR="${WORKPANE_USER_ZDOTDIR}"
+    source "${WORKPANE_USER_ZDOTDIR}/.zshenv"
+    WORKPANE_USER_ZDOTDIR="${ZDOTDIR}"
+fi
+
+ZDOTDIR="${WORKPANE_ZDOTDIR}"
+setopt RCS

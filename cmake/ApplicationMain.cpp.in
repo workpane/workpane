@@ -1,0 +1,6 @@
+#include "app/Application.h"
+#include "app/ApplicationIdentity.h"
+
+int main(int argc, char** argv) {
+    return workpane::app::Application::launch(argc, argv, {@WORKPANE_APP_NAME_LITERAL@, @WORKPANE_APP_VERSION_LITERAL@, @WORKPANE_APP_BUILD_LITERAL@, @WORKPANE_APP_ORGANIZATION_LITERAL@, @WORKPANE_APP_IDENTIFIER_LITERAL@, @WORKPANE_APP_RESOURCE_LITERAL@, @WORKPANE_APP_DATA_LITERAL@});
+}

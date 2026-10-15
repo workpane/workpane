@@ -1,0 +1,3 @@
+The sprites of this plugin come from the Tiny Swords pack by Pixel Frog, https://pixelfrog-assets.itch.io/tiny-swords.
+They are used inside this plugin as the pack allows for projects, and the pack itself is published only by its author.
+The sheets are cut to the frames the adventure draws, and the emblems of the three kinds of warrior are the blue avatars of the pack made smaller.

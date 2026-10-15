@@ -1,0 +1,118 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Windows (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2025
+            architecture: x86_64
+            msvc: amd64
+            ninja: ninja-win.zip
+            ninjaDigest: 07FC8261B42B20E71D1720B39068C2E14FFCEE6396B76FB7A795FB460B78DC65
+            openssh: OpenSSH-Win64
+            opensshDigest: 23F50F3458C4C5D0B12217C6A5DDFDE0137210A30FA870E98B29827F7B43ABA5
+          - runner: windows-11-arm
+            architecture: arm64
+            msvc: arm64
+            ninja: ninja-winarm64.zip
+            ninjaDigest: E52F0BDEF9DFB1003229DBD6508A508C4073FD017247002ADC66E5E806CB0391
+            openssh: OpenSSH-ARM64
+            opensshDigest: 698C6AEC31C1DD0FB996206E8741F4531A97355686B5431EF347D531B07FCD42
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # The build tools and the isolated SSH server come from release archives pinned by their digests.
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          $tools = Join-Path $env:RUNNER_TEMP "tools"
+          Invoke-WebRequest -Uri "https://github.com/ninja-build/ninja/releases/download/v1.13.2/${{ matrix.ninja }}" -OutFile ninja.zip -MaximumRetryCount 5 -RetryIntervalSec 10
+          Invoke-WebRequest -Uri "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.11/nsis-3.11.zip" -OutFile nsis.zip -UserAgent "curl" -MaximumRetryCount 5 -RetryIntervalSec 10
+          Invoke-WebRequest -Uri "https://github.com/PowerShell/Win32-OpenSSH/releases/download/10.0.0.0p2-Preview/${{ matrix.openssh }}.zip" -OutFile openssh.zip -MaximumRetryCount 5 -RetryIntervalSec 10
+          if ((Get-FileHash ninja.zip -Algorithm SHA256).Hash -ne "${{ matrix.ninjaDigest }}") { throw "The Ninja archive does not match its digest." }
+          if ((Get-FileHash nsis.zip -Algorithm SHA256).Hash -ne "C7D27F780DDB6CFFB4730138CD1591E841F4B7EDB155856901CDF5F214394FA1") { throw "The NSIS archive does not match its digest." }
+          if ((Get-FileHash openssh.zip -Algorithm SHA256).Hash -ne "${{ matrix.opensshDigest }}") { throw "The OpenSSH test archive does not match its digest." }
+          Expand-Archive ninja.zip -DestinationPath $tools
+          Expand-Archive nsis.zip -DestinationPath $tools
+          Expand-Archive openssh.zip -DestinationPath $tools
+          Remove-Item ninja.zip, nsis.zip, openssh.zip
+          $tools | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          (Join-Path $tools "nsis-3.11") | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          (Join-Path $tools "${{ matrix.openssh }}") | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Restore dependencies
+        id: dependencies
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: build/release/_deps
+          key: deps-windows-${{ matrix.architecture }}-${{ hashFiles('cmake/Dependencies.cmake', 'cmake/patches/**') }}
+
+      - name: Enable MSVC environment
+        shell: pwsh
+        run: |
+          $before = @{}
+          Get-ChildItem Env: | ForEach-Object { $before[$_.Name] = $_.Value }
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio/Installer/vswhere.exe"
+          $visualStudio = & $vswhere -latest -products "*" -property installationPath
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($visualStudio)) { throw "Visual Studio could not be located." }
+          & (Join-Path $visualStudio "Common7/Tools/Launch-VsDevShell.ps1") -Arch ${{ matrix.msvc }} -HostArch ${{ matrix.msvc }} -SkipAutomaticLocation
+          Get-ChildItem Env: | Where-Object { $before[$_.Name] -ne $_.Value } | ForEach-Object {
+            "$($_.Name)=$($_.Value)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
+
+      - name: Configure
+        run: cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DWORKPANE_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build/release --parallel
+
+      - name: Save dependencies
+        if: steps.dependencies.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: build/release/_deps
+          key: ${{ steps.dependencies.outputs.cache-primary-key }}
+
+      - name: Test native browser input
+        run: ctest --test-dir build/release -R "^NativeBrowserInputTest\." --output-on-failure --no-tests=error
+
+      - name: Test native SSH
+        run: ctest --test-dir build/release -R "^WindowsSshIntegrationTest\." --parallel 4 --output-on-failure --no-tests=error
+
+      - name: Run tests
+        run: ctest --test-dir build/release -E "^(NativeBrowserInputTest|WindowsSshIntegrationTest)\." --parallel 4 --output-on-failure --no-tests=error
+
+      - name: Package
+        run: cmake --build build/release --target package
+
+      - name: Validate package
+        run: python make.py validate-package
+
+      - name: Collect package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Get-ChildItem build/release -Filter "Workpane-*.exe" | Select-Object -First 1 | ForEach-Object { Copy-Item $_.FullName dist/workpane-windows-${{ matrix.architecture }}-installer.exe }
+          Get-ChildItem dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: workpane-windows-${{ matrix.architecture }}
+          if-no-files-found: error
+          path: |
+            dist/workpane-windows-${{ matrix.architecture }}-installer.exe

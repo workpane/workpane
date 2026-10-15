@@ -1,0 +1,104 @@
+{
+  "schemes": [
+    {
+      "id": "dark-modern",
+      "name": "Dark Modern",
+      "colors": {
+        "text": "#cccccc",
+        "keyword": "#569cd6",
+        "declaration": "#4ec9b0",
+        "number": "#b5cea8",
+        "string": "#ce9178",
+        "punctuation": "#cccccc",
+        "preprocessor": "#c586c0",
+        "identifier": "#9cdcfe",
+        "knownIdentifier": "#dcdcaa",
+        "comment": "#6a9955",
+        "background": "#1f1f1f",
+        "cursor": "#aeafad",
+        "selection": "#264f78",
+        "lineNumber": "#6e7681",
+        "currentLineNumber": "#cccccc",
+        "guide": "#404040",
+        "activeGuide": "#707070",
+        "currentLine": "#282828",
+        "occurrence": "#575757"
+      }
+    },
+    {
+      "id": "light-modern",
+      "name": "Light Modern",
+      "colors": {
+        "text": "#3b3b3b",
+        "keyword": "#0000ff",
+        "declaration": "#267f99",
+        "number": "#098658",
+        "string": "#a31515",
+        "punctuation": "#3b3b3b",
+        "preprocessor": "#af00db",
+        "identifier": "#001080",
+        "knownIdentifier": "#795e26",
+        "comment": "#008000",
+        "background": "#ffffff",
+        "cursor": "#000000",
+        "selection": "#add6ff",
+        "lineNumber": "#6e7681",
+        "currentLineNumber": "#171184",
+        "guide": "#d3d3d3",
+        "activeGuide": "#939393",
+        "currentLine": "#eeeeee",
+        "occurrence": "#c8c8c8"
+      }
+    },
+    {
+      "id": "solarized-dark",
+      "name": "Solarized Dark",
+      "colors": {
+        "text": "#839496",
+        "keyword": "#859900",
+        "declaration": "#b58900",
+        "number": "#2aa198",
+        "string": "#2aa198",
+        "punctuation": "#859900",
+        "preprocessor": "#cb4b16",
+        "identifier": "#839496",
+        "knownIdentifier": "#268bd2",
+        "comment": "#586e75",
+        "background": "#002b36",
+        "cursor": "#839496",
+        "selection": "#0a4b58",
+        "lineNumber": "#586e75",
+        "currentLineNumber": "#93a1a1",
+        "guide": "#073642",
+        "activeGuide": "#586e75",
+        "currentLine": "#073642",
+        "occurrence": "#1b5563"
+      }
+    },
+    {
+      "id": "solarized-light",
+      "name": "Solarized Light",
+      "colors": {
+        "text": "#657b83",
+        "keyword": "#859900",
+        "declaration": "#b58900",
+        "number": "#2aa198",
+        "string": "#2aa198",
+        "punctuation": "#859900",
+        "preprocessor": "#cb4b16",
+        "identifier": "#657b83",
+        "knownIdentifier": "#268bd2",
+        "comment": "#93a1a1",
+        "background": "#fdf6e3",
+        "cursor": "#657b83",
+        "selection": "#ddd6c1",
+        "lineNumber": "#93a1a1",
+        "currentLineNumber": "#586e75",
+        "guide": "#eee8d5",
+        "activeGuide": "#93a1a1",
+        "currentLine": "#eee8d5",
+        "occurrence": "#d6ceb3"
+      }
+    }
+  ]
+}

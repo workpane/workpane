@@ -1,0 +1,45 @@
+name: Build
+
+# Every push builds, because GitHub starts no run for a filtered push that changes more than 300 files, which is what a history kept to one commit pushes.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Formatting and audits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # The formatter is pinned to the version the sources were formatted with, because every release formats a little differently.
+      - name: Install clang-format
+        run: pipx install clang-format==23.1.1
+
+      - name: Check formatting
+        run: python3 make.py format-check
+
+      - name: Audit
+        run: python3 make.py audit
+
+  linux:
+    needs: checks
+    uses: ./.github/workflows/build-linux.yml
+
+  macos:
+    needs: checks
+    uses: ./.github/workflows/build-macos.yml
+    secrets: inherit
+
+  windows:
+    needs: checks
+    uses: ./.github/workflows/build-windows.yml

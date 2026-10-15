@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Workpane
+GenericName=Developer Workspace
+Comment=Terminals, code, browser, local servers and AI agents in one window
+Exec=/opt/workpane/bin/Workpane %U
+Icon=workpane
+Terminal=false
+Categories=Development;IDE;
+StartupWMClass=Workpane

@@ -1,0 +1,14 @@
+#pragma once
+
+#include <string_view>
+
+namespace workpane::app {
+
+class BuildInfo final {
+  public:
+    static constexpr std::string_view version{"@PROJECT_VERSION@"};
+    static constexpr std::string_view buildNumber{"@WORKPANE_BUILD_NUMBER@"};
+    static constexpr bool debugBuild{@WORKPANE_DEBUG_BUILD@};
+};
+
+} // namespace workpane::app
